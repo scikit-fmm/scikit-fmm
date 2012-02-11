@@ -1,0 +1,12 @@
+fast_marching.cpp
+fast_marching.h
+output.txt
+a.out
+gmon.out
+heap.cpp
+heap.h
+clean.out
+a.out.dSYM/
+session*
+a2.out
+a2.out.dSYM/
