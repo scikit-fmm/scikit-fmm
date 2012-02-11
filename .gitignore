@@ -1,0 +1,13 @@
+build/
+*.pyc
+*~
+scikits.fmm.egg-info/
+\#*
+dist/
+*.so
+scikit_fmm.egg-info/PKG-INFO
+scikit_fmm.egg-info/SOURCES.txt
+scikit_fmm.egg-info/dependency_links.txt
+scikit_fmm.egg-info/requires.txt
+scikit_fmm.egg-info/top_level.txt
+install_log.txt
