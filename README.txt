@@ -20,9 +20,9 @@ array([ 1.25,  0.75,  0.25,  0.25,  0.75,  1.25])
 The input array can be of 1, 2, 3 or higher dimensions and can be a
 masked array.
 
-Documentation:
+Documentation: http://packages.python.org/scikit-fmm
 
-PyPI:
+PyPI: http://pypi.python.org/pypi/scikit-fmm
 
 Source Code: https://github.com/scikit-fmm/
 
