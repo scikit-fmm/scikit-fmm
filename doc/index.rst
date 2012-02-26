@@ -19,10 +19,12 @@ Eikonal equation,
 .. math::
    F(x) | \nabla T(x) | = 1
 
-where :math:`F>0` and the unknown :math:`T(x)` is interpreted as the
-travel time from an initial boundary to a point x. The initial
-location of the boundary is defined by the zero contour (or zero
-level-set) of a scalar function.
+Typically, such a problem describes the evolution of a closed curve as
+a function of time :math:`T` with speed :math:`F(x)>0` in the normal
+direction at a point x on the curve. The speed function is specified,
+and the time at which the contour crosses a point x is obtained by
+solving the equation. The initial location of the boundary is defined
+by the zero contour (or zero level-set) of a scalar function.
 
 In this document the scalar function containing the initial interface
 location is referred to as phi. The scalar function phi can be thought to
@@ -38,22 +40,28 @@ name of :py:mod:`scikit-fmm` is :py:mod:`skfmm`.
 
 Examples
 ========
-First, a simple one-dimensional example::
+First, a simple example::
 
     >>> import skfmm
-    >>> phi = [-1,-1,-1,1,1,1]
+    >>> import numpy as np
+    >>> phi = np.ones((3, 3))
+    >>> phi[1, 1] = -1
     >>> skfmm.distance(phi)
-    array([-2.5, -1.5, -0.5,  0.5,  1.5,  2.5])
+    array([[ 1.20710678,  0.5       ,  1.20710678],
+           [ 0.5       , -0.35355339,  0.5       ],
+           [ 1.20710678,  0.5       ,  1.20710678]])
 
-Here the zero contour of phi is between elements 2 and 3. The return
+Here the zero contour of phi is around the (1, 1) point. The return
 value of :py:func:`skfmm.distance` gives the signed distance from zero
 contour. No grid spacing is given, so it is taken as 1. To specify a
-spacing use the dx argument::
+spacing use the optional dx argument::
 
     >>> skfmm.distance(phi, dx=0.25)
-    array([-0.625, -0.375, -0.125,  0.125,  0.375,  0.625])
+    array([[ 0.3017767 ,  0.125     ,  0.3017767 ],
+           [ 0.125     , -0.08838835,  0.125     ],
+           [ 0.3017767 ,  0.125     ,  0.3017767 ]])
 
-A two-dimensional example:
+A more detailed example:
 
 .. image:: 2d_phi.png
 
@@ -63,9 +71,9 @@ The boundary is specified as the zero contour of a scalar function phi:
  >>> import numpy as np
  >>> import pylab as pl
  >>> X, Y = np.meshgrid(np.linspace(-1,1,200), np.linspace(-1,1,200))
- >>> phi = -1*np.ones_like(X)
- >>> phi[X>-0.5] = 1
- >>> phi[np.logical_and(np.abs(Y)<0.25, X>-0.75)] = 1
+ >>> phi = -1 * np.ones_like(X)
+ >>> phi[X > -0.5] = 1
+ >>> phi[np.logical_and(np.abs(Y) < 0.25, X > -0.75)] = 1
 
 .. image:: 2d_phi_distance.png
 
@@ -84,7 +92,7 @@ of the domain.
 ::
 
  >>> speed = np.ones_like(X)
- >>> speed[Y>0] = 1.5
+ >>> speed[Y > 0] = 1.5
  >>> t = skfmm.travel_time(phi, speed, dx=1e-2)
 
 both :py:func:`skfmm.travel_time` and :py:func:`skfmm.distance`
@@ -94,7 +102,7 @@ support masked arrays for input. This allows an obstacle to be introduced.
 
 ::
 
- >>> mask = np.logical_and(abs(X)<0.1, abs(Y)<0.5)
+ >>> mask = np.logical_and(abs(X) < 0.1, abs(Y) < 0.5)
  >>> phi  = np.ma.MaskedArray(phi, mask)
  >>> t    = skfmm.travel_time(phi, speed, dx=1e-2)
 
