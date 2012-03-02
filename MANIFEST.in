@@ -9,6 +9,8 @@ include skfmm/fast_marching.cpp
 include skfmm/fmm.cpp
 include skfmm/__init__.py
 include skfmm/pfmm.py
+include skfmm/utility/__init__.py
+include skfmm/utility/fmm_utility.py
 include Makefile
 include LICENSE.txt
 include profile/prof.cpp
@@ -23,3 +25,4 @@ include doc/conf.py
 include doc/index.rst
 include static_analysis.sh
 include tests/test_fmm.py
+include tests/test_utilities.py
