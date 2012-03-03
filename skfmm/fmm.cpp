@@ -37,11 +37,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- and the input error checking should be done
 
   PyObject *pphi, *pdx, *pflag, *pspeed;
-  int       self_test;
-  PyArrayObject *phi, *dx, *flag, *speed, *distance;
+  int       self_test, extension;
+  PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext;
+  distance = 0;
+  f_ext    = 0;
+  speed    = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOi", &pphi, &pdx, &pflag,
-                        &pspeed, &self_test))
+  if (!PyArg_ParseTuple(args, "OOOOii", &pphi, &pdx, &pflag,
+                        &pspeed, &self_test, &extension))
   {
     return NULL;
   }
@@ -51,6 +54,13 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     PyErr_SetString(PyExc_ValueError, "self_test must be 0 or 1");
     return NULL;
   }
+
+  if (! (extension==0 || extension==1))
+  {
+    PyErr_SetString(PyExc_ValueError, "extension must be 0 or 1");
+    return NULL;
+  }
+
 
   phi = (PyArrayObject *)PyArray_FROMANY(pphi, PyArray_DOUBLE, 1,
                                          10, NPY_IN_ARRAY);
@@ -106,7 +116,6 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
       return NULL;
     }
   }
-  else speed=0;
 
   if (! (PyArray_NDIM(phi)==(npy_intp)PyArray_DIM(dx,0))) // ?!
   {
@@ -142,6 +151,16 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
+  if (extension && !speed)
+  {
+    PyErr_SetString(PyExc_ValueError, "speed must be defined for extension");
+    Py_XDECREF(phi);
+    Py_XDECREF(dx);
+    Py_XDECREF(flag);
+    Py_XDECREF(speed);
+    return NULL;
+  }
+
   int shape[MaximumDimension];
   npy_intp shape2[MaximumDimension];
   for (int i=0; i<PyArray_NDIM(phi); i++)
@@ -155,6 +174,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                                             shape2, PyArray_DOUBLE, 0);
   if (! distance) return NULL;
 
+  if (extension)
+  {
+    f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
+                                           shape2, PyArray_DOUBLE, 0);
+    if (! f_ext) return NULL;
+  }
+
+
   // create a level set object to do the calculation
   double * local_phi        = (double *) PyArray_DATA(phi);
   double * local_dx         = (double *) PyArray_DATA(dx);
@@ -163,18 +190,38 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   double * local_distance   = (double *) PyArray_DATA(distance);
 
-  fastMarcher *fm = new fastMarcher(
-    local_phi,
-    local_dx,
-    local_flag,
-    local_speed,
-    local_distance,
-    PyArray_NDIM(phi),
-    shape,
-    self_test);
+  if (extension == 0)
+  {
+    fastMarcher *fm = new fastMarcher(
+      local_phi,
+      local_dx,
+      local_flag,
+      local_speed,
+      local_distance,
+      PyArray_NDIM(phi),
+      shape,
+      self_test);
 
-  int error = fm->getError();
-  delete fm;
+    int error = fm->getError();
+    delete fm;
+  }
+  else
+  {
+    double * local_fext = (double *) PyArray_DATA(f_ext);
+    extensionMarcher *em = new extensionMarcher(
+      local_phi,
+      local_dx,
+      local_flag,
+      local_speed,
+      local_distance,
+      local_fext,
+      PyArray_NDIM(phi),
+      shape,
+      self_test);
+
+    int error = em->getError();
+    delete em;
+  }
 
   Py_DECREF(phi);
   Py_DECREF(flag);

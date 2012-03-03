@@ -5,7 +5,7 @@ import numpy as np
 
 __all__ = ['distance', 'travel_time']
 
-from cfmm import cFastMarcher
+from cfmm import cFastMarcher, cExtensionMarcher
 from sys import float_info
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
@@ -111,3 +111,25 @@ def travel_time(phi, speed, dx=1.0, self_test=False):
     t = cFastMarcher(phi, dx, flag, speed, int(self_test))
     t = post_process_result(t)
     return t
+
+def extension_velocities(phi, speed, dx=1.0, self_test=False):
+    """
+
+    """
+    phi = np.ascontiguousarray(phi, dtype='float64')
+    speed = np.ascontiguousarray(speed, dtype='float64')
+    assert phi.shape == speed.shape
+
+    if type(dx) is float or type(dx) is int:
+        dx = [dx for x in range(len(phi.shape))]
+    dx = np.ascontiguousarray(dx, dtype='float64')
+
+    if isinstance(phi, np.ma.MaskedArray):
+        flag           = np.zeros(phi.shape, dtype=np.int)
+        flag[phi.mask] = MASK
+        phi            = phi.data
+    else:
+        flag = np.zeros(phi.shape, dtype=np.int)
+
+    distance, f_ext = cFastMarcher(phi, dx, flag, speed, 1)
+    return distance, f_ext
