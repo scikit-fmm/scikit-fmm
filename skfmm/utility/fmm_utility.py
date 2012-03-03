@@ -27,8 +27,10 @@ def contour_area_2d(phi, dx, contour_value=0.0):
     dxn = dx ** len(phi.shape)
     return (phi < contour_value).sum() * dxn
 
-def normal_direction():
-    pass
+def normal_direction(phi):
+    vectors = np.array(np.gradient(phi))
+    norms = np.apply_along_axis(np.linalg.norm, 0, vectors)
+    nv = vectors / norms
 
 def curvature():
-    pass
+    raise NotImplemented("this function is not implimented yet!")

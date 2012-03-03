@@ -1,0 +1,11 @@
+to make a release:
+git tag v0.0.n
+git push --tags origin master
+
+make html
+python setup.py upload_docs --upload-dir build/html
+
+python setup.py sdist upload register
+
+on a windows machine:
+python setup.py bdist_wininst register upload
