@@ -1,4 +1,5 @@
 #include "fast_marching.h"
+#include "math.h"
 
 // second order point update
 // update the distance from the frozen points

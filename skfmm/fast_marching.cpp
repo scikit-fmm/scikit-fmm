@@ -7,11 +7,7 @@
 #include "heap.h"
 
 #include <iostream>
-#include <limits>
 #include "math.h"
-
-const double doubleEpsilon           = numeric_limits<double>::epsilon();
-const double maxDouble               = numeric_limits<double>::max();
 
 extern "C" {
 
@@ -69,7 +65,7 @@ inline void baseMarcher::_getIndex(int current,
   }
 }
 
-inline int baseMarcher::_getN(int current, int dim, int dir, int flag)
+int baseMarcher::_getN(int current, int dim, int dir, int flag)
 {
   // assume c order.
   // for a given point find his neighbor in the given dimension

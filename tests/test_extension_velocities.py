@@ -4,7 +4,7 @@ from skfmm import extension_velocities
 
 def test_exntension0():
     """
-    test that a constant speed value is preserved
+    test that a uniform speed value is preserved
     """
     N     = 50
     X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
@@ -18,9 +18,7 @@ def test_exntension0():
 
 
 def test_exntension1():
-    """
-    test that the a constant value arround the interface is
-    marched out properly
+    """ constant value marchout test
     """
     N     = 50
     X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))

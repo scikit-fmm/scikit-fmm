@@ -6,9 +6,12 @@ const char Narrow = 1;
 const char Frozen = 2;
 const char Mask   = 3;
 
-class heap;
-
 using namespace std;
+#include <limits>
+const double doubleEpsilon    = numeric_limits<double>::epsilon();
+const double maxDouble        = numeric_limits<double>::max();
+
+class heap;
 
 extern "C" {
 
@@ -21,7 +24,6 @@ public:
 
   virtual          ~baseMarcher();
   int              getError() const { return error_;}
-
 
 private:
   void              initalizeNarrow();
@@ -40,7 +42,7 @@ protected:
   virtual double   updatePoint(int i) = 0;
 
 
-  inline int       _getN(int current, int dim, int dir, int flag);
+  int              _getN(int current, int dim, int dir, int flag);
   void             march();
 
   double          * distance_; // return value modified in place
@@ -73,7 +75,7 @@ protected:
 
 class travelTimeMarcher : public baseMarcher
 {
-
+public:
   travelTimeMarcher(double *phi,      double *dx, int *flag,
                     double *distance, int ndim,   int *shape,
                     bool self_test,
@@ -87,7 +89,7 @@ class travelTimeMarcher : public baseMarcher
 
 protected:
   virtual void             initalizeFrozen() {}
-  virtual double           updatePoint(int i) {}
+  virtual double           updatePoint(int i) { return 0.0; }
 
 private:
   double *speed_;
@@ -111,7 +113,7 @@ public:
 
 protected:
   virtual void             initalizeFrozen() {}
-  virtual double           updatePoint(int i) {}
+  virtual double           updatePoint(int i) { return 0.0; }
 
 private:
   double *speed_;

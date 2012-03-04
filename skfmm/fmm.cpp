@@ -7,6 +7,10 @@
 #include "numpy/noprefix.h"
 #include "fast_marching.h"
 
+#define DISTANCE     0
+#define TRAVEL_TIME  1
+#define EXTENSION    2
+
 static PyObject *distance_method(PyObject *self, PyObject *args);
 
 static PyMethodDef fmm_methods[] =
@@ -37,14 +41,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- and the input error checking should be done
 
   PyObject *pphi, *pdx, *pflag, *pspeed;
-  int       self_test, extension;
+  int       self_test, mode;
   PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext;
   distance = 0;
   f_ext    = 0;
   speed    = 0;
 
   if (!PyArg_ParseTuple(args, "OOOOii", &pphi, &pdx, &pflag,
-                        &pspeed, &self_test, &extension))
+                        &pspeed, &self_test, &mode))
   {
     return NULL;
   }
@@ -55,12 +59,13 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  if (! (extension==0 || extension==1))
+  if (! (mode==DISTANCE ||
+         mode==TRAVEL_TIME ||
+         mode==EXTENSION))
   {
-    PyErr_SetString(PyExc_ValueError, "extension must be 0 or 1");
+    PyErr_SetString(PyExc_ValueError, "mode must be 0,1 or 2");
     return NULL;
   }
-
 
   phi = (PyArrayObject *)PyArray_FROMANY(pphi, PyArray_DOUBLE, 1,
                                          10, NPY_IN_ARRAY);
@@ -91,29 +96,31 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  if (pspeed != Py_None)
+  if (mode == TRAVEL_TIME || mode == EXTENSION)
   {
-    speed = (PyArrayObject *)PyArray_FROMANY(pspeed, PyArray_DOUBLE, 1,
-                                             10, NPY_IN_ARRAY);
-    if (!speed)
     {
-      PyErr_SetString(PyExc_ValueError,
-                      "speed must be a 1D to 12-D array of doubles");
-      Py_XDECREF(phi);
-      Py_XDECREF(dx);
-      Py_XDECREF(flag);
-      return NULL;
-    }
+      speed = (PyArrayObject *)PyArray_FROMANY(pspeed, PyArray_DOUBLE, 1,
+                                               10, NPY_IN_ARRAY);
+      if (!speed)
+      {
+        PyErr_SetString(PyExc_ValueError,
+                        "speed must be a 1D to 12-D array of doubles");
+        Py_XDECREF(phi);
+        Py_XDECREF(dx);
+        Py_XDECREF(flag);
+        return NULL;
+      }
 
-    if (! PyArray_SAMESHAPE(phi,speed))
-    {
-      PyErr_SetString(PyExc_ValueError,
-                      "phi and speed must have the same shape");
-      Py_XDECREF(phi);
-      Py_XDECREF(dx);
-      Py_XDECREF(flag);
-      Py_XDECREF(speed);
-      return NULL;
+      if (! PyArray_SAMESHAPE(phi,speed))
+      {
+        PyErr_SetString(PyExc_ValueError,
+                        "phi and speed must have the same shape");
+        Py_XDECREF(phi);
+        Py_XDECREF(dx);
+        Py_XDECREF(flag);
+        Py_XDECREF(speed);
+        return NULL;
+      }
     }
   }
 
@@ -151,16 +158,6 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  if (extension && !speed)
-  {
-    PyErr_SetString(PyExc_ValueError, "speed must be defined for extension");
-    Py_XDECREF(phi);
-    Py_XDECREF(dx);
-    Py_XDECREF(flag);
-    Py_XDECREF(speed);
-    return NULL;
-  }
-
   int shape[MaximumDimension];
   npy_intp shape2[MaximumDimension];
   for (int i=0; i<PyArray_NDIM(phi); i++)
@@ -174,7 +171,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                                             shape2, PyArray_DOUBLE, 0);
   if (! distance) return NULL;
 
-  if (extension)
+  if (mode == EXTENSION)
   {
     f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
                                            shape2, PyArray_DOUBLE, 0);
@@ -189,38 +186,57 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   double * local_distance   = (double *) PyArray_DATA(distance);
+  int error;
 
-  if (extension == 0)
+  switch (mode)
   {
-    fastMarcher *fm = new fastMarcher(
-      local_phi,
-      local_dx,
-      local_flag,
-      local_speed,
-      local_distance,
-      PyArray_NDIM(phi),
-      shape,
-      self_test);
-
-    int error = fm->getError();
-    delete fm;
-  }
-  else
-  {
-    double * local_fext = (double *) PyArray_DATA(f_ext);
-    extensionMarcher *em = new extensionMarcher(
-      local_phi,
-      local_dx,
-      local_flag,
-      local_speed,
-      local_distance,
-      local_fext,
-      PyArray_NDIM(phi),
-      shape,
-      self_test);
-
-    int error = em->getError();
-    delete em;
+    case DISTANCE:
+    {
+      distanceMarcher *dm = new distanceMarcher(
+        local_phi,
+        local_dx,
+        local_flag,
+        local_distance,
+        PyArray_NDIM(phi),
+        shape,
+        self_test);
+      error = dm->getError();
+      delete dm;
+    }
+    break;
+    case TRAVEL_TIME:
+    {
+      travelTimeMarcher *tm = new travelTimeMarcher(
+        local_phi,
+        local_dx,
+        local_flag,
+        local_distance,
+        PyArray_NDIM(phi),
+        shape,
+        self_test,
+        local_speed);
+      error = tm->getError();
+      delete tm;
+    }
+    break;
+    case EXTENSION:
+    {
+      double * local_fext = (double *) PyArray_DATA(f_ext);
+      extensionMarcher *em = new extensionMarcher(
+        local_phi,
+        local_dx,
+        local_flag,
+        local_distance,
+        PyArray_NDIM(phi),
+        shape,
+        self_test,
+        local_speed,
+        local_fext);
+      error = em->getError();
+      delete em;
+    }
+    break;
+  default: error=1;
   }
 
   Py_DECREF(phi);

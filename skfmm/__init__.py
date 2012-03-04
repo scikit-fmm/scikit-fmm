@@ -73,4 +73,4 @@ Version History:
 """
 __version__ = "0.0.3dev"
 
-from pfmm import distance, travel_time
+from pfmm import distance, travel_time, extension_velocities
