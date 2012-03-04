@@ -3,7 +3,7 @@
 // this file is a C++ implementation of the fast marching method. The
 // code in this file is independent of Python.
 
-#include "fast_marching.h"
+#include "base_marcher.h"
 #include "heap.h"
 
 #include <iostream>

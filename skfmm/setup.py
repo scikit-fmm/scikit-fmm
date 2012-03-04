@@ -6,10 +6,10 @@ def configuration(parent_package='', top_path=None):
     config.add_extension("cfmm",
                           sources=["fmm.cpp",
                                    "heap.cpp",
-                                   "fast_marching.cpp",
+                                   "base_marcher.cpp",
                                    "distance_marcher.cpp",
                                    "travel_time_marcher.cpp",
-                                   "fast_marching.h",
+                                   "base_marcher.h",
                                    "heap.h"],
                           include_dirs=['.'])
     return config

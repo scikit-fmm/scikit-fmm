@@ -1,4 +1,4 @@
-#include "fast_marching.h"
+#include "distance_marcher.h"
 #include "math.h"
 
 // second order point update

@@ -5,7 +5,10 @@
 
 #include "Python.h"
 #include "numpy/noprefix.h"
-#include "fast_marching.h"
+
+#include "distance_marcher.h"
+#include "travel_time_marcher.h"
+#include "extension_marcher.h"
 
 #define DISTANCE     0
 #define TRAVEL_TIME  1
@@ -262,6 +265,6 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  // python wrapper adds mask back
+  // check mode return (distance, f_ext) if mode == EXTENSION
   return (PyObject *)distance;
 }

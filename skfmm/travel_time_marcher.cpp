@@ -1,4 +1,6 @@
-#include "fast_marching.h"
+//travel_time_marcher.cpp
+
+#include "travel_time_marcher.h"
 #include "math.h"
 
 void travelTimeMarcher::initalizeFrozen()
