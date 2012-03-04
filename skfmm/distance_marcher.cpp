@@ -46,6 +46,15 @@ double distanceMarcher::updatePoint(int i)
       c+=idx2_[dim]*pow(value1,2);
     }
   }
+  return solveQuadratic(i,a,b,c);
+}
+
+
+// find and return the correct root
+double distanceMarcher::solveQuadratic(int i, const double &a,
+                                       const double &b,
+                                       double &c)
+{
   c-=1;
   double r0=0;
   double r1=0;
@@ -62,7 +71,6 @@ double distanceMarcher::updatePoint(int i)
   if (phi_[i] > doubleEpsilon) return r0;
   else return r1;
 }
-
 
 void distanceMarcher::initalizeFrozen()
 {

@@ -185,34 +185,3 @@ void baseMarcher::solve()
 }
 
 } // extern "C"
-
-/*
-
-  if (hasSpeed_)
-  {
-    for (int i=0; i<size_; i++)
-    {
-      // we need to be carefull here: very small speed values can result
-      // in an overflow
-      if (speed_[i]<doubleEpsilon) flag_[i]=Mask;
-      else
-      {
-        if (flag_[i]==Frozen || flag_[i]==Narrow)
-        {
-          // convert distance to time
-          if (flag_[i]==Narrow)
-            heap_->set(heapptr_[i],fabs(distance_[i]/speed_[i]));
-          distance_[i]=fabs(distance_[i]/speed_[i]);
-        }
-      }
-    }
-  }
-
-  from updatePoint
-  if (hasSpeed_)
-    c-= 1/pow(speed_[i],2);
-
-
-  if (hasSpeed_) return r0;
-
-*/

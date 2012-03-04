@@ -188,11 +188,12 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   double * local_distance   = (double *) PyArray_DATA(distance);
   int error;
 
+  baseMarcher *marcher = 0;
   switch (mode)
   {
     case DISTANCE:
     {
-      distanceMarcher *dm = new distanceMarcher(
+      marcher = new distanceMarcher(
         local_phi,
         local_dx,
         local_flag,
@@ -200,13 +201,11 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         PyArray_NDIM(phi),
         shape,
         self_test);
-      error = dm->getError();
-      delete dm;
     }
     break;
     case TRAVEL_TIME:
     {
-      travelTimeMarcher *tm = new travelTimeMarcher(
+      marcher = new travelTimeMarcher(
         local_phi,
         local_dx,
         local_flag,
@@ -215,14 +214,12 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         shape,
         self_test,
         local_speed);
-      error = tm->getError();
-      delete tm;
     }
     break;
     case EXTENSION:
     {
       double * local_fext = (double *) PyArray_DATA(f_ext);
-      extensionMarcher *em = new extensionMarcher(
+      marcher = new extensionMarcher(
         local_phi,
         local_dx,
         local_flag,
@@ -232,12 +229,15 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         self_test,
         local_speed,
         local_fext);
-      error = em->getError();
-      delete em;
     }
     break;
   default: error=1;
   }
+
+  marcher->march();
+  error = marcher->getError();
+  delete marcher;
+
 
   Py_DECREF(phi);
   Py_DECREF(flag);
@@ -265,4 +265,3 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // python wrapper adds mask back
   return (PyObject *)distance;
 }
-

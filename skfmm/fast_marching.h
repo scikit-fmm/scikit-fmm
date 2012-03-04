@@ -23,6 +23,7 @@ public:
               bool self_test);
 
   virtual          ~baseMarcher();
+  void             march();
   int              getError() const { return error_;}
 
 private:
@@ -43,7 +44,7 @@ protected:
 
 
   int              _getN(int current, int dim, int dir, int flag);
-  void             march();
+
 
   double          * distance_; // return value modified in place
   double          * phi_;
@@ -62,35 +63,41 @@ public:
   distanceMarcher(double *phi,      double *dx, int *flag,
                   double *distance, int ndim,   int *shape,
                   bool self_test) :
-    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test)
-  {
-    march();
-  }
+    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test) { }
   virtual ~distanceMarcher() { }
 
 protected:
+  virtual double           solveQuadratic(int i, const double &a,
+                                          const double &b, double &c);
+
   virtual void             initalizeFrozen();
   virtual double           updatePoint(int i);
 };
 
-class travelTimeMarcher : public baseMarcher
+class travelTimeMarcher : public distanceMarcher
 {
 public:
   travelTimeMarcher(double *phi,      double *dx, int *flag,
                     double *distance, int ndim,   int *shape,
                     bool self_test,
                     double *speed) :
-    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test)
+    distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test),
+    speed_(speed)
   {
-    speed_ = speed;
-    march();
+    for (int i=0; i<size_; i++)
+    {
+      // we need to be carefull here: very small speed values can result
+      // in an overflow
+      if (speed_[i]<doubleEpsilon) flag_[i]=Mask;
+    }
   }
+
   virtual ~travelTimeMarcher() { }
 
 protected:
-  virtual void             initalizeFrozen() {}
-  virtual double           updatePoint(int i) { return 0.0; }
-
+  virtual void             initalizeFrozen();
+  virtual double           solveQuadratic(int i, const double &a,
+                                          const double &b, double &c);
 private:
   double *speed_;
 };
@@ -103,12 +110,8 @@ public:
                    bool self_test,
                    double *speed,
                    double *f_ext) :
-    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test)
-  {
-    speed_ = speed;
-    f_ext_ = f_ext;
-    march();
-  }
+    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test),
+    speed_(speed), f_ext_(f_ext)  { }
   virtual ~extensionMarcher() { }
 
 protected:
