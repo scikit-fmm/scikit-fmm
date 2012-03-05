@@ -57,10 +57,21 @@ void extensionVelocityMarcher::initalizeFrozen()
       double denominator = 0.0;
       for (int dim=0; dim<dim_; dim++)
       {
-        numerator += lspeed[dim]/pow(ldistance[dim],2);
-        denominator += 1/pow(ldistance[dim],2);
+        if (ldistance[dim] != 0.0)
+        {
+          numerator += lspeed[dim]/pow(ldistance[dim],2);
+          denominator += 1/pow(ldistance[dim],2);
+        }
       }
-      f_ext_[i] = numerator/denominator;
+      if (denominator != 0.0)
+      {
+        f_ext_[i] = numerator/denominator;
+      }
+      else
+      {
+        throw std::runtime_error(
+          "div by zero (flag=2) in scikit-fmm extension marcher");
+      }
 
       double dsum = 0;
       for (int dim=0; dim<dim_; dim++)
@@ -104,7 +115,7 @@ double extensionVelocityMarcher::updatePoint(int i)
         if (ldistance[dim]==0 || ldistance[dim]>d)
         {
           ldistance[dim] = d;
-          lspeed[dim] = speed_[naddr];
+          lspeed[dim] = f_ext_[naddr];
         }
       }
     } // for each direction
@@ -122,7 +133,8 @@ double extensionVelocityMarcher::updatePoint(int i)
   }
   else
   {
-    throw std::runtime_error("div by zero error in extension velocity");
+    throw std::runtime_error(
+      "div by zero error in scikit-fmm extension velocity");
   }
 
   return phi_i;
