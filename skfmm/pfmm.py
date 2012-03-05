@@ -9,7 +9,7 @@ from cfmm import cFastMarcher
 from sys import float_info
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
-
+DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
 
 def pre_process_args(phi, dx):
     """
@@ -70,7 +70,8 @@ def distance(phi, dx=1.0, self_test=False):
         of phi to each point in the array.
     """
     phi, dx, flag = pre_process_args(phi, dx)
-    d = cFastMarcher(phi, dx, flag, None, int(self_test), 0)
+    d = cFastMarcher(phi, dx, flag, None,
+                     int(self_test), DISTANCE)
     d = post_process_result(d)
     return d
 
@@ -108,28 +109,18 @@ def travel_time(phi, speed, dx=1.0, self_test=False):
         than or equal to zero the return value will be a masked array.
     """
     phi, dx, flag = pre_process_args(phi, dx)
-    t = cFastMarcher(phi, dx, flag, speed, int(self_test), 1)
+    t = cFastMarcher(phi, dx, flag, speed,
+                     int(self_test), TRAVEL_TIME)
     t = post_process_result(t)
     return t
 
 def extension_velocities(phi, speed, dx=1.0, self_test=False):
     """
-
     """
-    phi = np.ascontiguousarray(phi, dtype='float64')
-    speed = np.ascontiguousarray(speed, dtype='float64')
-    assert phi.shape == speed.shape
+    phi, dx, flag = pre_process_args(phi, dx)
+    distance, f_ext = cFastMarcher(phi, dx, flag, speed,
+                                   int(self_test),  EXTENSION_VELOCITY)
+    distance = post_process_result(distance)
+    f_ext    = post_process_result(f_ext)
 
-    if type(dx) is float or type(dx) is int:
-        dx = [dx for x in range(len(phi.shape))]
-    dx = np.ascontiguousarray(dx, dtype='float64')
-
-    if isinstance(phi, np.ma.MaskedArray):
-        flag           = np.zeros(phi.shape, dtype=np.int)
-        flag[phi.mask] = MASK
-        phi            = phi.data
-    else:
-        flag = np.zeros(phi.shape, dtype=np.int)
-
-    distance, f_ext = cFastMarcher(phi, dx, flag, speed, int(self_test), 2)
     return distance, f_ext

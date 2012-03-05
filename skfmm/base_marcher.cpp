@@ -52,6 +52,8 @@ void baseMarcher::march()
   initalizeNarrow();
 
   solve();
+
+  cleanUp();
 }
 
 inline void baseMarcher::_getIndex(int current,

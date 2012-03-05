@@ -1,12 +1,9 @@
 include README.txt
 include examples/2d_example.py
 include setup.py
-include skfmm/heap.h
-include skfmm/heap.cpp
-include skfmm/fast_marching.h
+include skfmm/*.cpp
+include skfmm/*.h
 include skfmm/setup.py
-include skfmm/fast_marching.cpp
-include skfmm/fmm.cpp
 include skfmm/__init__.py
 include skfmm/pfmm.py
 include skfmm/utility/__init__.py
@@ -24,5 +21,4 @@ include doc/2d_phi.png
 include doc/conf.py
 include doc/index.rst
 include static_analysis.sh
-include tests/test_fmm.py
-include tests/test_utilities.py
+include tests/test_*.py

@@ -42,6 +42,7 @@ protected:
   virtual void     initalizeFrozen() = 0;
   virtual double   updatePoint(int i) = 0;
   int              _getN(int current, int dim, int dir, int flag);
+  virtual void     cleanUp() {}
 
   double          * distance_; // return value modified in place
   double          * phi_;
