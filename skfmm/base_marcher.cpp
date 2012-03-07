@@ -107,7 +107,7 @@ void baseMarcher::initalizeNarrow()
           if (flag_[i]==Far)
           {
             flag_[i]     =  Narrow;
-            double d     =  updatePoint(i);
+            double d     =  updatePointO1(i);
             distance_[i] =  d;
             heapptr_[i]  =  heap_->push(i,fabs(d));
           }

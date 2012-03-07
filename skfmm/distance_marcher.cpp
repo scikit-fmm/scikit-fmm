@@ -1,6 +1,36 @@
 #include "distance_marcher.h"
 #include "math.h"
 
+double distanceMarcher::updatePointO1(int i)
+{
+  double a,b,c;
+  a=b=c=0;
+  int naddr=0;
+  for (int dim=0; dim<dim_; dim++)
+  {
+    double value = maxDouble;
+    for (int j=-1; j<2; j+=2) // each direction
+    {
+      naddr = _getN(i,dim,j,Mask);
+      if (naddr!=-1 && flag_[naddr]==Frozen)
+      {
+        if (distance_[naddr]<value)
+        {
+          value = distance_[naddr];
+        }
+      }
+    }
+    if (value<maxDouble)
+    {
+      a+=idx2_[dim];
+      b-=idx2_[dim]*2*value;
+      c+=idx2_[dim]*pow(value,2);
+    }
+  }
+  return solveQuadratic(i,a,b,c);
+}
+
+
 // second order point update
 // update the distance from the frozen points
 const double aa         =  9.0/4.0;

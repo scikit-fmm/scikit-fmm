@@ -17,4 +17,5 @@ protected:
 
   virtual void             initalizeFrozen();
   virtual double           updatePoint(int i);
+  virtual double           updatePointO1(int i);
 };

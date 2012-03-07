@@ -41,6 +41,9 @@ protected:
   // derived classes must implement these functions
   virtual void     initalizeFrozen() = 0;
   virtual double   updatePoint(int i) = 0;
+  virtual double   updatePointO1(int i) = 0;
+
+
   int              _getN(int current, int dim, int dir, int flag);
   virtual void     cleanUp() {}
 
