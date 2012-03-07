@@ -5,16 +5,22 @@
 
 #include "Python.h"
 #include "numpy/noprefix.h"
-#include "fast_marching.h"
+
+#include "distance_marcher.h"
+#include "travel_time_marcher.h"
+#include "extension_velocity_marcher.h"
+
+#define DISTANCE              0
+#define TRAVEL_TIME           1
+#define EXTENSION_VELOCITY    2
 
 static PyObject *distance_method(PyObject *self, PyObject *args);
 
 static PyMethodDef fmm_methods[] =
 {
     {"cFastMarcher", (PyCFunction)distance_method, METH_VARARGS,
+     "Entry point for scikit-fmm c extension"
      "Use the python wrapper to this function"
-     "Returns the signed distance or travel time from "
-     "the zero level set of phi. "
     },
     {NULL, NULL, 0, NULL}
 };
@@ -23,8 +29,7 @@ PyMODINIT_FUNC initcfmm(void)
 {
     PyObject* m;
     m = Py_InitModule3("cfmm", fmm_methods,
-        "a c extension for calculating the signed distance and travel "
-        "time from the zero level set of a function");
+        "c extension module for scikit-fmm");
     if (m == NULL)
         return;
     import_array();
@@ -37,11 +42,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- and the input error checking should be done
 
   PyObject *pphi, *pdx, *pflag, *pspeed;
-  int       self_test;
-  PyArrayObject *phi, *dx, *flag, *speed, *distance;
+  int       self_test, mode;
+  PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext;
+  distance = 0;
+  f_ext    = 0;
+  speed    = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOi", &pphi, &pdx, &pflag,
-                        &pspeed, &self_test))
+  if (!PyArg_ParseTuple(args, "OOOOii", &pphi, &pdx, &pflag,
+                        &pspeed, &self_test, &mode))
   {
     return NULL;
   }
@@ -49,6 +57,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   if (! (self_test==0 || self_test==1))
   {
     PyErr_SetString(PyExc_ValueError, "self_test must be 0 or 1");
+    return NULL;
+  }
+
+  if (! (mode==DISTANCE ||
+         mode==TRAVEL_TIME ||
+         mode==EXTENSION_VELOCITY))
+  {
+    PyErr_SetString(PyExc_ValueError, "invalid mode flag");
     return NULL;
   }
 
@@ -81,32 +97,33 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  if (pspeed != Py_None)
+  if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
   {
-    speed = (PyArrayObject *)PyArray_FROMANY(pspeed, PyArray_DOUBLE, 1,
-                                             10, NPY_IN_ARRAY);
-    if (!speed)
     {
-      PyErr_SetString(PyExc_ValueError,
-                      "speed must be a 1D to 12-D array of doubles");
-      Py_XDECREF(phi);
-      Py_XDECREF(dx);
-      Py_XDECREF(flag);
-      return NULL;
-    }
+      speed = (PyArrayObject *)PyArray_FROMANY(pspeed, PyArray_DOUBLE, 1,
+                                               10, NPY_IN_ARRAY);
+      if (!speed)
+      {
+        PyErr_SetString(PyExc_ValueError,
+                        "speed must be a 1D to 12-D array of doubles");
+        Py_XDECREF(phi);
+        Py_XDECREF(dx);
+        Py_XDECREF(flag);
+        return NULL;
+      }
 
-    if (! PyArray_SAMESHAPE(phi,speed))
-    {
-      PyErr_SetString(PyExc_ValueError,
-                      "phi and speed must have the same shape");
-      Py_XDECREF(phi);
-      Py_XDECREF(dx);
-      Py_XDECREF(flag);
-      Py_XDECREF(speed);
-      return NULL;
+      if (! PyArray_SAMESHAPE(phi,speed))
+      {
+        PyErr_SetString(PyExc_ValueError,
+                        "phi and speed must have the same shape");
+        Py_XDECREF(phi);
+        Py_XDECREF(dx);
+        Py_XDECREF(flag);
+        Py_XDECREF(speed);
+        return NULL;
+      }
     }
   }
-  else speed=0;
 
   if (! (PyArray_NDIM(phi)==(npy_intp)PyArray_DIM(dx,0))) // ?!
   {
@@ -155,6 +172,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                                             shape2, PyArray_DOUBLE, 0);
   if (! distance) return NULL;
 
+  if (mode == EXTENSION_VELOCITY)
+  {
+    f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
+                                           shape2, PyArray_DOUBLE, 0);
+    if (! f_ext) return NULL;
+  }
+
+
   // create a level set object to do the calculation
   double * local_phi        = (double *) PyArray_DATA(phi);
   double * local_dx         = (double *) PyArray_DATA(dx);
@@ -162,19 +187,58 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   double * local_distance   = (double *) PyArray_DATA(distance);
+  int error;
 
-  fastMarcher *fm = new fastMarcher(
-    local_phi,
-    local_dx,
-    local_flag,
-    local_speed,
-    local_distance,
-    PyArray_NDIM(phi),
-    shape,
-    self_test);
+  baseMarcher *marcher = 0;
+  switch (mode)
+  {
+    case DISTANCE:
+    {
+      marcher = new distanceMarcher(
+        local_phi,
+        local_dx,
+        local_flag,
+        local_distance,
+        PyArray_NDIM(phi),
+        shape,
+        self_test);
+    }
+    break;
+    case TRAVEL_TIME:
+    {
+      marcher = new travelTimeMarcher(
+        local_phi,
+        local_dx,
+        local_flag,
+        local_distance,
+        PyArray_NDIM(phi),
+        shape,
+        self_test,
+        local_speed);
+    }
+    break;
+    case EXTENSION_VELOCITY:
+    {
+      double * local_fext = (double *) PyArray_DATA(f_ext);
+      marcher = new extensionVelocityMarcher(
+        local_phi,
+        local_dx,
+        local_flag,
+        local_distance,
+        PyArray_NDIM(phi),
+        shape,
+        self_test,
+        local_speed,
+        local_fext);
+    }
+    break;
+  default: error=1;
+  }
 
-  int error = fm->getError();
-  delete fm;
+  marcher->march();
+  error = marcher->getError();
+  delete marcher;
+
 
   Py_DECREF(phi);
   Py_DECREF(flag);
@@ -199,7 +263,9 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  // python wrapper adds mask back
+  if (mode == EXTENSION_VELOCITY)
+  {
+    return Py_BuildValue("OO", distance, f_ext);
+  }
   return (PyObject *)distance;
 }
-

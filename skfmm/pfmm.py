@@ -9,7 +9,7 @@ from cfmm import cFastMarcher
 from sys import float_info
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
-
+DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
 
 def pre_process_args(phi, dx):
     """
@@ -70,7 +70,8 @@ def distance(phi, dx=1.0, self_test=False):
         of phi to each point in the array.
     """
     phi, dx, flag = pre_process_args(phi, dx)
-    d = cFastMarcher(phi, dx, flag, None, int(self_test))
+    d = cFastMarcher(phi, dx, flag, None,
+                     int(self_test), DISTANCE)
     d = post_process_result(d)
     return d
 
@@ -108,6 +109,18 @@ def travel_time(phi, speed, dx=1.0, self_test=False):
         than or equal to zero the return value will be a masked array.
     """
     phi, dx, flag = pre_process_args(phi, dx)
-    t = cFastMarcher(phi, dx, flag, speed, int(self_test))
+    t = cFastMarcher(phi, dx, flag, speed,
+                     int(self_test), TRAVEL_TIME)
     t = post_process_result(t)
     return t
+
+def extension_velocities(phi, speed, dx=1.0, self_test=False):
+    """
+    """
+    phi, dx, flag = pre_process_args(phi, dx)
+    distance, f_ext = cFastMarcher(phi, dx, flag, speed,
+                                   int(self_test),  EXTENSION_VELOCITY)
+    distance = post_process_result(distance)
+    f_ext    = post_process_result(f_ext)
+
+    return distance, f_ext

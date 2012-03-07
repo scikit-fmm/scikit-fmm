@@ -25,6 +25,7 @@ def configuration(parent_package='',top_path=None):
         quiet=True)
 
     config.add_subpackage('skfmm')
+    config.add_subpackage('skfmm/utility')
 
     return config
 
