@@ -6,8 +6,6 @@ include skfmm/*.h
 include skfmm/setup.py
 include skfmm/__init__.py
 include skfmm/pfmm.py
-include skfmm/utility/__init__.py
-include skfmm/utility/fmm_utility.py
 include Makefile
 include LICENSE.txt
 include profile/prof.cpp
