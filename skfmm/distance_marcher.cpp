@@ -1,7 +1,7 @@
 #include "distance_marcher.h"
 #include "math.h"
 
-double distanceMarcher::updatePointO1(int i)
+double distanceMarcher::updatePointOrderOne(int i)
 {
   double a,b,c;
   a=b=c=0;
@@ -35,7 +35,7 @@ double distanceMarcher::updatePointO1(int i)
 // update the distance from the frozen points
 const double aa         =  9.0/4.0;
 const double oneThird   =  1.0/3.0;
-double distanceMarcher::updatePoint(int i)
+double distanceMarcher::updatePointOrderTwo(int i)
 {
   double a,b,c;
   a=b=c=0;

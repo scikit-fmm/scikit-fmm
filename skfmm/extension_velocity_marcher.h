@@ -16,7 +16,7 @@ public:
 
 protected:
   virtual void             initalizeFrozen();
-  virtual double           updatePoint(int i);
+  virtual void             finalizePoint(int i, double phi_i);
   virtual void             cleanUp();
 
 private:

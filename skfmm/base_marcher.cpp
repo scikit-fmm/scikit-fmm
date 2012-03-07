@@ -107,7 +107,7 @@ void baseMarcher::initalizeNarrow()
           if (flag_[i]==Far)
           {
             flag_[i]     =  Narrow;
-            double d     =  updatePointO1(i);
+            double d     =  updatePointOrderOne(i);
             distance_[i] =  d;
             heapptr_[i]  =  heap_->push(i,fabs(d));
           }
@@ -144,6 +144,7 @@ void baseMarcher::solve()
     int     addr    = 0;
     heap_->pop(&addr, &value);
     flag_[addr]=Frozen;
+    finalizePoint(addr, value);
 
     for (int dim=0; dim<dim_; dim++)
     {
@@ -154,7 +155,7 @@ void baseMarcher::solve()
         {
           if (flag_[naddr]==Narrow)
           {
-            double d = updatePoint(naddr);
+            double d = updatePointOrderTwo(naddr);
             if (d)
             {
               heap_->set(heapptr_[naddr],fabs(d));
@@ -163,7 +164,7 @@ void baseMarcher::solve()
           }
           else if (flag_[naddr]==Far)
           {
-            double d = updatePoint(naddr);
+            double d = updatePointOrderTwo(naddr);
             if (d)
             {
               distance_[naddr]=d;

@@ -84,10 +84,9 @@ void extensionVelocityMarcher::initalizeFrozen()
   }// for each point in the far field
 }
 
-double extensionVelocityMarcher::updatePoint(int i)
+void extensionVelocityMarcher::finalizePoint(int i, double phi_i)
 {
-   // get the updated position of the point
-  double phi_i = distanceMarcher::updatePoint(i);
+  // set the extension velocity of this point
   // find f_ext where grad f_ext . grad phi = 0
   // as described in Adalsteinsson and Sethian
 
@@ -136,8 +135,6 @@ double extensionVelocityMarcher::updatePoint(int i)
     throw std::runtime_error(
       "div by zero error in scikit-fmm extension velocity");
   }
-
-  return phi_i;
 }
 
 void extensionVelocityMarcher::cleanUp()

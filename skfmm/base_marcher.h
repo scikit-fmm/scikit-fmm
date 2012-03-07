@@ -40,12 +40,15 @@ private:
 protected:
   // derived classes must implement these functions
   virtual void     initalizeFrozen() = 0;
-  virtual double   updatePoint(int i) = 0;
-  virtual double   updatePointO1(int i) = 0;
+  virtual double   updatePointOrderTwo(int i) = 0;
+  virtual double   updatePointOrderOne(int i) = 0;
 
+  virtual void     cleanUp() { }
+  virtual void     finalizePoint(int i, double phi_i) { }
 
   int              _getN(int current, int dim, int dir, int flag);
-  virtual void     cleanUp() {}
+
+
 
   double          * distance_; // return value modified in place
   double          * phi_;
