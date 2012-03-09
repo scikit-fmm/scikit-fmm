@@ -55,3 +55,21 @@ def test_distance_from_extension():
     d, f_ext     = extension_velocities(phi, speed, dx, self_test=True)
     d2           = distance(phi, dx, self_test=True)
     np.testing.assert_allclose(d, d2)
+
+def test_extension_glitch():
+    N     = 50
+    X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+    r     = 0.5
+    dx    = 2.0 / (N - 1)
+    phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+    speed = np.ones_like(phi)
+    speed[X>0.25] = 3.0
+    d     = distance(phi, dx, self_test=True)
+    exact = np.sqrt(X ** 2 + Y ** 2) - r
+    d2, f_ext = extension_velocities(phi, speed, dx)
+
+    assert (f_ext<=3.000001).all()
+
+
+
+
