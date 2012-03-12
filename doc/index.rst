@@ -127,6 +127,8 @@ Function Reference
 
 .. autofunction:: skfmm.travel_time
 
+.. autofunction:: skfmm.extension_velocities
+
 
 .. toctree::
    :maxdepth: 2

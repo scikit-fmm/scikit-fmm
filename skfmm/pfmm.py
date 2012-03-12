@@ -1,15 +1,10 @@
 import numpy as np
-
-#import ipydb; ipydb.db()
-#import sys; sys.exit()
-
-__all__ = ['distance', 'travel_time']
-
 from cfmm import cFastMarcher
 from sys import float_info
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
+
 
 def pre_process_args(phi, dx):
     """
@@ -114,8 +109,38 @@ def travel_time(phi, speed, dx=1.0, self_test=False):
     t = post_process_result(t)
     return t
 
+
 def extension_velocities(phi, speed, dx=1.0, self_test=False):
     """
+    Extend the velocities defined at the zero contour of phi to the
+    rest of the domain. Extend the velocities such that
+    grad f_ext dot grad d = 0 where where f_ext is the
+    extension velocity and d is the signed distance function.
+
+    Parameters
+    ----------
+    phi : array-like
+          the zero contour of this array is the boundary location for
+          the travel time calculation. Phi can of 1,2,3 or higher
+          dimension and can be a masked array.
+
+    speed : array-like, the same shape as phi
+            contains the speed of interface propagation at each point
+            in the domain.
+
+    dx  : float or an array-like of shape len(phi), optional
+          the cell length in each dimension.
+
+    self_test : bool, optional
+                if True consistency checks are made on the binary min
+                heap during the calculation. This is used in testing and
+                results in a slower calculation.
+
+    Returns
+    -------
+    (d, f_ext) : tuple
+        a tuple containing the signed distance function d and the
+        extension velocities f_ext.
     """
     phi, dx, flag = pre_process_args(phi, dx)
     distance, f_ext = cFastMarcher(phi, dx, flag, speed,
