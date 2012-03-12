@@ -116,10 +116,6 @@ Limitations:
 :py:mod:`scikit-fmm` only works for regular Cartesian grids, but grid cells may
 have a different (uniform) length in each dimension.
 
-:py:mod:`scikit-fmm` does not compute level set extension or solve the
-time-dependent level set equation.
-
-
 Function Reference
 ==================
 
