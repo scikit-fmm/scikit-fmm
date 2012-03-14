@@ -64,8 +64,6 @@ def test_extension_glitch():
     phi   = (X) ** 2 + (Y) ** 2 - r ** 2
     speed = np.ones_like(phi)
     speed[X>0.25] = 3.0
-    d     = distance(phi, dx, self_test=True)
-    exact = np.sqrt(X ** 2 + Y ** 2) - r
     d2, f_ext = extension_velocities(phi, speed, dx)
 
     assert (f_ext <= 3).all()
