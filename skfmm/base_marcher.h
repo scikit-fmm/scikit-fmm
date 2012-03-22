@@ -29,7 +29,15 @@ public:
 private:
   void              initalizeNarrow();
   void              solve();
-  inline void       _getIndex(int current, int coord[MaximumDimension]);
+  void              _getIndex(int current, int coord[MaximumDimension])
+  {
+    int rem = current;
+    for (int i=0; i<dim_; i++)
+    {
+      coord[i] = rem/shift_[i]; // integer assignment is like floor()
+      rem -= coord[i]*shift_[i];
+    }
+  }
 
   int             * heapptr_;        // heap back pointers
   heap            * heap_;
@@ -46,9 +54,21 @@ protected:
   virtual void     cleanUp() { }
   virtual void     finalizePoint(int i, double phi_i) { }
 
-  int              _getN(int current, int dim, int dir, int flag);
-
-
+  int              _getN(int current, int dim, int dir, int flag)
+  {
+    // assume c order.
+    // for a given point find his neighbor in the given dimension
+    // and direction. Return -1 if not possible.
+    // consult shape_ information
+    int coord[MaximumDimension];
+    _getIndex(current, coord);
+    int newc = coord[dim]+dir;
+    if (newc >= shape_[dim] || newc < 0) return -1;
+    int newa = current + dir*shift_[dim];
+    if (flag_[newa]==flag)  return -1;
+    _getIndex(newa, coord);
+    return newa;
+  }
 
   double          * distance_; // return value modified in place
   double          * phi_;
