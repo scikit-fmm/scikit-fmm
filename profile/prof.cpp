@@ -1,4 +1,4 @@
-#include "fast_marching.h"
+#include "distance_marcher.h"
 #include "math.h"
 
 int main(void)
@@ -24,14 +24,18 @@ int main(void)
   }
   phi[0]=-1;
 
-  fastMarcher *fm = new fastMarcher(
-    phi,dx,flag,0,distance,2,shape,false);
+  distanceMarcher *fm = new distanceMarcher(
+    phi,dx,flag,distance,2,shape,false);
+  fm->march();
 
   delete [] phi;
   delete [] distance;
   delete [] flag;
   delete fm;
-  phi = distance = flag = fm = 0;
+  fm = 0;
+  flag = 0;
+  phi = distance = 0;
+
 
   return 0;
 }

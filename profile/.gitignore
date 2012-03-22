@@ -1,5 +1,7 @@
-fast_marching.cpp
-fast_marching.h
+base_marcher.cpp
+base_marcher.h
+distance_marcher.cpp
+distance_marcher.h
 output.txt
 a.out
 gmon.out
