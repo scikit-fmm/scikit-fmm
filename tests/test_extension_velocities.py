@@ -66,7 +66,7 @@ def test_extension_glitch():
     speed[X>0.25] = 3.0
     d2, f_ext = extension_velocities(phi, speed, dx)
 
-    assert (f_ext <= 3).all()
+    assert (f_ext <= 3.0000001).all()
     assert (f_ext >= 1).all()
 
     np.testing.assert_almost_equal(f_ext[137, 102], 1, 3)
@@ -74,7 +74,4 @@ def test_extension_glitch():
     np.testing.assert_almost_equal(f_ext[72, 100], 3, 3)
     np.testing.assert_almost_equal(f_ext[72, 86], 3, 3)
     np.testing.assert_almost_equal(f_ext[110, 121], 3, 3)
-
-
-
 
