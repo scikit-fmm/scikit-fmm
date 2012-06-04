@@ -13,7 +13,7 @@ extern "C" {
 
 
 baseMarcher::baseMarcher(
-  double *phi,      double *dx,   int *flag,
+  double *phi,      double *dx,   long *flag,
   double *distance, int     ndim, int *shape,
   bool self_test)
 {

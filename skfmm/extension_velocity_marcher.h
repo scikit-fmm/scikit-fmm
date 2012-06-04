@@ -5,11 +5,11 @@
 class extensionVelocityMarcher : public distanceMarcher
 {
 public:
-  extensionVelocityMarcher(double *phi,      double *dx,   int *flag,
-                   double *distance, int     ndim, int *shape,
-                   bool self_test,
-                   double *speed,
-                   double *f_ext) :
+  extensionVelocityMarcher(double *phi,      double *dx,   long *flag,
+                           double *distance, int     ndim, int *shape,
+                           bool self_test,
+                           double *speed,
+                           double *f_ext) :
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test),
     speed_(speed), f_ext_(f_ext)  { }
   virtual ~extensionVelocityMarcher() { }
