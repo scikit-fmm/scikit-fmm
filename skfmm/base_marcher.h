@@ -27,7 +27,7 @@ public:
   int              getError() const { return error_;}
 
 private:
-  void              initalizeNarrow();
+
   void              solve();
   void              _getIndex(int current, int coord[MaximumDimension])
   {
@@ -39,13 +39,12 @@ private:
     }
   }
 
-  int             * heapptr_;        // heap back pointers
-  heap            * heap_;
   int               shape_[MaximumDimension];    // size of each dimension
   int               shift_[MaximumDimension];
   bool              self_test_;
 
 protected:
+  virtual void     initalizeNarrow();
   // derived classes must implement these functions
   virtual void     initalizeFrozen() = 0;
   virtual double   updatePointOrderTwo(int i) = 0;
@@ -70,6 +69,8 @@ protected:
     return newa;
   }
 
+  int             * heapptr_;        // heap back pointers
+  heap            * heap_;
   double          * distance_; // return value modified in place
   double          * phi_;
   double          * dx_;

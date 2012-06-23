@@ -5,8 +5,6 @@
 
 #include "base_marcher.h"
 #include "heap.h"
-
-#include <iostream>
 #include "math.h"
 
 extern "C" {
@@ -79,7 +77,7 @@ void baseMarcher::initalizeNarrow()
           if (flag_[i]==Far)
           {
             flag_[i]     =  Narrow;
-            double d     =  updatePointOrderOne(i);
+            double d     =  updatePointOrderTwo(i);
             distance_[i] =  d;
             heapptr_[i]  =  heap_->push(i,fabs(d));
           }

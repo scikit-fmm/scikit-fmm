@@ -55,7 +55,8 @@ double distanceMarcher::updatePointOrderTwo(int i)
           int naddr2 = _getN(i,dim,j*2,Mask);
           if (naddr2!=-1 &&
               flag_[naddr2]==Frozen &&
-              distance_[naddr2]<value1)
+              ((distance_[naddr2]<=value1 && value1 >=0) ||
+               (distance_[naddr2]>=value1 && value1 <=0)))
           {
             value2=distance_[naddr2];
           }
