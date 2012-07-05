@@ -45,9 +45,10 @@ Source Code: https://github.com/scikit-fmm/scikit-fmm
 
 Requirements: Numpy and a C/C++ compiler (gcc/MinGW)
 
-Bugs, questions, patches, feature requests:
-  Please use the scikit-fmm Github issue tracker.
-  https://github.com/scikit-fmm/scikit-fmm/issues
+Bugs, questions, patches, feature requests, discussion & cetera:
+  Email list: http://groups.google.com/group/scikit-fmm
+
+  Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
 
 Installing:
  $ python setup.py install
