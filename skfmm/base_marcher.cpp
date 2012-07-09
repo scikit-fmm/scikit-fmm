@@ -13,8 +13,9 @@ extern "C" {
 baseMarcher::baseMarcher(
   double *phi,      double *dx,   long *flag,
   double *distance, int     ndim, int *shape,
-  bool self_test)
+  bool self_test,   int order)
 {
+  order_      =   order;
   error_      =   1;
   phi_        =   phi;
   dx_         =   dx;
@@ -77,7 +78,12 @@ void baseMarcher::initalizeNarrow()
           if (flag_[i]==Far)
           {
             flag_[i]     =  Narrow;
-            double d     =  updatePointOrderTwo(i);
+            double d;
+            if (order_ == 2)
+              d =  updatePointOrderTwo(i);
+            else
+              d =  updatePointOrderOne(i);
+
             distance_[i] =  d;
             heapptr_[i]  =  heap_->push(i,fabs(d));
           }
@@ -125,7 +131,12 @@ void baseMarcher::solve()
         {
           if (flag_[naddr]==Narrow)
           {
-            double d = updatePointOrderTwo(naddr);
+
+            double d;
+            if (order_ == 2)
+              d =  updatePointOrderTwo(i);
+            else
+              d =  updatePointOrderOne(i);
             if (d)
             {
               heap_->set(heapptr_[naddr],fabs(d));
@@ -134,7 +145,11 @@ void baseMarcher::solve()
           }
           else if (flag_[naddr]==Far)
           {
-            double d = updatePointOrderTwo(naddr);
+            double d;
+            if (order_ == 2)
+              d =  updatePointOrderTwo(i);
+            else
+              d =  updatePointOrderOne(i);
             if (d)
             {
               distance_[naddr]=d;

@@ -42,14 +42,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- and the input error checking should be done
 
   PyObject *pphi, *pdx, *pflag, *pspeed;
-  int       self_test, mode;
+  int       self_test, mode, order;
   PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext;
   distance = 0;
   f_ext    = 0;
   speed    = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOii", &pphi, &pdx, &pflag,
-                        &pspeed, &self_test, &mode))
+  if (!PyArg_ParseTuple(args, "OOOOiii", &pphi, &pdx, &pflag,
+                        &pspeed, &self_test, &mode, &order))
   {
     return NULL;
   }
@@ -59,6 +59,14 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     PyErr_SetString(PyExc_ValueError, "self_test must be 0 or 1");
     return NULL;
   }
+
+
+  if (! (order==1 || order==2))
+  {
+    PyErr_SetString(PyExc_ValueError, "order must be 1 or 2");
+    return NULL;
+  }
+  printf("order: %i \n", order);
 
   if (! (mode==DISTANCE ||
          mode==TRAVEL_TIME ||
@@ -201,7 +209,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         local_distance,
         PyArray_NDIM(phi),
         shape,
-        self_test);
+        self_test,
+        order);
     }
     break;
     case TRAVEL_TIME:
@@ -214,6 +223,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         PyArray_NDIM(phi),
         shape,
         self_test,
+        order,
         local_speed);
     }
     break;
@@ -228,6 +238,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         PyArray_NDIM(phi),
         shape,
         self_test,
+        order,
         local_speed,
         local_fext);
     }

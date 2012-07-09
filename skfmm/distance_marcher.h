@@ -7,8 +7,8 @@ class distanceMarcher : public baseMarcher
 public:
   distanceMarcher(double *phi,      double *dx, long *flag,
                   double *distance, int ndim,   int *shape,
-                  bool self_test) :
-    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test) { }
+                  bool self_test,   int order) :
+    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test, order) { }
   virtual ~distanceMarcher() { }
 
 protected:

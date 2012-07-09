@@ -34,7 +34,11 @@ void travelTimeMarcher::initalizeNarrow()
           if (flag_[i]==Far)
           {
             flag_[i]     =  Narrow;
-            double d     =  updatePointOrderOne(i);
+            double d;
+            if (order_ == 2)
+              d =  updatePointOrderTwo(i);
+            else
+              d =  updatePointOrderOne(i);
             distance_[i] =  d;
             heapptr_[i]  =  heap_->push(i,fabs(d));
           }

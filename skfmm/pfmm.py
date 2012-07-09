@@ -39,7 +39,7 @@ def post_process_result(result):
     return result
 
 
-def distance(phi, dx=1.0, self_test=False):
+def distance(phi, dx=1.0, self_test=False, order=2):
     """
     Return the distance from the zero contour of the array phi.
 
@@ -66,12 +66,12 @@ def distance(phi, dx=1.0, self_test=False):
     """
     phi, dx, flag = pre_process_args(phi, dx)
     d = cFastMarcher(phi, dx, flag, None,
-                     int(self_test), DISTANCE)
+                     int(self_test), DISTANCE, order)
     d = post_process_result(d)
     return d
 
 
-def travel_time(phi, speed, dx=1.0, self_test=False):
+def travel_time(phi, speed, dx=1.0, self_test=False, order=2):
     """
     Return the travel from the zero contour of the array phi given the
     scalar velocity field speed.
@@ -105,12 +105,12 @@ def travel_time(phi, speed, dx=1.0, self_test=False):
     """
     phi, dx, flag = pre_process_args(phi, dx)
     t = cFastMarcher(phi, dx, flag, speed,
-                     int(self_test), TRAVEL_TIME)
+                     int(self_test), TRAVEL_TIME, order)
     t = post_process_result(t)
     return t
 
 
-def extension_velocities(phi, speed, dx=1.0, self_test=False):
+def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2):
     """
     Extend the velocities defined at the zero contour of phi to the
     rest of the domain. Extend the velocities such that
@@ -144,7 +144,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False):
     """
     phi, dx, flag = pre_process_args(phi, dx)
     distance, f_ext = cFastMarcher(phi, dx, flag, speed,
-                                   int(self_test),  EXTENSION_VELOCITY)
+                                   int(self_test),  EXTENSION_VELOCITY, order)
     distance = post_process_result(distance)
     f_ext    = post_process_result(f_ext)
 

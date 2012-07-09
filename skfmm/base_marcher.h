@@ -20,7 +20,7 @@ class baseMarcher
 public:
   baseMarcher(double *phi,      double *dx,  long *flag,
               double *distance, int ndim,    int *shape,
-              bool self_test);
+              bool self_test,   int order);
 
   virtual          ~baseMarcher();
   void             march();
@@ -69,6 +69,7 @@ protected:
     return newa;
   }
 
+  int               order_;
   int             * heapptr_;        // heap back pointers
   heap            * heap_;
   double          * distance_; // return value modified in place
