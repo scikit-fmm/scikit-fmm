@@ -17,35 +17,55 @@ void travelTimeMarcher::initalizeFrozen()
   }
 }
 
-void travelTimeMarcher::initalizeNarrow()
+// second order point update
+// update the distance from the frozen points
+const double aa         =  9.0/4.0;
+const double oneThird   =  1.0/3.0;
+double travelTimeMarcher::updatePointOrderTwo(int i)
 {
-  // for each point in the far field check if neighbor is frozen
-  // if so calculate distance and insert into heap
-  for (int i=0; i<size_; i++)
+  double a,b,c;
+  a=b=c=0;
+  int naddr=0;
+  for (int dim=0; dim<dim_; dim++)
   {
-    if (flag_[i] == Far)
+    double value1 = maxDouble;
+    double value2 = maxDouble;
+    for (int j=-1; j<2; j+=2) // each direction
     {
-      for (int dim=0; dim<dim_; dim++)
+      naddr = _getN(i,dim,j,Mask);
+      if (naddr!=-1 && flag_[naddr]==Frozen)
       {
-        for (int j=-1; j<2; j+=2) // each direction
+        if (distance_[naddr]<value1)
         {
-          int naddr = _getN(i,dim,j,Mask);
-          if (naddr!=-1 && flag_[naddr]==Frozen)
-          if (flag_[i]==Far)
+          value1 = distance_[naddr];
+          int naddr2 = _getN(i,dim,j*2,Mask);
+          if (naddr2!=-1 &&
+              flag_[naddr2]==Frozen &&
+              ((distance_[naddr2]<=value1 && value1 >=0) ||
+               (distance_[naddr2]>=value1 && value1 <=0)))
           {
-            flag_[i]     =  Narrow;
-            double d;
-            if (order_ == 2)
-              d =  updatePointOrderTwo(i);
-            else
-              d =  updatePointOrderOne(i);
-            distance_[i] =  d;
-            heapptr_[i]  =  heap_->push(i,fabs(d));
+            value2=distance_[naddr2];
+            if (phi_[naddr2] * phi_[naddr] < 0)
+              value2 *= -1;
           }
-        } // for each direction
-      } // for each dimension
-    } // each far field point
+        }
+      }
+    }
+    if (value2<maxDouble)
+    {
+      double tp = oneThird*(4*value1-value2);
+      a+=idx2_[dim]*aa;
+      b-=idx2_[dim]*2*aa*tp;
+      c+=idx2_[dim]*aa*pow(tp,2);
+    }
+    else if (value1<maxDouble)
+    {
+      a+=idx2_[dim];
+      b-=idx2_[dim]*2*value1;
+      c+=idx2_[dim]*pow(value1,2);
+    }
   }
+  return solveQuadratic(i,a,b,c);
 }
 
 

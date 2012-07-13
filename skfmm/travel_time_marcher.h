@@ -24,7 +24,7 @@ public:
 
 protected:
   virtual void             initalizeFrozen();
-  virtual void             initalizeNarrow();
+  virtual double           updatePointOrderTwo(int i);
   virtual double           solveQuadratic(int i, const double &a,
                                           const double &b, double &c);
 private:
