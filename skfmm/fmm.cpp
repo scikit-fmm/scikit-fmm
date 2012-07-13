@@ -1,8 +1,6 @@
 // This file provides the interface between Python and the C++
 // implementation of the fast marching method in fast_marching.cpp
 
-#include "stdio.h"
-
 #include "Python.h"
 #include "numpy/noprefix.h"
 
@@ -66,7 +64,6 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     PyErr_SetString(PyExc_ValueError, "order must be 1 or 2");
     return NULL;
   }
-  printf("order: %i \n", order);
 
   if (! (mode==DISTANCE ||
          mode==TRAVEL_TIME ||

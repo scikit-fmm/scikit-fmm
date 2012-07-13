@@ -47,11 +47,8 @@ void baseMarcher::march()
     if (flag_[i] == Far) maxHeap++;
   heap_ = new heap(maxHeap, self_test_);
   heapptr_ = new int[size_];
-
   initalizeNarrow();
-
   solve();
-
   cleanUp();
 }
 
@@ -134,9 +131,9 @@ void baseMarcher::solve()
 
             double d;
             if (order_ == 2)
-              d =  updatePointOrderTwo(i);
+              d =  updatePointOrderTwo(naddr);
             else
-              d =  updatePointOrderOne(i);
+              d =  updatePointOrderOne(naddr);
             if (d)
             {
               heap_->set(heapptr_[naddr],fabs(d));
@@ -147,9 +144,9 @@ void baseMarcher::solve()
           {
             double d;
             if (order_ == 2)
-              d =  updatePointOrderTwo(i);
+              d =  updatePointOrderTwo(naddr);
             else
-              d =  updatePointOrderOne(i);
+              d =  updatePointOrderOne(naddr);
             if (d)
             {
               distance_[naddr]=d;
