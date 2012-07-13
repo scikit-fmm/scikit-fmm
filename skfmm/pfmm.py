@@ -58,6 +58,10 @@ def distance(phi, dx=1.0, self_test=False, order=2):
                 heap during the calculation. This is used in testing and
                 results in a slower calculation.
 
+    order : int, optional
+            order of computational stencil to use in updating points during
+            the fast marching method. Must be 1 or 2, the default is 2.
+
     Returns
     -------
     d : an array the same shape as phi
@@ -94,6 +98,10 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2):
                 if True consistency checks are made on the binary min
                 heap during the calculation. This is used in testing and
                 results in a slower calculation.
+
+    order : int, optional
+            order of computational stencil to use in updating points during
+            the fast marching method. Must be 1 or 2, the default is 2.
 
     Returns
     -------
@@ -135,6 +143,10 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2):
                 if True consistency checks are made on the binary min
                 heap during the calculation. This is used in testing and
                 results in a slower calculation.
+
+    order : int, optional
+            order of computational stencil to use in updating points during
+            the fast marching method. Must be 1 or 2, the default is 2.
 
     Returns
     -------
