@@ -161,3 +161,27 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2):
     f_ext    = post_process_result(f_ext)
 
     return distance, f_ext
+
+class distance_variable(object):
+    def __init__(self, phi, dx=1, self_test=False, order=2):
+        self.phi = phi
+        self._dx = dx
+        self.self_test = self_test
+        self.order = order
+        self._shape = self.phi.shape
+        self.distance = np.zeros_like(self._shape)
+        self._flag = np.zeros_like(self._shape, dtype=np.int64)
+        self._heap_distance = np.zeros_like(self._shape)
+        self._heap_int_1 = np.zeros_like(self._shape, dtype=np.int64)
+        self._heap_int_2 = np.zeros_like(self._shape, dtype=np.int64)
+        self._heap_int_3 = np.zeros_like(self._shape, dtype=np.int64)
+
+    def calculate(self):
+        assert self._flag.shape == self.phi.shape == self.distance.shape
+        cFastMarcher_noMalloc(self.phi, self.distance, self._dx,
+                              self._flag, int(self.self_test),
+                              self._heap_distance, self._heap_int_1,
+                              self._heat_int_2, self._heat_int_3)
+
+
+

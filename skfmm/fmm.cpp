@@ -20,6 +20,10 @@ static PyMethodDef fmm_methods[] =
      "Entry point for scikit-fmm c extension"
      "Use the python wrapper to this function"
     },
+    {"cFastMarcher_noMalloc", (PyCFunction) distance_no_malloc, METH_VARARGS,
+     "alternative entrypoint for scikit-fmm"
+     "no malloc here"
+    },
     {NULL, NULL, 0, NULL}
 };
 
@@ -31,6 +35,24 @@ PyMODINIT_FUNC initcfmm(void)
     if (m == NULL)
         return;
     import_array();
+}
+
+static PyObject *distance_no_malloc(PyObject *self, PyObject *args)
+{
+  // phi, dx, flag, result
+  // self_test, order,
+  // heap double, + 3*heap int
+  baseMarcher *marcher = 0;
+  marcher = new distanceMarcher(
+    local_phi,
+    local_dx,
+    local_flag,
+    local_distance,
+    PyArray_NDIM(phi),
+    shape,
+    self_test,
+    order);
+
 }
 
 static PyObject *distance_method(PyObject *self, PyObject *args)
