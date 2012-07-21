@@ -8,11 +8,15 @@
 #include "travel_time_marcher.h"
 #include "extension_velocity_marcher.h"
 
+#include "sDistanceMarcher.h"
+
+
 #define DISTANCE              0
 #define TRAVEL_TIME           1
 #define EXTENSION_VELOCITY    2
 
 static PyObject *distance_method(PyObject *self, PyObject *args);
+static PyObject *distance_no_malloc(PyObject *self, PyObject *args);
 
 static PyMethodDef fmm_methods[] =
 {
@@ -39,20 +43,70 @@ PyMODINIT_FUNC initcfmm(void)
 
 static PyObject *distance_no_malloc(PyObject *self, PyObject *args)
 {
-  // phi, dx, flag, result
-  // self_test, order,
+  // phi, distance, dx, flag,
+  // self_test, order, heap_pointers
   // heap double, + 3*heap int
-  baseMarcher *marcher = 0;
-  marcher = new distanceMarcher(
-    local_phi,
-    local_dx,
-    local_flag,
-    local_distance,
-    PyArray_NDIM(phi),
-    shape,
-    self_test,
-    order);
 
+  PyObject *pphi, *pdistance, *pdx, *pflag, *php, *phd, *phi1, *phi2, *phi3;
+  int       self_test, order;
+  PyArrayObject *phi, *distance, *dx, *flag, *hp, *hd, *hi1, *hi2, *hi3;
+
+  if (!PyArg_ParseTuple(args, "OOOOiiOOOOO",
+                        &pphi, &pdistance, &pdx, &pflag,
+                        &self_test, &order, &php,
+                        &phd, &phi1, &phi2, &phi3))
+  {
+    PyErr_SetString(PyExc_ValueError, "object conversion error");
+    return NULL;
+  }
+  phi = (PyArrayObject *)PyArray_FROMANY(pphi, PyArray_DOUBLE, 1,
+                                         10, NPY_IN_ARRAY);
+  distance = (PyArrayObject *)PyArray_FROMANY(pdistance, PyArray_DOUBLE, 1,
+                                         10, NPY_OUT_ARRAY);
+  dx = (PyArrayObject *)PyArray_FROMANY(pdx, PyArray_DOUBLE, 1,
+                                         1, NPY_IN_ARRAY);
+  flag = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_LONG, 1,
+                                          10, NPY_OUT_ARRAY);
+  hp   = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_LONG, 1,
+                                          10, NPY_OUT_ARRAY);
+  hd = (PyArrayObject *)PyArray_FROMANY(phd, PyArray_DOUBLE, 1,
+                                         10, NPY_OUT_ARRAY);
+  hi1   = (PyArrayObject *)PyArray_FROMANY(phi1, PyArray_LONG, 1,
+                                          10, NPY_OUT_ARRAY);
+  hi2   = (PyArrayObject *)PyArray_FROMANY(phi2, PyArray_LONG, 1,
+                                          10, NPY_OUT_ARRAY);
+  hi3   = (PyArrayObject *)PyArray_FROMANY(phi3, PyArray_LONG, 1,
+                                          10, NPY_OUT_ARRAY);
+
+  if (!phi || !distance || !dx || !flag || !hp || !hd || !hi1 || !hi2 || !hi3)
+  {
+    PyErr_SetString(PyExc_ValueError, "array conversion error");
+    return NULL;
+  }
+
+  int shape[MaximumDimension];
+  for (int i=0; i<PyArray_NDIM(phi); i++)
+  {
+    shape[i] = PyArray_DIM(phi,i);
+  }
+
+  sDistanceMarcher dm;
+  dm.set((double *) PyArray_DATA(phi),
+         (double *) PyArray_DATA(distance),
+         (double *) PyArray_DATA(dx),
+         (long *) PyArray_DATA(flag),
+         (long *) PyArray_DATA(hp),
+         (double *) PyArray_DATA(hd),
+         (long *) PyArray_DATA(hi1),
+         (long *) PyArray_DATA(hi2),
+         (long *) PyArray_DATA(hi3),
+         PyArray_NDIM(phi),
+         shape,
+         self_test,
+         order);
+  dm.march();
+
+  return NULL;
 }
 
 static PyObject *distance_method(PyObject *self, PyObject *args)

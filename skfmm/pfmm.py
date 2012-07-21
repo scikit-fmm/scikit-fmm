@@ -1,5 +1,5 @@
 import numpy as np
-from cfmm import cFastMarcher
+from cfmm import cFastMarcher, cFastMarcher_noMalloc
 from sys import float_info
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
@@ -163,25 +163,31 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2):
     return distance, f_ext
 
 class distance_variable(object):
-    def __init__(self, phi, dx=1, self_test=False, order=2):
+    def __init__(self, phi, dx, self_test=False, order=2):
+        assert isinstance(phi, np.ndarray)
         self.phi = phi
-        self._dx = dx
+        self._dx = np.asarray(dx)
         self.self_test = self_test
         self.order = order
         self._shape = self.phi.shape
-        self.distance = np.zeros_like(self._shape)
-        self._flag = np.zeros_like(self._shape, dtype=np.int64)
-        self._heap_distance = np.zeros_like(self._shape)
-        self._heap_int_1 = np.zeros_like(self._shape, dtype=np.int64)
-        self._heap_int_2 = np.zeros_like(self._shape, dtype=np.int64)
-        self._heap_int_3 = np.zeros_like(self._shape, dtype=np.int64)
+        self.distance = np.zeros(self._shape)
+        self._flag = np.zeros(self._shape, dtype=np.int64)
+        self._heap_pointers = np.zeros(self._shape, dtype=np.int64)
+        self._heap_distance = np.zeros(self._shape)
+        self._heap_int_1 = np.zeros(self._shape, dtype=np.int64)
+        self._heap_int_2 = np.zeros(self._shape, dtype=np.int64)
+        self._heap_int_3 = np.zeros(self._shape, dtype=np.int64)
 
     def calculate(self):
         assert self._flag.shape == self.phi.shape == self.distance.shape
+        assert self.phi.flags['C_CONTIGUOUS'] == True
+        assert self.phi.flags['ALIGNED'] == True
+        assert self.phi.flags['WRITEABLE'] == True
+        assert self.phi.dtype == 'float64'
+
         cFastMarcher_noMalloc(self.phi, self.distance, self._dx,
                               self._flag, int(self.self_test),
+                              self.order, self._heap_pointers,
                               self._heap_distance, self._heap_int_1,
                               self._heat_int_2, self._heat_int_3)
-
-
-
+        # change self.distance inplace.

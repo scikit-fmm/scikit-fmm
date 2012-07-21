@@ -7,6 +7,7 @@ def configuration(parent_package='', top_path=None):
                           sources=["fmm.cpp",
                                    "heap.cpp",
                                    "base_marcher.cpp",
+                                   "sDistanceMarcher.cpp",
                                    "distance_marcher.cpp",
                                    "travel_time_marcher.cpp",
                                    "extension_velocity_marcher.cpp"],
