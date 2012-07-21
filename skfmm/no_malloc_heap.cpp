@@ -7,7 +7,7 @@
 
 nm_heap::nm_heap()
 {
-  selfTest_     = False;
+  selfTest_     = false;
   maxLength_    = 0;
   heapLength_   = 0;
   listLength_   = 0;
@@ -21,8 +21,8 @@ nm_heap::~nm_heap()
 {
 }
 
-void nm_heap::set(int maxLength, double *hd, int *hi1, int *hi2, int *hi3,
-                  bool self_test)
+void nm_heap::set_data(int maxLength, double *hd, long *hi1, long *hi2,
+                       long *hi3,  bool self_test)
 {
   maxLength_    = maxLength;
   heapLength_   = 0;
@@ -111,7 +111,6 @@ void nm_heap::_siftUp(int pos)
   heap_[pos] = newItem;
   _siftDown(startPos, pos);
 }
-
 
 void nm_heap::set(int index, double newDistance)
 {

@@ -189,5 +189,5 @@ class distance_variable(object):
                               self._flag, int(self.self_test),
                               self.order, self._heap_pointers,
                               self._heap_distance, self._heap_int_1,
-                              self._heat_int_2, self._heat_int_3)
+                              self._heap_int_2, self._heap_int_3)
         # change self.distance inplace.

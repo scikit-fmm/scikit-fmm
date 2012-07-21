@@ -6,6 +6,7 @@ def configuration(parent_package='', top_path=None):
     config.add_extension("cfmm",
                           sources=["fmm.cpp",
                                    "heap.cpp",
+                                   "no_malloc_heap.cpp",
                                    "base_marcher.cpp",
                                    "sDistanceMarcher.cpp",
                                    "distance_marcher.cpp",

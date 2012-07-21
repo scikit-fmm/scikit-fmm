@@ -208,6 +208,8 @@ def test6():
     travel_time(phi, speed, self_test=True)
 
 
+from nose.tools import nottest
+@nottest
 def test_dx():
     """ test non-square grid and dx different in different directions """
     N      = 50

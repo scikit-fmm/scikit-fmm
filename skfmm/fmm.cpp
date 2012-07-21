@@ -106,7 +106,7 @@ static PyObject *distance_no_malloc(PyObject *self, PyObject *args)
          order);
   dm.march();
 
-  return NULL;
+  Py_RETURN_NONE;
 }
 
 static PyObject *distance_method(PyObject *self, PyObject *args)

@@ -4,7 +4,6 @@
 // code in this file is independent of Python.
 
 #include "sDistanceMarcher.h"
-#include "no_malloc_heap.h"
 #include "math.h"
 
 extern "C" {
@@ -29,10 +28,10 @@ sDistanceMarcher::~sDistanceMarcher()
 }
 
 void sDistanceMarcher::set(double *phi,  double *distance, double *dx,
-                           long   *flag, long   *hp,       double *hd,
-                           long   *hp,   long   *hi1,      long   *hi2,
-                           long   *hi3,  int     ndim,     int    *shape,
-                           bool   self_test,               int order);
+                          long   *flag, long   *hp,       double *hd,
+                          long   *hi1,      long   *hi2,
+                          long   *hi3,  int     ndim,     int    *shape,
+                          bool   self_test,               int order)
 {
   order_      =   order;
   error_      =   1;
@@ -57,7 +56,7 @@ void sDistanceMarcher::set(double *phi,  double *distance, double *dx,
     for (int j=i+1; j<dim_; j++) prod*=shape_[j];
     shift_[i]=prod;
   }
-  heap_.set(size_, hd, hi1, hi2, hi3, self_test);
+  heap_.set_data(size_, hd, hi1, hi2, hi3, self_test);
 }
 
 void sDistanceMarcher::march()
@@ -92,7 +91,7 @@ void sDistanceMarcher::initalizeNarrow()
               d =  updatePointOrderOne(i);
 
             distance_[i] =  d;
-            heapptr_[i]  =  heap_->push(i,fabs(d));
+            heapptr_[i]  =  heap_.push(i,fabs(d));
           }
         } // for each direction
       } // for each dimension
@@ -120,12 +119,12 @@ void sDistanceMarcher::solve()
     return;
   }
   int i=0;
-  while (! heap_->empty())
+  while (! heap_.empty())
   {
     i++;
     double  value   = 0;
     int     addr    = 0;
-    heap_->pop(&addr, &value);
+    heap_.pop(&addr, &value);
     flag_[addr]=Frozen;
     finalizePoint(addr, value);
 
@@ -146,7 +145,7 @@ void sDistanceMarcher::solve()
               d =  updatePointOrderOne(naddr);
             if (d)
             {
-              heap_->set(heapptr_[naddr],fabs(d));
+              heap_.set(heapptr_[naddr],fabs(d));
               distance_[naddr]=d;
             }
           }
@@ -161,7 +160,7 @@ void sDistanceMarcher::solve()
             {
               distance_[naddr]=d;
               flag_[naddr]=Narrow;
-              heapptr_[naddr] = heap_->push(naddr,fabs(d));
+              heapptr_[naddr] = heap_.push(naddr,fabs(d));
             }
           }
         }

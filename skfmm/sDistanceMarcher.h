@@ -2,6 +2,7 @@
 #pragma once
 
 #include "no_malloc_heap.h"
+#include "base_marcher.h"
 
 extern "C" {
 
@@ -20,6 +21,9 @@ public:
   int              getError() const { return error_;}
 
 private:
+  virtual double           solveQuadratic(int i, const double &a,
+                                          const double &b, double &c);
+
   void             initalizeNarrow();
   void             solve();
   void             _getIndex(int current, int coord[MaximumDimension])
