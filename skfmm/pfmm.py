@@ -166,14 +166,14 @@ class distance_variable(object):
     def __init__(self, phi, dx, self_test=False, order=2):
         assert isinstance(phi, np.ndarray)
         self.phi = phi
-        self._dx = np.asarray(dx)
+        self._dx = np.asarray(dx, dtype='double')
         self.self_test = self_test
         self.order = order
         self._shape = self.phi.shape
-        self.distance = np.zeros(self._shape)
+        self.distance = np.zeros(self._shape, dtype='double')
         self._flag = np.zeros(self._shape, dtype=np.int64)
         self._heap_pointers = np.zeros(self._shape, dtype=np.int64)
-        self._heap_distance = np.zeros(self._shape)
+        self._heap_distance = np.zeros(self._shape, dtype='double')
         self._heap_int_1 = np.zeros(self._shape, dtype=np.int64)
         self._heap_int_2 = np.zeros(self._shape, dtype=np.int64)
         self._heap_int_3 = np.zeros(self._shape, dtype=np.int64)
@@ -182,9 +182,11 @@ class distance_variable(object):
         assert self._flag.shape == self.phi.shape == self.distance.shape
         assert self.phi.flags['C_CONTIGUOUS'] == True
         assert self.phi.flags['ALIGNED'] == True
-        assert self.phi.flags['WRITEABLE'] == True
         assert self.phi.dtype == 'float64'
 
+        assert self.distance.flags['WRITEABLE'] == True
+
+        self._flag.fill(0)
         cFastMarcher_noMalloc(self.phi, self.distance, self._dx,
                               self._flag, int(self.self_test),
                               self.order, self._heap_pointers,

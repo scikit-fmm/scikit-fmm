@@ -67,7 +67,7 @@ static PyObject *distance_no_malloc(PyObject *self, PyObject *args)
                                          1, NPY_IN_ARRAY);
   flag = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_LONG, 1,
                                           10, NPY_OUT_ARRAY);
-  hp   = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_LONG, 1,
+  hp   = (PyArrayObject *)PyArray_FROMANY(php, PyArray_LONG, 1,
                                           10, NPY_OUT_ARRAY);
   hd = (PyArrayObject *)PyArray_FROMANY(phd, PyArray_DOUBLE, 1,
                                          10, NPY_OUT_ARRAY);
@@ -105,7 +105,6 @@ static PyObject *distance_no_malloc(PyObject *self, PyObject *args)
          self_test,
          order);
   dm.march();
-
   Py_RETURN_NONE;
 }
 
@@ -133,7 +132,6 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     PyErr_SetString(PyExc_ValueError, "self_test must be 0 or 1");
     return NULL;
   }
-
 
   if (! (order==1 || order==2))
   {
