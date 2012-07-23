@@ -14,7 +14,7 @@ int main(void)
   int lsize =pow(size,dim);
   double *phi         = new double[lsize];
   double *distance    = new double[lsize];
-  int    *flag        = new int[lsize];
+  long   *flag        = new long[lsize];
 
   for (int i=0; i<lsize; i++)
   {
@@ -25,7 +25,7 @@ int main(void)
   phi[0]=-1;
 
   distanceMarcher *fm = new distanceMarcher(
-    phi,dx,flag,distance,2,shape,false);
+    phi, dx, flag, distance, 2, shape, false, 2);
   fm->march();
 
   delete [] phi;

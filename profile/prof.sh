@@ -13,7 +13,7 @@ g++ -O2 base_marcher.cpp distance_marcher.cpp heap.cpp prof.cpp  -o clean.out
 time ./clean.out
 time ./a.out
 gprof ./a.out > output.txt
-shark -i -1 -G ./a.out
+shark -i -1 -G ./clean.out
 
 #########################################################################
 # notes on profiling:                                                   #
