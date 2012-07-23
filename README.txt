@@ -1,4 +1,5 @@
-scikit-fmm is an extension module which implements the fast marching method.
+scikit-fmm is a Python extension module which implements the fast
+marching method.
 
 The fast marching method is used to model the evolution of boundaries
 and interfaces in a variety of application areas. More specifically,
