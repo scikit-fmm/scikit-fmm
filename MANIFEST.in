@@ -1,5 +1,5 @@
 include README.txt
-include examples/2d_example.py
+include examples/*.py
 include setup.py
 include skfmm/*.cpp
 include skfmm/*.h
@@ -8,15 +8,12 @@ include skfmm/__init__.py
 include skfmm/pfmm.py
 include Makefile
 include LICENSE.txt
+include CONTRIBUTORS.txt
 include profile/prof.cpp
 include profile/prof.sh
 include profile/profile.py
-include doc/2d_phi_travel_time.png
-include doc/examples.rst
-include doc/2d_phi_travel_time_mask.png
-include doc/2d_phi_distance.png
-include doc/2d_phi.png
+include doc/*.png
+include doc/*.rst
 include doc/conf.py
-include doc/index.rst
 include static_analysis.sh
 include tests/test_*.py

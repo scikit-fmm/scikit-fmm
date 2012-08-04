@@ -156,7 +156,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2):
     """
     phi, dx, flag = pre_process_args(phi, dx)
     distance, f_ext = cFastMarcher(phi, dx, flag, speed,
-                                   int(self_test),  EXTENSION_VELOCITY, order)
+                                   int(self_test), EXTENSION_VELOCITY, order)
     distance = post_process_result(distance)
     f_ext    = post_process_result(f_ext)
 

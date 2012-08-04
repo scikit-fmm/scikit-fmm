@@ -1,5 +1,6 @@
 """
-scikit-fmm is an extension module which implements the fast marching method.
+scikit-fmm is a Python extension module which implements the fast
+marching method.
 
 The fast marching method is used to model the evolution of boundaries
 and interfaces in a variety of application areas. More specifically,
@@ -15,11 +16,9 @@ point x on the curve. The speed function is specified, and the time at
 which the contour crosses a point x is obtained by solving the
 equation.
 
-scikit-fmm is a simple module which provides two functions:
-distance(phi, dx=1.0) and travel_time(phi, speed, dx=1.0).
-
-The functions calculate the signed distance and travel time to an
-interface described by the zero contour of the input array phi.
+scikit-fmm is a simple module which provides functions to calculate
+the signed distance and travel time to an interface described by the
+zero contour of the input array phi.
 
 >>> import skfmm
 >>> import numpy as np
@@ -36,9 +35,11 @@ array([[ 0.40236893,  0.16666667,  0.40236893],
        [ 0.40236893,  0.16666667,  0.40236893]])
 
 The input array can be of 1, 2, 3 or higher dimensions and can be a
-masked array.
+masked array. A function is provided to compute extension velocities.
 
-Documentation: http://packages.python.org/scikit-fmm
+Documentation:
+    Release Version:     http://packages.python.org/scikit-fmm
+    Development Version: http://scikit-fmm.readthedocs.org/en/latest/
 
 PyPI: http://pypi.python.org/pypi/scikit-fmm
 
@@ -46,9 +47,9 @@ Source Code: https://github.com/scikit-fmm/scikit-fmm
 
 Requirements: Numpy and a C/C++ compiler (gcc/MinGW)
 
-Bugs, questions, patches, feature requests:
-  Please use the scikit-fmm Github issue tracker.
-  https://github.com/scikit-fmm/scikit-fmm/issues
+Bugs, questions, patches, feature requests, discussion & cetera:
+  Email list: http://groups.google.com/group/scikit-fmm
+  Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
 
 Installing:
  $ python setup.py install
@@ -68,9 +69,15 @@ Version History:
   Including tests and docs in source distribution. Minor changes to
   documentation.
 
+0.0.3: July 22nd 2012
+  Extension velocities.
+  Fixes for 64 bit platforms.
+  Optional keyword argument for point update order.
+  Bug reports and patches from three contributors.
+
 :Copyright: Copyright 2012 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
 """
-__version__ = "0.0.3dev"
+__version__ = "0.0.3"
 
 from pfmm import distance, travel_time, extension_velocities

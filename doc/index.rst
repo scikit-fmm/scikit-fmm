@@ -6,8 +6,8 @@
 scikit-fmm documentation
 ========================
 
-:py:mod:`scikit-fmm` is an extension module which implements the fast
-marching method.
+:py:mod:`scikit-fmm` is a python extension module which implements the
+fast marching method.
 
 The fast marching method is used to model the evolution of boundaries
 and interfaces in a variety of application areas.
@@ -33,9 +33,10 @@ zero contour of the function is physically meaningful. The boundary
 grows outward in the local normal direction at a speed given by
 :math:`F(x)`.
 
-:py:mod:`scikit-fmm` is a simple module which provides two functions:
-:py:func:`skfmm.distance` and :py:func:`skfmm.travel_time`. The import
-name of :py:mod:`scikit-fmm` is :py:mod:`skfmm`.
+:py:mod:`scikit-fmm` is a simple module which provides the functions:
+:py:func:`skfmm.distance`, :py:func:`skfmm.travel_time` and
+:py:func:`skfmm.extension_velocities`. The import name of
+:py:mod:`scikit-fmm` is :py:mod:`skfmm`.
 
 
 Examples
@@ -109,7 +110,22 @@ support masked arrays for input. This allows an obstacle to be introduced.
 The full example is in examples/2d_example.py.
 :doc:`examples`
 
+An example of using :py:mod:`scikit-fmm` to compute extension velocities.
 
+::
+
+ >>> N     = 150
+ >>> X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+ >>> r     = 1.75
+ >>> dx    = 2.0 / (N - 1)
+ >>> phi   = (X) ** 2 + (Y+1.85) ** 2 - r ** 2
+ >>> speed = X + 1.25
+ >>> d, f_ext = extension_velocities(phi, speed, dx)
+
+.. image:: extension_velocity.png
+
+The full example is in examples/extension_velocities_example.py.
+:doc:`examples`
 
 Limitations:
 ============

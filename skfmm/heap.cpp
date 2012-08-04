@@ -184,14 +184,14 @@ void heap::test() const
   }
 }
 
-void heap::print() const
-{
-  for (int i=0; i<heapLength_; i++)
-  {
-    printf("%i: %i ", i, heap_[i]);
-    printf("(%i)",     address_[heap_[i]]);
-    printf(" %lf", distance_[heap_[i]]);
-    printf(" [%i]\n", backPointer_[heap_[i]]);
-  }
-  printf("\n");
-}
+// void heap::print() const
+// {
+//   for (int i=0; i<heapLength_; i++)
+//   {
+//     printf("%i: %i ", i, heap_[i]);
+//     printf("(%i)",     address_[heap_[i]]);
+//     printf(" %lf", distance_[heap_[i]]);
+//     printf(" [%i]\n", backPointer_[heap_[i]]);
+//   }
+//   printf("\n");
+// }

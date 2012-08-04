@@ -40,7 +40,7 @@ class heap
   bool       empty() const;
 
  private:
-  void       print() const;
+  //void       print() const;
   void       test() const;
   inline void       _siftUp(int pos);
   inline void       _siftDown(int startPos, int pos);

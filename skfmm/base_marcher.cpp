@@ -24,6 +24,9 @@ baseMarcher::baseMarcher(
   dim_        =   ndim;
   size_       =   1;
   self_test_  =   self_test;
+  heapptr_    =   0;
+  heap_       =   0;
+
   for (int i=0; i<dim_; i++)
   {
     shape_[i]  = shape[i];
