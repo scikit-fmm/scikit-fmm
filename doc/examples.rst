@@ -8,7 +8,7 @@
 
 .. literalinclude:: ../examples/2d_example.py
 
-Extension velocities Example
+extension_velocities_example.py
 ============================
 
 .. literalinclude:: ../examples/extension_velocities_example.py

@@ -1,4 +1,12 @@
 to make a release:
+
+increment version number. Currently the version number is hard-coded in
+the following locations:
+./doc/conf.py
+./setup.py
+./skfmm/__init__.py
+./README.txt
+
 git tag v0.0.n
 git push --tags origin master
 
@@ -9,3 +17,4 @@ python setup.py sdist upload register
 
 on a windows machine:
 python setup.py bdist_wininst register upload
+

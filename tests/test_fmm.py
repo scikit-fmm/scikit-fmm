@@ -219,7 +219,7 @@ def test_dx():
     d      = distance(phi, dx, self_test=True)
     exact  = np.sqrt(X ** 2 + Y ** 2) - r
 
-    np.testing.assert_allclose(d, exact, atol=max(dx))
+    np.testing.assert_allclose(d, exact, atol=1.1*max(dx))
 
 
 def test7():
