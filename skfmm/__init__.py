@@ -69,7 +69,7 @@ Version History:
   Including tests and docs in source distribution. Minor changes to
   documentation.
 
-0.0.3: July 22nd 2012
+0.0.3: August 4th 2012
   Extension velocities.
   Fixes for 64 bit platforms.
   Optional keyword argument for point update order.
@@ -78,6 +78,6 @@ Version History:
 :Copyright: Copyright 2012 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
 """
-__version__ = "0.0.3"
+__version__ = "0.0.4dev"
 
 from pfmm import distance, travel_time, extension_velocities

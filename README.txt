@@ -68,7 +68,7 @@ Version History:
   Including tests and docs in source distribution. Minor changes to
   documentation.
 
-0.0.3: July 22nd 2012
+0.0.3: August 4th 2012
   Extension velocities.
   Fixes for 64 bit platforms.
   Optional keyword argument for point update order.
