@@ -7,11 +7,11 @@ class extensionVelocityMarcher : public distanceMarcher
 public:
   extensionVelocityMarcher(double *phi,      double *dx,   long *flag,
                            double *distance, int     ndim, int *shape,
-                           bool self_test,   int order,
+                           bool self_test,   int order, long *ext_mask,
                            double *speed,
                            double *f_ext) :
-    distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test, order),
-    speed_(speed), f_ext_(f_ext)  { }
+  distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test, order),
+    ext_mask_(ext_mask), speed_(speed), f_ext_(f_ext) { }
   virtual ~extensionVelocityMarcher() { }
 
 protected:
@@ -22,4 +22,5 @@ protected:
 private:
   double *speed_;
   double *f_ext_;
+  long *ext_mask_;
 };

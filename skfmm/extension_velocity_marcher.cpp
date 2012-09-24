@@ -46,7 +46,12 @@ void extensionVelocityMarcher::initalizeFrozen()
           if (ldistance[dim]==0 || ldistance[dim]>d)
           {
             ldistance[dim] = d;
-            lspeed[dim] = speed_[i] + d / dx_[dim] * (speed_[naddr] - speed_[i]);
+            if (ext_mask_[i])
+              lspeed[dim] = speed_[naddr];
+            else if (ext_mask_[naddr])
+              lspeed[dim] = speed_[i];
+            else
+              lspeed[dim] = speed_[i] + d / dx_[dim] * (speed_[naddr] - speed_[i]);
           }
         }
       } // for each direction
