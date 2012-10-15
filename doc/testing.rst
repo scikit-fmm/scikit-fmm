@@ -1,0 +1,5 @@
+========
+Doctests
+========
+
+.. autofunction:: skfmm.testing
