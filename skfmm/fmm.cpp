@@ -39,15 +39,16 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- phi, dx, flag, and speed
   // -- and the input error checking should be done
 
-  PyObject *pphi, *pdx, *pflag, *pspeed;
+  PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask;
   int       self_test, mode, order;
-  PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext;
+  PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
   distance = 0;
   f_ext    = 0;
   speed    = 0;
+  ext_mask = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOiii", &pphi, &pdx, &pflag,
-                        &pspeed, &self_test, &mode, &order))
+  if (!PyArg_ParseTuple(args, "OOOOOiii", &pphi, &pdx, &pflag,
+                        &pspeed, &pext_mask, &self_test, &mode, &order))
   {
     return NULL;
   }
@@ -182,13 +183,28 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
                                            shape2, PyArray_DOUBLE, 0);
     if (! f_ext) return NULL;
-  }
 
+    ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, PyArray_LONG, 1,
+                                                10, NPY_IN_ARRAY);
+    if (! ext_mask)
+      {
+        PyErr_SetString(PyExc_ValueError,
+                        "ext_mask must be a 1D, 12-D array of integers");
+        Py_XDECREF(phi);
+        Py_XDECREF(dx);
+        Py_XDECREF(flag);
+        Py_XDECREF(speed);
+        return NULL;
+      }
+
+  }
 
   // create a level set object to do the calculation
   double * local_phi        = (double *) PyArray_DATA(phi);
   double * local_dx         = (double *) PyArray_DATA(dx);
-  long   * local_flag       = (long *)    PyArray_DATA(flag);
+  long   * local_flag       = (long *)   PyArray_DATA(flag);
+  long    * local_ext_mask   = 0;
+  if (ext_mask) local_ext_mask = (long *) PyArray_DATA(ext_mask);
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   double * local_distance   = (double *) PyArray_DATA(distance);
@@ -236,6 +252,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         shape,
         self_test,
         order,
+        local_ext_mask,
         local_speed,
         local_fext);
     }
@@ -252,6 +269,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   Py_DECREF(flag);
   Py_DECREF(dx);
   Py_XDECREF(speed);
+  Py_XDECREF(ext_mask);
 
   switch (error)
   {

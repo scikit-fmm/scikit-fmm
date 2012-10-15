@@ -127,6 +127,11 @@ An example of using :py:mod:`scikit-fmm` to compute extension velocities.
 The full example is in examples/extension_velocities_example.py.
 :doc:`examples`
 
+.. toctree::
+   :maxdepth: 2
+
+   examples
+
 Limitations:
 ============
 :py:mod:`scikit-fmm` only works for regular Cartesian grids, but grid cells may
@@ -141,10 +146,14 @@ Function Reference
 
 .. autofunction:: skfmm.extension_velocities
 
+Testing
+=======
 
-.. toctree::
-   :maxdepth: 2
+To run all the tests use
 
-   examples
+   $ python -c "import skfmm; skfmm.test()"
+
+See the full :doc:`testing`.
+
 
 

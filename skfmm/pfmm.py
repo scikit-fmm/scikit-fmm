@@ -6,7 +6,7 @@ FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
 
 
-def pre_process_args(phi, dx):
+def pre_process_args(phi, dx, ext_mask=None):
     """
     get input data into the correct form for calling the c extension module
     This wrapper allows for a little bit of flexibility in the input types
@@ -25,7 +25,10 @@ def pre_process_args(phi, dx):
     else:
         flag = np.zeros(phi.shape, dtype=np.int)
 
-    return phi, dx, flag
+	if ext_mask is None:
+		ext_mask = np.zeros(phi.shape, dtype=np.int)
+		
+    return phi, dx, flag, ext_mask
 
 
 def post_process_result(result):
@@ -68,8 +71,8 @@ def distance(phi, dx=1.0, self_test=False, order=2):
         contains the distance from the zero contour (zero level set)
         of phi to each point in the array.
     """
-    phi, dx, flag = pre_process_args(phi, dx)
-    d = cFastMarcher(phi, dx, flag, None,
+    phi, dx, flag, ext_mask = pre_process_args(phi, dx)
+    d = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), DISTANCE, order)
     d = post_process_result(d)
     return d
@@ -111,14 +114,14 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2):
         velocity field speed. If the input array speed has values less
         than or equal to zero the return value will be a masked array.
     """
-    phi, dx, flag = pre_process_args(phi, dx)
-    t = cFastMarcher(phi, dx, flag, speed,
+    phi, dx, flag, ext_mask = pre_process_args(phi, dx)
+    t = cFastMarcher(phi, dx, flag, speed, ext_mask,
                      int(self_test), TRAVEL_TIME, order)
     t = post_process_result(t)
     return t
 
 
-def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2):
+def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2, ext_mask=None):
     """
     Extend the velocities defined at the zero contour of phi to the
     rest of the domain. Extend the velocities such that
@@ -154,8 +157,9 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2):
         a tuple containing the signed distance function d and the
         extension velocities f_ext.
     """
-    phi, dx, flag = pre_process_args(phi, dx)
-    distance, f_ext = cFastMarcher(phi, dx, flag, speed,
+    phi, dx, flag, ext_mask = pre_process_args(phi, dx, ext_mask)
+
+    distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY, order)
     distance = post_process_result(distance)
     f_ext    = post_process_result(f_ext)
