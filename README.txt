@@ -53,8 +53,8 @@ Bugs, questions, patches, feature requests, discussion & cetera:
 Installing:
  $ python setup.py install
 
-Testing (requires nose):
-  $ python tests/test_fmm.py
+Testing (doctest):
+  $ python -c "import skfmm; skfmm.test()"
 
 Building documentation (required sphinx and numpydoc):
   $ make html

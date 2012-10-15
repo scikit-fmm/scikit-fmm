@@ -27,7 +27,7 @@ def pre_process_args(phi, dx, ext_mask=None):
 
 	if ext_mask is None:
 		ext_mask = np.zeros(phi.shape, dtype=np.int)
-		
+
     return phi, dx, flag, ext_mask
 
 
@@ -150,6 +150,11 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2, ext_mask=
     order : int, optional
             order of computational stencil to use in updating points during
             the fast marching method. Must be 1 or 2, the default is 2.
+
+    ext_mask : array-like, the same shape as phi, optional
+               enables initial front values to be eliminated when
+               calculating the value at the interface before the
+               values are extended away from the interface.
 
     Returns
     -------
