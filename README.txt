@@ -74,5 +74,11 @@ Version History:
   Optional keyword argument for point update order.
   Bug reports and patches from three contributors.
 
+0.0.4: October 15th 2012
+  Contributions from Daniel Wheeler:
+   * Bug fixes in extension velocity.
+   * Many additional tests and migration to doctest format.
+   * Additional optional input to extension_velocities() for FiPy compatibly.
+
 :Copyright: Copyright 2012 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.

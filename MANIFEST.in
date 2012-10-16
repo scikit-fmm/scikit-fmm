@@ -16,4 +16,3 @@ include doc/*.png
 include doc/*.rst
 include doc/conf.py
 include static_analysis.sh
-include tests/test_*.py

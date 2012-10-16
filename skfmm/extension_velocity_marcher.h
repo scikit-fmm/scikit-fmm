@@ -11,7 +11,7 @@ public:
                            double *speed,
                            double *f_ext) :
   distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test, order),
-    ext_mask_(ext_mask), speed_(speed), f_ext_(f_ext) { }
+  speed_(speed), f_ext_(f_ext), ext_mask_(ext_mask) { }
   virtual ~extensionVelocityMarcher() { }
 
 protected:

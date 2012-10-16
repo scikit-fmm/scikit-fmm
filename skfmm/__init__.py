@@ -33,7 +33,7 @@ array([[ 1.20710678,  0.5       ,  1.20710678],
 array([[ 0.40236893,  0.16666667,  0.40236893],
        [ 0.16666667,  0.11785113,  0.16666667],
        [ 0.40236893,  0.16666667,  0.40236893]])
-       
+
 The input array can be of 1, 2, 3 or higher dimensions and can be a
 masked array. A function is provided to compute extension velocities.
 
@@ -76,10 +76,17 @@ Version History:
   Optional keyword argument for point update order.
   Bug reports and patches from three contributors.
 
+0.0.4: October 15th 2012
+  Contributions from Daniel Wheeler:
+   * Bug fixes in extension velocity.
+   * Many additional tests and migration to doctest format.
+   * Additional optional input to extension_velocities() for FiPy compatibly.
+
+
 :Copyright: Copyright 2012 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
 """
-__version__ = "0.0.4dev"
+__version__ = "0.0.4"
 __docformat__ = 'restructuredtext'
 
 from pfmm import distance, travel_time, extension_velocities
@@ -94,11 +101,11 @@ def testing():
     .. _PyLSMLIB: https://github.com/ktchu/LSMLIB/tree/master/pylsmlib
     .. _Scikit-fmm: http://packages.python.org/scikit-fmm/
     .. _LSMLIB: http://ktchu.serendipityresearch.org/software/lsmlib/index.html
-    
+
     **1D Test**
 
     >>> import numpy as np
-    
+
     >>> print np.allclose(distance((-1., -1., -1., -1., 1., 1., 1., 1.), dx=.5),
     ...                   (-1.75, -1.25, -.75, -0.25, 0.25, 0.75, 1.25, 1.75))
     True
@@ -211,7 +218,7 @@ def testing():
     >>> phi = distance(phi, order=2)
 
     The following values come form Scikit-fmm_.
-    
+
     >>> answer = [[-0.5,        -0.58578644, -1.08578644, -1.85136395],
     ...           [ 0.5,         0.29289322, -0.58578644, -1.54389939],
     ...           [ 1.30473785,  0.5,        -0.5,        -1.5       ],
@@ -225,7 +232,7 @@ def testing():
 
     >>> print np.allclose(phi, answer, rtol=1e-9)
     True
-    
+
     **Circle Example**
 
     Solve the level set equation in two dimensions for a circle.
@@ -350,7 +357,7 @@ def testing():
     ValueError: phi and speed must have the same shape
 
     **Test for 1D equality between `distance` and `travel_time`**
-    
+
     >>> phi = np.arange(-5, 5) + 0.499
     >>> d = distance(phi)
     >>> t = travel_time(phi, speed=np.ones_like(phi))
@@ -508,20 +515,20 @@ def testing():
     ...                                           [0.5, 0, 0.5])
 
     Travel time tests 2
-    
+
     >>> phi   = [1, 1, 1, -1, -1, -1]
     >>> t     = travel_time(phi, np.ones_like(phi))
     >>> exact = [2.5, 1.5, 0.5, 0.5, 1.5, 2.5]
     >>> np.testing.assert_allclose(t, exact)
 
     Travel time tests 3
-    
+
     >>> phi   = [-1, -1, -1, 1, 1, 1]
     >>> t     = travel_time(phi, np.ones_like(phi))
     >>> exact = [2.5, 1.5, 0.5, 0.5, 1.5, 2.5]
     >>> np.testing.assert_allclose(t, exact)
 
-    Corner case 
+    Corner case
 
     >>> np.testing.assert_array_equal(distance([0, 0]), [0, 0])
     >>> np.testing.assert_array_equal(travel_time([0, 0], [1, 1]), [0, 0])
@@ -576,7 +583,7 @@ def testing():
     >>> np.testing.assert_allclose(d, exact, atol=dx)
 
     Planar level set
-    
+
     >>> N         = 50
     >>> X, Y      = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
     >>> dx        = 2.0 / (N - 1)
@@ -587,7 +594,7 @@ def testing():
     >>> np.testing.assert_allclose(d, exact)
 
     Masked input
-    
+
     >>> N         = 50
     >>> X, Y      = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
     >>> dx        = 2.0 / (N - 1)
@@ -605,7 +612,7 @@ def testing():
 
     >>> assert diff > 635 and diff < 645
 
-    Test eikonal solution 
+    Test eikonal solution
 
     >>> N     = 50
     >>> X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
@@ -648,7 +655,7 @@ def testing():
     >>> np.testing.assert_allclose(d, exact, atol=dx)
 
     Test default dx
-    
+
     >>> N     = 50
     >>> X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
     >>> r     = 0.5
@@ -657,7 +664,7 @@ def testing():
     >>> out = travel_time(phi, speed, self_test=True)
 
     Test non-square grid and dx different in different directions
-    
+
     >>> N      = 50
     >>> NX, NY = N, 5 * N
     >>> X, Y   = np.meshgrid(np.linspace(-1, 1, NY), np.linspace(-1, 1, NX))
@@ -704,7 +711,7 @@ def testing():
     Traceback (most recent call last):
       ...
     ValueError: self_test must be 0 or 1
-    
+
     Check array type test
 
     >>> distance(np.array(["a", "b"]))
@@ -713,7 +720,7 @@ def testing():
     ValueError: phi must be a 1 to 12-D array of doubles
 
     """
-    
+
 def  test(verbose=None):
     r"""
     Run all the doctests available.
