@@ -233,6 +233,21 @@ def testing():
     >>> print np.allclose(phi, answer, rtol=1e-9)
     True
 
+    The following tests for the same issue but is a better test case
+    guarentted to fail.
+
+    >>> phi = np.array([[-1,  1,  1,  1,  1, -1],
+    ...                 [-1, -1, -1, -1, -1, -1],
+    ...                 [-1, -1, -1, -1, -1, -1]])
+
+    >>> phi = distance(phi)
+    >>> print phi[2, 2] == phi[2, 3]
+    True
+    
+    >>> phi = distance(phi)
+    >>> print phi[2, 2] == phi[2, 3]
+    True
+    
     **Circle Example**
 
     Solve the level set equation in two dimensions for a circle.
