@@ -86,7 +86,7 @@ Version History:
 :Copyright: Copyright 2012 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
 """
-__version__ = "0.0.4"
+__version__ = "0.0.5dev"
 __docformat__ = 'restructuredtext'
 
 from pfmm import distance, travel_time, extension_velocities
