@@ -158,11 +158,29 @@ void baseMarcher::solve()
             }
           }
         }
-      }
-    }
-  }
+        //==========================================================
+        // update the far point in the second order stencil
+        // "jump" over a Frozen point if needed
+        if (order_ == 2)
+        {
+          int naddr2 = _getN(addr,dim,j*2,Frozen);
+          if (naddr!=-1 && naddr2!=-1 && flag_[naddr2]==Narrow && flag_[naddr]==Frozen)
+          {
+            double d = updatePointOrderTwo(naddr2);
+            if (d)
+            {
+              heap_->set(heapptr_[naddr2], fabs(d));
+              distance_[naddr2]=d;
+            }
+          }
+        }
+        //==========================================================
+      } // for each direction
+    } // for each dimension
+  } // main loop of Fast Marching Method
+
   // add back mask here. The python wrapper will look for elements
-  // equal to mexDouble and add the mask back
+  // equal to maxDouble and add the mask back
   for (int i=0; i<size_; i++)
   {
     if (flag_[i] == Mask) distance_[i] = maxDouble;
