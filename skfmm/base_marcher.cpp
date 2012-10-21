@@ -164,7 +164,7 @@ void baseMarcher::solve()
         if (order_ == 2)
         {
           int naddr2 = _getN(addr,dim,j*2,Frozen);
-          if (naddr!=-1 && naddr2!=-1 && flag_[naddr2]==Narrow && flag_[naddr]==Frozen)
+          if (naddr2!=-1 && flag_[naddr]==Frozen && flag_[naddr2]==Narrow)
           {
             double d = updatePointOrderTwo(naddr2);
             if (d)
