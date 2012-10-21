@@ -1,5 +1,6 @@
 #include "distance_marcher.h"
 #include "math.h"
+#include "stdio.h"
 
 double distanceMarcher::updatePointOrderOne(int i)
 {
@@ -27,7 +28,9 @@ double distanceMarcher::updatePointOrderOne(int i)
       c+=idx2_[dim]*pow(value,2);
     }
   }
-  return solveQuadratic(i,a,b,c);
+  double tmp = solveQuadratic(i,a,b,c);
+  printf("new value %lf\n", tmp);
+  return tmp;
 }
 
 
@@ -37,6 +40,10 @@ const double aa         =  9.0/4.0;
 const double oneThird   =  1.0/3.0;
 double distanceMarcher::updatePointOrderTwo(int i)
 {
+  printf("updating: ");
+  printPoint(i);
+  printf("old value %lf\n", distance_[i]);
+
   double a,b,c;
   a=b=c=0;
   int naddr=0;
@@ -77,7 +84,9 @@ double distanceMarcher::updatePointOrderTwo(int i)
       c+=idx2_[dim]*pow(value1,2);
     }
   }
-  return solveQuadratic(i,a,b,c);
+  double tmp = solveQuadratic(i,a,b,c);
+  printf("new value %lf\n", tmp);
+  return tmp;
 }
 
 
