@@ -163,14 +163,18 @@ void baseMarcher::solve()
         // "jump" over a Frozen point if needed
         if (order_ == 2)
         {
-          int naddr2 = _getN(addr,dim,j*2,Frozen);
-          if (naddr2!=-1 && flag_[naddr]==Frozen && flag_[naddr2]==Narrow)
+          int local_naddr = _getN(addr,dim,j,Mask);
+          if (local_naddr!=-1 && flag_[local_naddr]==Frozen)
           {
-            double d = updatePointOrderTwo(naddr2);
-            if (d)
+            int naddr2 = _getN(addr,dim,j*2,Frozen);
+            if (naddr2!=-1 && flag_[naddr2]==Narrow)
             {
-              heap_->set(heapptr_[naddr2], fabs(d));
-              distance_[naddr2]=d;
+              double d = updatePointOrderTwo(naddr2);
+              if (d)
+              {
+                heap_->set(heapptr_[naddr2], fabs(d));
+                distance_[naddr2]=d;
+              }
             }
           }
         }
