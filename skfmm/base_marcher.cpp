@@ -6,7 +6,6 @@
 #include "base_marcher.h"
 #include "heap.h"
 #include "math.h"
-#include "stdio.h"
 #include <vector>
 
 extern "C" {
@@ -63,33 +62,10 @@ baseMarcher::~baseMarcher()
   delete[] heapptr_;
 }
 
-void baseMarcher::printPoint(int addr) const
-{
-  if (! dim_==2) return;
-  int c = addr;
-  int a = c/shape_[1];
-  c -= a*shape_[1];
-  printf("(%i, %i)\n", a, c);
-}
-
-void baseMarcher::showArray() const
-{
-  if (! dim_==2) return;
-  for (int i=0; i<size_; i++)
-  {
-    if (i % shape_[1]==0) printf("\n");
-    if (flag_[i]==Far) printf("0");
-    if (flag_[i]==Narrow) printf("N");
-    if (flag_[i]==Frozen) printf("F");
-    if (flag_[i]==Mask) printf("M");
-  }
-}
-
 void baseMarcher::initalizeNarrow()
 {
   // for each point in the far field check if neighbor is frozen
   // if so calculate distance and insert into heap
-  printf("\n initializing beginning narrow-band \n");
   for (int i=0; i<size_; i++)
   {
     if (flag_[i] == Far)
@@ -129,7 +105,6 @@ void baseMarcher::initalizeNarrow()
 //       distance value.
 void baseMarcher::solve()
 {
-  printf("\n starting solve loop\n");
   int frozenCount=0;
   for (int i=0; i<size_; i++)
     if (flag_[i] == Frozen) frozenCount++;
@@ -143,8 +118,6 @@ void baseMarcher::solve()
 
   while (! heap_->empty())
   {
-    showArray();
-
     toFreeze.clear();
     i++;
     double  value   = 0;
@@ -153,7 +126,6 @@ void baseMarcher::solve()
     flag_[addr]=Frozen;
     finalizePoint(addr, value);
     toFreeze.push_back(addr);
-
 
     bool done=false;
     while (!done)
@@ -170,15 +142,6 @@ void baseMarcher::solve()
       else
         done = true;
     }
-
-
-    for (unsigned int j=0; j<toFreeze.size(); j++)
-    {
-      printf("\nfreezing: ");
-      printPoint(toFreeze[j]);
-      printf("final value: %lf\n\n", distance_[toFreeze[j]]);
-    }
-
 
     for (unsigned int k=0; k<toFreeze.size(); k++)
     {

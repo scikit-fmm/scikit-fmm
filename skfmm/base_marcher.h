@@ -47,10 +47,6 @@ private:
   bool              self_test_;
 
 protected:
-
-  void printPoint(int addr) const;
-  void showArray() const;
-
   // derived classes must implement these functions
   virtual void     initalizeFrozen() = 0;
   virtual double   updatePointOrderTwo(int i) = 0;
