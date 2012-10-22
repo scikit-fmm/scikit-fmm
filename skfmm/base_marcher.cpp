@@ -7,6 +7,7 @@
 #include "heap.h"
 #include "math.h"
 #include "stdio.h"
+#include <vector>
 
 extern "C" {
 
@@ -138,81 +139,110 @@ void baseMarcher::solve()
     return;
   }
   int i=0;
+  std::vector<int> toFreeze;
+
   while (! heap_->empty())
   {
     showArray();
 
+    toFreeze.clear();
     i++;
     double  value   = 0;
     int     addr    = 0;
     heap_->pop(&addr, &value);
     flag_[addr]=Frozen;
     finalizePoint(addr, value);
+    toFreeze.push_back(addr);
 
 
-
-    printf("\nfreezing: ");
-    printPoint(addr);
-    printf("final value: %lf\n\n", distance_[addr]);
-
-    for (int dim=0; dim<dim_; dim++)
+    bool done=false;
+    while (!done)
     {
-      for (int j=-1; j<2; j+=2) // each direction
+      if (! heap_->empty() && value == heap_->peek())
       {
-        int naddr = _getN(addr,dim,j,Frozen);
-        if (naddr!=-1 && flag_[naddr]!=Frozen)
+        double  l_value   = 0;
+        int     l_addr    = 0;
+        heap_->pop(&l_addr, &l_value);
+        flag_[l_addr]=Frozen;
+        finalizePoint(l_addr, l_value);
+        toFreeze.push_back(l_addr);
+      }
+      else
+        done = true;
+    }
+
+
+    for (unsigned int j=0; j<toFreeze.size(); j++)
+    {
+      printf("\nfreezing: ");
+      printPoint(toFreeze[j]);
+      printf("final value: %lf\n\n", distance_[toFreeze[j]]);
+    }
+
+
+    for (unsigned int k=0; k<toFreeze.size(); k++)
+    {
+      int addr = toFreeze[k];
+
+      for (int dim=0; dim<dim_; dim++)
+      {
+        for (int j=-1; j<2; j+=2) // each direction
         {
-          if (flag_[naddr]==Narrow)
+          int naddr = _getN(addr,dim,j,Frozen);
+          if (naddr!=-1 && flag_[naddr]!=Frozen)
           {
-            double d;
-            if (order_ == 2)
-              d =  updatePointOrderTwo(naddr);
-            else
-              d =  updatePointOrderOne(naddr);
-            if (d)
+            if (flag_[naddr]==Narrow)
             {
-              heap_->set(heapptr_[naddr],fabs(d));
-              distance_[naddr]=d;
-            }
-          }
-          else if (flag_[naddr]==Far)
-          {
-            double d;
-            if (order_ == 2)
-              d =  updatePointOrderTwo(naddr);
-            else
-              d =  updatePointOrderOne(naddr);
-            if (d)
-            {
-              distance_[naddr]=d;
-              flag_[naddr]=Narrow;
-              heapptr_[naddr] = heap_->push(naddr,fabs(d));
-            }
-          }
-        }
-        //==========================================================
-        // update the far point in the second order stencil
-        // "jump" over a Frozen point if needed
-        if (order_ == 2)
-        {
-          int local_naddr = _getN(addr,dim,j,Mask);
-          if (local_naddr!=-1 && flag_[local_naddr]==Frozen)
-          {
-            int naddr2 = _getN(addr,dim,j*2,Frozen);
-            if (naddr2!=-1 && flag_[naddr2]==Narrow)
-            {
-              double d = updatePointOrderTwo(naddr2);
+              double d;
+              if (order_ == 2)
+                d =  updatePointOrderTwo(naddr);
+              else
+                d =  updatePointOrderOne(naddr);
               if (d)
               {
-                heap_->set(heapptr_[naddr2], fabs(d));
-                distance_[naddr2]=d;
+                heap_->set(heapptr_[naddr],fabs(d));
+                distance_[naddr]=d;
+              }
+            }
+            else if (flag_[naddr]==Far)
+            {
+              double d;
+              if (order_ == 2)
+                d =  updatePointOrderTwo(naddr);
+              else
+                d =  updatePointOrderOne(naddr);
+              if (d)
+              {
+                distance_[naddr]=d;
+                flag_[naddr]=Narrow;
+                heapptr_[naddr] = heap_->push(naddr,fabs(d));
               }
             }
           }
-        }
-        //==========================================================
-      } // for each direction
-    } // for each dimension
+          //==========================================================
+          // update the far point in the second order stencil
+          // "jump" over a Frozen point if needed
+          if (order_ == 2)
+          {
+            int local_naddr = _getN(addr,dim,j,Mask);
+            if (local_naddr!=-1 && flag_[local_naddr]==Frozen)
+            {
+              int naddr2 = _getN(addr,dim,j*2,Frozen);
+              if (naddr2!=-1 && flag_[naddr2]==Narrow)
+              {
+                double d = updatePointOrderTwo(naddr2);
+                if (d)
+                {
+                  heap_->set(heapptr_[naddr2], fabs(d));
+                  distance_[naddr2]=d;
+                }
+              }
+            }
+          }
+          //==========================================================
+        } // for each direction
+      } // for each dimension
+    }
   } // main loop of Fast Marching Method
 
   // add back mask here. The python wrapper will look for elements
