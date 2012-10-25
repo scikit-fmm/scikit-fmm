@@ -45,7 +45,7 @@ double travelTimeMarcher::updatePointOrderTwo(int i)
                (distance_[naddr2]>=value1 && value1 <=0)))
           {
             value2=distance_[naddr2];
-            if (phi_[naddr2] * phi_[naddr] < 0)
+            if (phi_[naddr2] * phi_[naddr] < 0  || phi_[naddr2] * phi_[i] < 0)
               value2 *= -1;
           }
         }
