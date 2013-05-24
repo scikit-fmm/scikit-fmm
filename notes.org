@@ -1,0 +1,121 @@
+#+TITLE:
+#+DATE:
+#+OPTIONS: toc:nil timestamp:nil
+* Bi-cubic interpolation function over a grid cell
+
+\(
+p(x,y) = \sum_{i=0}^3 \sum_{j=0}^3 a_{ij} x^i y^j
+\)
+
+Grouping the unknown parameters $a_{ij}$ in a vector,
+
+\(
+\alpha=\left[
+a_{00} a_{10} a_{20} a_{30} a_{01} a_{11} a_{21} a_{31} a_{02} a_{12}
+a_{22} a_{32} a_{03} a_{13} a_{23} a_{33}
+\right]^T
+\)
+
+and letting
+
+\(
+X=[f(0,0) f(1,0) f(0,1) f(1,1) f_x(0,0) f_x(1,0) f_x(0,1) f_x(1,1) f_y(0,0)
+\)
+
+\(
+f_y(1,0) f_y(0,1) f_y(1,1) f_{xy}(0,0) f_{xy}(1,0) f_{xy}(0,1) f_{xy}(1,1)
+]^T
+\)
+
+the problem can be reformulated into a linear equation $A\alpha=X$
+where its inverse is:
+
+#+begin_src python
+ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                 [-3,3,0,0,-2,-1,0,0,0,0,0,0,0,0,0,0],
+                 [2,-2,0,0,1,1,0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+                 [0,0,0,0,0,0,0,0,-3,3,0,0,-2,-1,0,0],
+                 [0,0,0,0,0,0,0,0,2,-2,0,0,1,1,0,0],
+                 [-3,0,3,0,0,0,0,0,-2,0,-1,0,0,0,0,0],
+                 [0,0,0,0,-3,0,3,0,0,0,0,0,-2,0,-1,0],
+                 [9,-9,-9,9,6,3,-6,-3,6,-6,3,-3,4,2,2,1],
+                 [-6,6,6,-6,-3,-3,3,3,-4,4,-2,2,-2,-2,-1,-1],
+                 [2,0,-2,0,0,0,0,0,1,0,1,0,0,0,0,0],
+                 [0,0,0,0,2,0,-2,0,0,0,0,0,1,0,1,0],
+                 [-6,6,6,-6,-4,-2,4,2,-3,3,-3,3,-2,-1,-2,-1],
+                 [4,-4,-4,4,2,2,-2,-2,2,-2,2,-2,1,1,1,1]], dtype=double)
+a = ainv * X
+#+end_src
+
+The values of the array X can be found via the np.gradient() function
+which uses central differences on the interior points. The cross
+derivatives can be found via
+
+\(
+f_{xy}(x,y) \approx \frac{f(x+h, y+k) - f(x+h, y) - f(x, y+k) + 2
+f(x,y) - f(x-h, y) - f(x, y-k) + f(x-h, y-k)}{2hk}
+\)
+
+http://en.wikipedia.org/wiki/Bicubic_interpolation
+
+
+* Finding the shortest distance to the zero contour
+
+from Salac, 2011 "The augmented fast marching method for level set
+reinitialization." http://arxiv.org/abs/1111.6903 see also Chop (2001)
+and Nave (2010).
+
+For each grid point, $b_{i,j}$, adjacent to the zero level set find
+point c such that
+
+\(
+p(c) = 0
+\)
+
+\(
+\nabla p(c) \times (b - c) = 0
+\)
+
+The distance from the grid point to the zero level set is
+$|b-c|$
+
+dp/dx|c (b_y-c_y) - dp/dy|c  (b_x-c_x) = 0
+
+in 2d this becomes
+
+\(
+\left. \frac{\partial p}{\partial x} \right|_c (b_y-c_y) -
+\left. \frac{\partial p}{\partial y} \right|_c (b_x-c_x) = 0
+\)
+
+the LHS expands to:
+
+#+begin_src python
+-(b0 - c0)*(a[0,1] + 2*a[0,2]*c1 + 3*a[0,3]*c1**2 +
+a[1,1]*c0 + 2*a[1,2]*c0*c1 + 3*a[1,3]*c0*c1**2 + a[2,1]*c0**2 +
+2*a[2,2]*c0**2*c1 + 3*a[2,3]*c0**2*c1**2 + a[3,1]*c0**3 + 2*a[3,2]*c0**3*c1 +
+3*a[3,3]*c0**3*c1**2) + (b1 - c1)*(a[1,0] + a[1,1]*c1 + a[1,2]*c1**2 +
+a[1,3]*c1**3 + 2*a[2,0]*c0 + 2*a[2,1]*c0*c1 + 2*a[2,2]*c0*c1**2 +
+2*a[2,3]*c0*c1**3 + 3*a[3,0]*c0**2 + 3*a[3,1]*c0**2*c1 +
+3*a[3,2]*c0**2*c1**2 + 3*a[3,3]*c0**2*c1**3)
+#+end_src
+
+the LHS of $p(c)=0$ expands to:
+#+begin_src python
+a[0,0] + a[0,1]*c1 + a[0,2]*c1**2 + a[0,3]*c1**3 +
+a[1,0]*c0 + a[1,1]*c0*c1 + a[1,2]*c0*c1**2 + a[1,3]*c0*c1**3 +
+a[2,0]*c0**2 + a[2,1]*c0**2*c1 + a[2,2]*c0**2*c1**2 +
+a[2,3]*c0**2*c1**3 + a[3,0]*c0**3 + a[3,1]*c0**3*c1 +
+a[3,2]*c0**3*c1**2 + a[3,3]*c0**3*c1**3
+#+end_src
+
+A system of 3rd order polynomials which can be solved for c_0 and c_1.
+Can be solved by scipy.fsolve.
+
+Generate interpolating functions for each cell in which the zero
+contour crosses at least of the cell faces. For each grid point adjacent
+to the contour find the minimum distance to the interpolated zero
+contour by checking all the adjacent cells.
