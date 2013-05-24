@@ -1,38 +1,153 @@
 import numpy as np
 import pylab as plt
+from sys import float_info
+from scipy.optimize import fsolve
+
+ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                 [-3,3,0,0,-2,-1,0,0,0,0,0,0,0,0,0,0],
+                 [2,-2,0,0,1,1,0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+                 [0,0,0,0,0,0,0,0,-3,3,0,0,-2,-1,0,0],
+                 [0,0,0,0,0,0,0,0,2,-2,0,0,1,1,0,0],
+                 [-3,0,3,0,0,0,0,0,-2,0,-1,0,0,0,0,0],
+                 [0,0,0,0,-3,0,3,0,0,0,0,0,-2,0,-1,0],
+                 [9,-9,-9,9,6,3,-6,-3,6,-6,3,-3,4,2,2,1],
+                 [-6,6,6,-6,-3,-3,3,3,-4,4,-2,2,-2,-2,-1,-1],
+                 [2,0,-2,0,0,0,0,0,1,0,1,0,0,0,0,0],
+                 [0,0,0,0,2,0,-2,0,0,0,0,0,1,0,1,0],
+                 [-6,6,6,-6,-4,-2,4,2,-3,3,-3,3,-2,-1,-2,-1],
+                 [4,-4,-4,4,2,2,-2,-2,2,-2,2,-2,1,1,1,1]], dtype=np.double)
+
+class bc_interp(object):
+    def __init__(self, a):
+        self.a = a.reshape((4,4),order="f")
+    def __call__(self, x, y):
+        a=self.a
+        return  a[0,0] + a[0,1]*y + a[0,2]*y**2 + a[0,3]*y**3 + \
+                a[1,0]*x + a[1,1]*x*y + a[1,2]*x*y**2 + a[1,3]*x*y**3 + \
+                a[2,0]*x**2 + a[2,1]*x**2*y + a[2,2]*x**2*y**2 + \
+                a[2,3]*x**2*y**3 + a[3,0]*x**3 + a[3,1]*x**3*y + \
+                a[3,2]*x**3*y**2 + a[3,3]*x**3*y**3
+
+class bc_interp_eq2(bc_interp):
+    def __init__(self, interp, b0, b1):
+        self.a = interp.a
+        self.b0, self.b1 = b0, b1
+    def __call__(self, x, y):
+        a=self.a
+        b0, b1 = self.b0, self.b1
+        return -(b0 - x)* \
+            (a[0,1] + 2*a[0,2]*y + 3*a[0,3]*y**2 + \
+                           a[1,1]*x + 2*a[1,2]*x*y + \
+                           3*a[1,3]*x*y**2 + a[2,1]*x**2 +\
+                           2*a[2,2]*x**2*y + 3*a[2,3]*x**2*y**2 +\
+                           a[3,1]*x**3 + 2*a[3,2]*x**3*y +\
+                           3*a[3,3]*x**3*y**2) + (b1 - y)* \
+            (a[1,0] + a[1,1]*y + a[1,2]*y**2 + a[1,3]*y**3 +\
+             2*a[2,0]*x + 2*a[2,1]*x*y +\
+             2*a[2,2]*x*y**2 + 2*a[2,3]*x*y**3 +\
+             3*a[3,0]*x**2 + 3*a[3,1]*x**2*y +\
+             3*a[3,2]*x**2*y**2 +\
+             3*a[3,3]*x**2*y**3)
 
 class testinit(object):
-    def __init__(self, phi, h):
+    def __init__(self, phi, h, X, Y):
         self.phi = phi
+        self.d = np.ones_like(phi) * float_info.max
         self.h = h
         assert len(phi.shape)==2
+        self.X, self.Y = X, Y
 
+        gx, gy = np.gradient(phi)
+        self.gx, self.gy = gx/2./h, gy/2./h
+
+        xgr = np.zeros_like(phi)
+        # xgr[1:-1,1:-1] = (phi[2:,2:] - phi[2:,1:-1] - phi[1:-1,2:] \
+        #                   + 2*phi[1:-1,1:-1] - phi[:-2,1:-1] - phi[1:-1,:-2] \
+        #                   + phi[:-2,:-2])/(2 * h**2)
+
+        xgr[1:-1,1:-1] = (phi[2:,2:] - phi[2:,:-2] - phi[:-2,2:] + \
+                          phi[:-2,:-2])/(4*h**2)
+        # need to also define this for the outside edges.
+        self.xgr = xgr
         self.find_frozen()
+        self.ini_frozen()
 
     def find_frozen(self):
-        gr = np.gradient(phi)
         aborders = np.zeros_like(phi,dtype=bool)
+        border_cells = np.zeros_like(phi, dtype=bool)[:-1,:-1]
         x, y = phi.shape
         for i in range(x-2):
             for j in range(y-2):
                 ii=i+1
                 jj=j+1
                 for k in [-1,1]:
-                    if phi[ii,jj] * phi[ii+k,jj] < 0: aborders[ii,jj] = True
-                    elif phi[ii,jj] * phi[ii,jj+k] < 0: aborders[ii,jj] = True
+                    if phi[ii,jj] * phi[ii+k,jj] < 0:
+                        aborders[ii,jj] = True
+                        border_cells[ii][jj] = True
+                        border_cells[ii][jj-1] = True
+                    elif phi[ii,jj] * phi[ii,jj+k] < 0:
+                        aborders[ii,jj] = True
+                        border_cells[ii][jj] = True
+                        border_cells[ii-1][jj] = True
+
         self.aborders = aborders
+        self.border_cells = border_cells
 
     def ini_frozen(self):
-        for i in range(x-2):
-            for j in range(y-2):
-                ii=i+1
-                jj=j+1
-                if aborders(ii, jj):
-                    pass
+        x, y = self.border_cells.shape
+        for i in range(x):
+            for j in range(y):
+                if self.aborders[i, j]:
+                    self.process_cell(i,j)
+                    return
 
+    def process_cell(self,i,j):
+        # find interpolation values for this cell
+        #
 
-    def find_distance(self):
-        pass
+        coords = ((i, i+1, i, i+1), (j, j, j+1, j+1))
+        print coords
+        X = np.hstack((self.phi[coords], self.gx[coords],
+                       self.gy[coords], self.xgr[coords]))
+        print i,j, self.phi[i,j]
+        print X
+        a =  ainv *np.matrix(X).T
+        print a
+        interp = bc_interp(a)
+
+        print
+        np.testing.assert_allclose(self.phi[i,j],     interp(0,0))
+        np.testing.assert_allclose(self.phi[i+1,j],   interp(1,0))
+        np.testing.assert_allclose(self.phi[i,j+1],   interp(0,1))
+        np.testing.assert_allclose(self.phi[i+1,j+1], interp(1,1))
+
+        print interp(0,0)
+        print interp(1,0)
+        print interp(0,1)
+        print interp(1,1)
+
+        print "phi at cell center", interp(0.5,0.5)
+
+        self.process_point(i,j,0,0,interp)
+        self.process_point(i,j,1,0,interp)
+        self.process_point(i,j,0,1,interp)
+        self.process_point(i,j,1,2,interp)
+
+    def process_point(self, i, j, ii, jj, interp):
+        # ii and jj are b here in the dimensionless reference cell
+        eq2 = bc_interp_eq2(interp, ii, jj)
+        def eqns(p):
+            c0, c1 = p
+            return (interp(c0, c1), eq2(c0, c1))
+        print "starting fsolve"
+        rx, ry = fsolve(eqns, (0.5,0.5))
+        print rx, ry, interp(rx,ry)
+        assert 0 <= rx <=1
+        assert 0 <= ry <=1
+
 
 if __name__ == '__main__':
     N = 150
@@ -44,11 +159,12 @@ if __name__ == '__main__':
     # given elliptic zero contour 0.5*x^2 + y^2 = 1
 
     phi = 0.5*X**2 + Y**2 - 1.
+    #plt.matshow(phi)
 
-    plt.matshow(phi)
-    plt.show()
+    a=testinit(phi, 1, X, Y)
 
-    a=testinit(phi, h)
+    # plt.matshow(a.aborders)
+    # plt.matshow(a.border_cells)
+    # plt.matshow(a.xgr[1:-1,1:-1])
 
-    plt.matshow(a.aborders)
     plt.show()
