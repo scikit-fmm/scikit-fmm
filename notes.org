@@ -55,8 +55,8 @@ which uses central differences on the interior points. The cross
 derivatives can be found via
 
 \(
-f_{xy}(x,y) \approx \frac{f(x+h, y+k) - f(x+h, y) - f(x, y+k) + 2
-f(x,y) - f(x-h, y) - f(x, y-k) + f(x-h, y-k)}{2hk}
+f_{xy}(x,y) \approx  \frac{f(x+h,y+k) - f(x+h,y-k) - f(x-h,y+k) +
+f(x-h,y-k)}{4hk}
 \)
 
 http://en.wikipedia.org/wiki/Bicubic_interpolation
@@ -78,11 +78,6 @@ p(c) = 0
 \(
 \nabla p(c) \times (b - c) = 0
 \)
-
-The distance from the grid point to the zero level set is
-$|b-c|$
-
-dp/dx|c (b_y-c_y) - dp/dy|c  (b_x-c_x) = 0
 
 in 2d this becomes
 
@@ -113,7 +108,8 @@ a[3,2]*c0**3*c1**2 + a[3,3]*c0**3*c1**3
 #+end_src
 
 A system of 3rd order polynomials which can be solved for c_0 and c_1.
-Can be solved by scipy.fsolve.
+Can be solved by scipy.fsolve. The distance from the grid point to the
+zero level set is $|b-c|$
 
 Generate interpolating functions for each cell in which the zero
 contour crosses at least one of the cell faces. For each grid point
