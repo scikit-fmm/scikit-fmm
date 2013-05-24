@@ -1,7 +1,7 @@
 import numpy as np
 import pylab as plt
 from sys import float_info
-from scipy.optimize import fsolve
+from scipy.optimize import fsolve, fmin_l_bfgs_b, minimize
 
 ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
@@ -56,6 +56,7 @@ class testinit(object):
     def __init__(self, phi, h, X, Y):
         self.phi = phi
         self.d = np.ones_like(phi) * float_info.max
+        self.d1 = np.ones_like(phi) * float_info.max
         self.h = h
         assert len(phi.shape)==2
         self.X, self.Y = X, Y
@@ -100,53 +101,73 @@ class testinit(object):
         x, y = self.border_cells.shape
         for i in range(x):
             for j in range(y):
-                if self.aborders[i, j]:
+                if self.border_cells[i, j]:
                     self.process_cell(i,j)
-                    return
+
 
     def process_cell(self,i,j):
         # find interpolation values for this cell
         #
 
         coords = ((i, i+1, i, i+1), (j, j, j+1, j+1))
-        print coords
+        #print coords
         X = np.hstack((self.phi[coords], self.gx[coords],
                        self.gy[coords], self.xgr[coords]))
-        print i,j, self.phi[i,j]
-        print X
+        #print i,j, self.phi[i,j]
+        #print X
         a =  ainv *np.matrix(X).T
-        print a
+        #print a
         interp = bc_interp(a)
 
-        print
+        #print
         np.testing.assert_allclose(self.phi[i,j],     interp(0,0))
         np.testing.assert_allclose(self.phi[i+1,j],   interp(1,0))
         np.testing.assert_allclose(self.phi[i,j+1],   interp(0,1))
         np.testing.assert_allclose(self.phi[i+1,j+1], interp(1,1))
 
-        print interp(0,0)
-        print interp(1,0)
-        print interp(0,1)
-        print interp(1,1)
+        # print interp(0,0)
+        # print interp(1,0)
+        # print interp(0,1)
+        # print interp(1,1)
 
-        print "phi at cell center", interp(0.5,0.5)
+        # print "phi at cell center", interp(0.5,0.5)
 
         self.process_point(i,j,0,0,interp)
-        self.process_point(i,j,1,0,interp)
-        self.process_point(i,j,0,1,interp)
-        self.process_point(i,j,1,2,interp)
+        self.process_point(i+1,j,1,0,interp)
+        self.process_point(i,j+1,0,1,interp)
+        self.process_point(i+1,j+1,1,1,interp)
 
     def process_point(self, i, j, ii, jj, interp):
         # ii and jj are b here in the dimensionless reference cell
+        #print ii,jj
         eq2 = bc_interp_eq2(interp, ii, jj)
+
         def eqns(p):
             c0, c1 = p
+            return interp(c0, c1)**2 + eq2(c0, c1)**2
+
+        def eqns2(p):
+            c0, c1 = p
             return (interp(c0, c1), eq2(c0, c1))
-        print "starting fsolve"
-        rx, ry = fsolve(eqns, (0.5,0.5))
-        print rx, ry, interp(rx,ry)
-        assert 0 <= rx <=1
-        assert 0 <= ry <=1
+
+
+        sx,sy = fsolve(eqns2, (0.5,0.5))
+        #print sx,sy, interp(sx,sy), eq2(sx,sy)
+
+        # res = minimize(eqns, (0.5,0.5), bounds=((0,1),(0,1)),
+        #                method="TNC", tol=1e-18)
+        # assert res.success
+        # rx, ry = res.x
+        # print rx, ry, interp(rx, ry), eq2(sx,sy)
+        # assert 0 <= rx <=1
+        # assert 0 <= ry <=1
+
+        if 0 <= sx <= 1 and 0 <= sy <= 1:
+            dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
+
+            if self.d[i,j] > dist:
+                #print "setting d",i,j,dist
+                self.d[i,j]=dist
 
 
 if __name__ == '__main__':
@@ -166,5 +187,16 @@ if __name__ == '__main__':
     # plt.matshow(a.aborders)
     # plt.matshow(a.border_cells)
     # plt.matshow(a.xgr[1:-1,1:-1])
+
+    arr=np.copy(a.d)
+    mask = arr==float_info.max
+    bb=np.ma.MaskedArray(arr,mask)
+
+    # make sure that all point adjacent to the zero contour got a value
+    assert np.logical_and(a.aborders==True, np.logical_not(mask)).sum() == \
+        (a.aborders==True).sum()
+
+    plt.matshow(bb)
+    plt.colorbar()
 
     plt.show()
