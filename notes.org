@@ -47,7 +47,7 @@ ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,2,0,-2,0,0,0,0,0,1,0,1,0],
                   [-6,6,6,-6,-4,-2,4,2,-3,3,-3,3,-2,-1,-2,-1],
                   [4,-4,-4,4,2,2,-2,-2,2,-2,2,-2,1,1,1,1]], dtype=double)
-a = ainv * X
+a = ainv * X.T
 #+end_src
 
 The values of the array X can be found via the np.gradient() function

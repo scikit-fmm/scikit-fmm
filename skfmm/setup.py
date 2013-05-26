@@ -8,6 +8,7 @@ def configuration(parent_package='', top_path=None):
                                    "heap.cpp",
                                    "base_marcher.cpp",
                                    "distance_marcher.cpp",
+                                   "distance_marcher_dinit.cpp",
                                    "travel_time_marcher.cpp",
                                    "extension_velocity_marcher.cpp"],
                           include_dirs=['.'])

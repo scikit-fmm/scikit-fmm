@@ -1,6 +1,7 @@
 import numpy as np
 from cfmm import cFastMarcher
 from sys import float_info
+from bi_cubic_init import BiCubicInit
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
@@ -25,8 +26,8 @@ def pre_process_args(phi, dx, ext_mask=None):
     else:
         flag = np.zeros(phi.shape, dtype=np.int)
 
-	if ext_mask is None:
-		ext_mask = np.zeros(phi.shape, dtype=np.int)
+        if ext_mask is None:
+                ext_mask = np.zeros(phi.shape, dtype=np.int)
 
     return phi, dx, flag, ext_mask
 
@@ -72,8 +73,20 @@ def distance(phi, dx=1.0, self_test=False, order=2):
         of phi to each point in the array.
     """
     phi, dx, flag, ext_mask = pre_process_args(phi, dx)
+    distance_init = None
+    if len(phi.shape)==2 and dx[0]==dx[1] and order==2:
+        # 2d only bicubic initialization
+        dinit = BiCubicInit(phi, 1)
+        mask = dinit.aborders == False
+        distance_init = dinit.d
+        distance_init[mask] = 0.0
+        distance_init *= dx[0]
+        distance_init[phi<0] *= -1
+        distance_init[mask] = float_info.max
+
+
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
-                     int(self_test), DISTANCE, order)
+                     int(self_test), DISTANCE, order, distance_init)
     d = post_process_result(d)
     return d
 
@@ -116,12 +129,13 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2):
     """
     phi, dx, flag, ext_mask = pre_process_args(phi, dx)
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
-                     int(self_test), TRAVEL_TIME, order)
+                     int(self_test), TRAVEL_TIME, order, None)
     t = post_process_result(t)
     return t
 
 
-def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2, ext_mask=None):
+def extension_velocities(phi, speed, dx=1.0, self_test=False,
+                         order=2, ext_mask=None):
     """
     Extend the velocities defined at the zero contour of phi to the
     rest of the domain. Extend the velocities such that
@@ -165,7 +179,8 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2, ext_mask=
     phi, dx, flag, ext_mask = pre_process_args(phi, dx, ext_mask)
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
-                                   int(self_test), EXTENSION_VELOCITY, order)
+                                   int(self_test), EXTENSION_VELOCITY, order,
+                                   None)
     distance = post_process_result(distance)
     f_ext    = post_process_result(f_ext)
 

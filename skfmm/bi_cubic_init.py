@@ -1,7 +1,7 @@
 import numpy as np
 import pylab as plt
 from sys import float_info
-from scipy.optimize import fsolve, fmin_l_bfgs_b, minimize
+from scipy.optimize import fsolve
 
 ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
@@ -52,32 +52,31 @@ class bc_interp_eq2(bc_interp):
              3*a[3,2]*x**2*y**2 +\
              3*a[3,3]*x**2*y**3)
 
-class testinit(object):
-    def __init__(self, phi, h, X, Y):
+class BiCubicInit(object):
+    def __init__(self, phi, h):
         self.phi = phi
         self.d = np.ones_like(phi) * float_info.max
-        self.d1 = np.ones_like(phi) * float_info.max
         self.h = h
         assert len(phi.shape)==2
-        self.X, self.Y = X, Y
 
         gx, gy = np.gradient(phi)
         self.gx, self.gy = gx/2./h, gy/2./h
 
         xgr = np.zeros_like(phi)
-        # xgr[1:-1,1:-1] = (phi[2:,2:] - phi[2:,1:-1] - phi[1:-1,2:] \
-        #                   + 2*phi[1:-1,1:-1] - phi[:-2,1:-1] - phi[1:-1,:-2] \
-        #                   + phi[:-2,:-2])/(2 * h**2)
 
         xgr[1:-1,1:-1] = (phi[2:,2:] - phi[2:,:-2] - phi[:-2,2:] + \
                           phi[:-2,:-2])/(4*h**2)
-        # need to also define this for the outside edges.
+        # TODO: need to also define this for the outside edges.
+
         self.xgr = xgr
         self.find_frozen()
         self.ini_frozen()
 
     def find_frozen(self):
+        phi = self.phi
         aborders = np.zeros_like(phi,dtype=bool)
+        aborders[phi==0] = True
+        self.d[phi==0] = 0.0
         border_cells = np.zeros_like(phi, dtype=bool)[:-1,:-1]
         x, y = phi.shape
         for i in range(x-2):
@@ -107,19 +106,13 @@ class testinit(object):
 
     def process_cell(self,i,j):
         # find interpolation values for this cell
-        #
-
+        #if not self.aborders[i,j]: return
         coords = ((i, i+1, i, i+1), (j, j, j+1, j+1))
-        #print coords
         X = np.hstack((self.phi[coords], self.gx[coords],
                        self.gy[coords], self.xgr[coords]))
-        #print i,j, self.phi[i,j]
-        #print X
         a =  ainv *np.matrix(X).T
-        #print a
         interp = bc_interp(a)
 
-        #print
         np.testing.assert_allclose(self.phi[i,j],     interp(0,0))
         np.testing.assert_allclose(self.phi[i+1,j],   interp(1,0))
         np.testing.assert_allclose(self.phi[i,j+1],   interp(0,1))
@@ -144,34 +137,19 @@ class testinit(object):
 
         def eqns(p):
             c0, c1 = p
-            return interp(c0, c1)**2 + eq2(c0, c1)**2
-
-        def eqns2(p):
-            c0, c1 = p
             return (interp(c0, c1), eq2(c0, c1))
 
-
-        sx,sy = fsolve(eqns2, (0.5,0.5))
+        sx,sy = fsolve(eqns, (0.5,0.5))
         #print sx,sy, interp(sx,sy), eq2(sx,sy)
-
-        # res = minimize(eqns, (0.5,0.5), bounds=((0,1),(0,1)),
-        #                method="TNC", tol=1e-18)
-        # assert res.success
-        # rx, ry = res.x
-        # print rx, ry, interp(rx, ry), eq2(sx,sy)
-        # assert 0 <= rx <=1
-        # assert 0 <= ry <=1
 
         if 0 <= sx <= 1 and 0 <= sy <= 1:
             dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
-
             if self.d[i,j] > dist:
-                #print "setting d",i,j,dist
                 self.d[i,j]=dist
 
 
 if __name__ == '__main__':
-    N = 150
+    N = 100
     x, h = np.linspace(-2.5,2.5,N,retstep=True)
     extent = (x[0],x[-1],x[0],x[-1])
     X,Y = np.meshgrid(x,x)
@@ -179,10 +157,10 @@ if __name__ == '__main__':
     # solve the eikonal equation: |grad phi| = 1
     # given elliptic zero contour 0.5*x^2 + y^2 = 1
 
-    phi = 0.5*X**2 + Y**2 - 1.
+    phi = X**2 + Y**2 - 1.
     #plt.matshow(phi)
 
-    a=testinit(phi, 1, X, Y)
+    a=BiCubicInit(phi, 1)
 
     # plt.matshow(a.aborders)
     # plt.matshow(a.border_cells)
@@ -191,6 +169,7 @@ if __name__ == '__main__':
     arr=np.copy(a.d)
     mask = arr==float_info.max
     bb=np.ma.MaskedArray(arr,mask)
+    bb[phi<0] *= -1
 
     # make sure that all point adjacent to the zero contour got a value
     assert np.logical_and(a.aborders==True, np.logical_not(mask)).sum() == \
