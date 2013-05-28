@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 import skfmm
 
 # grid info
-N = 1000
+N = 100
 x, h = np.linspace(-2.5,2.5,N,retstep=True)
 extent = (x[0],x[-1],x[0],x[-1])
 X,Y = np.meshgrid(x,x)
 
 # solve the eikonal equation: |grad phi| = 1
 # given elliptic zero contour 0.5*x^2 + y^2 = 1
-phi = np.ones(X.shape)
-phi[0.5*X**2 + Y**2 < 1.] = -1.
+phi = X**2 + Y**2 - 1.0
+
 phi = skfmm.distance(phi, h, order=2)
 
 # print max/mean of Q = ||grad phi| - 1 | in a band around the zero-contour
@@ -29,10 +29,15 @@ print 'grid shape =', phi.shape
 
 # laplacian approximated by 9pt stencil
 # I need this laplacian to approximate the curvature of the zero-countour
+phi += -phi.min()
 lapl = np.zeros_like(phi)
-lapl[1:-1,1:-1] = (phi[ :-2, :-2] + phi[2:  ,2:  ] + phi[2:  , :-2] +
-                   phi[ :-2,2:  ] + phi[1:-1, :-2] + phi[1:-1,2:  ] +
-                   phi[ :-2,1:-1] + phi[2:  ,1:-1] - 8.*phi[1:-1,1:-1])/h**2
+lapl[1:-1, 1:-1] = (phi[1:-1, 2:] + phi[1:-1, :-2] + \
+                    phi[2:, 1:-1] + phi[:-2, 1:-1] - \
+                    4*phi[1:-1, 1:-1]) / h**2
+
+# lapl[1:-1,1:-1] = (phi[ :-2, :-2] + phi[2:  ,2:  ] + phi[2:  , :-2] +
+#                    phi[ :-2,2:  ] + phi[1:-1, :-2] + phi[1:-1,2:  ] +
+#                    phi[ :-2,1:-1] + phi[2:  ,1:-1] - 8.*phi[1:-1,1:-1])/h**2
 
 # contour plot of phi and grad^2 phi
 fig = plt.figure()
@@ -42,4 +47,8 @@ cs1 = ax.contour(X,Y,phi,[-.5, -.25, 0., .25, .5, .75], alpha=1, colors='k')
 cs2 = ax.contour(X,Y,lapl, alpha=0.5)
 ax.clabel(cs1, inline=1, fontsize=10)
 plt.savefig('example.png')
+plt.show()
+
+plt.contourf(X,Y,lapl, np.linspace(0,10,10))
+plt.colorbar()
 plt.show()
