@@ -75,8 +75,8 @@ class BiCubicInit(object):
     def find_frozen(self):
         phi = self.phi
         aborders = np.zeros_like(phi,dtype=bool)
-        aborders[phi==0] = True
-        self.d[phi==0] = 0.0
+        aborders[phi==0.0] = True
+        self.d[phi==0.0] = 0.0
         border_cells = np.zeros_like(phi, dtype=bool)[:-1,:-1]
         x, y = phi.shape
         for i in range(x-2):
@@ -113,10 +113,10 @@ class BiCubicInit(object):
         a =  ainv *np.matrix(X).T
         interp = bc_interp(a)
 
-        np.testing.assert_allclose(self.phi[i,j],     interp(0,0))
-        np.testing.assert_allclose(self.phi[i+1,j],   interp(1,0))
-        np.testing.assert_allclose(self.phi[i,j+1],   interp(0,1))
-        np.testing.assert_allclose(self.phi[i+1,j+1], interp(1,1))
+        np.testing.assert_almost_equal(self.phi[i,j],     interp(0,0))
+        np.testing.assert_almost_equal(self.phi[i+1,j],   interp(1,0))
+        np.testing.assert_almost_equal(self.phi[i,j+1],   interp(0,1))
+        np.testing.assert_almost_equal(self.phi[i+1,j+1], interp(1,1))
 
         # print interp(0,0)
         # print interp(1,0)
@@ -133,19 +133,28 @@ class BiCubicInit(object):
     def process_point(self, i, j, ii, jj, interp):
         # ii and jj are b here in the dimensionless reference cell
         #print ii,jj
+        #if not self.aborders[ii,jj]: return
         eq2 = bc_interp_eq2(interp, ii, jj)
 
         def eqns(p):
             c0, c1 = p
+            # try scaling these?
             return (interp(c0, c1), eq2(c0, c1))
 
-        sx,sy = fsolve(eqns, (0.5,0.5))
-        #print sx,sy, interp(sx,sy), eq2(sx,sy)
-
-        if 0 <= sx <= 1 and 0 <= sy <= 1:
-            dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
-            if self.d[i,j] > dist:
-                self.d[i,j]=dist
+        # maybe try using the bilnear approximation as a starting value?
+        # or try specifying the Jacobian of the functions
+        # http://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant
+        sol, info, ier, mesg = fsolve(eqns, (0.5,0.5), maxfev=1e4,
+                                      full_output=1)
+        sx,sy = sol
+        if ier==1:
+            if 0 <= sx <= 1 and 0 <= sy <= 1:
+                dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
+                if self.d[i,j] > dist:
+                    self.d[i,j]=dist
+        else:
+            print ier, mesg
+            print sx,sy, interp(sx,sy), eq2(sx,sy)
 
 
 if __name__ == '__main__':

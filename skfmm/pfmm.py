@@ -43,7 +43,7 @@ def post_process_result(result):
     return result
 
 
-def distance(phi, dx=1.0, self_test=False, order=2):
+def distance(phi, dx=1.0, self_test=False, order=2, initorder=1):
     """
     Return the distance from the zero contour of the array phi.
 
@@ -74,8 +74,10 @@ def distance(phi, dx=1.0, self_test=False, order=2):
     """
     phi, dx, flag, ext_mask = pre_process_args(phi, dx)
     distance_init = None
-    if len(phi.shape)==2 and dx[0]==dx[1] and order==2:
-        # 2d only bicubic initialization
+    if initorder==2:
+        # experimental 2d only bicubic initialization
+        assert len(phi.shape)==2 and dx[0]==dx[1] and order==2
+
         dinit = BiCubicInit(phi, 1)
         mask = dinit.aborders == False
         distance_init = dinit.d
