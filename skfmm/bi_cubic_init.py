@@ -97,9 +97,6 @@ class bc_interp_eq2_jacobian(bc_interp):
           4*a_[2,2]*c0*c1 + 6*a_[2,3]*c0*c1**2 + 3*a_[3,1]*c0**2 +\
           6*a_[3,2]*c0**2*c1 + 9*a_[3,3]*c0**2*c1**2))
 
-
-
-
 class BiCubicInit(object):
     def __init__(self, phi, h):
         self.phi = phi
@@ -120,11 +117,13 @@ class BiCubicInit(object):
         self.find_frozen()
         self.ini_frozen()
 
-        mask = d==float_info.max
+        mask = self.d==float_info.max
 
-        assert np.logical_and(self.aborders==True,
-                              np.logical_not(mask)).sum() == \
-            (self.aborders==True).sum()
+        print self.aborders.sum()
+        print np.logical_not(self.d==float_info.max).sum()
+        # assert np.logical_and(self.aborders==True,
+        #                       np.logical_not(mask)).sum() == \
+        #     (self.aborders==True).sum()
 
     def find_frozen(self):
         phi = self.phi
@@ -187,7 +186,11 @@ class BiCubicInit(object):
     def process_point(self, i, j, ii, jj, interp):
         # ii and jj are b here in the dimensionless reference cell
         #print ii,jj
-        #if not self.aborders[ii,jj]: return
+        if not self.aborders[i,j]: return
+        if abs(self.phi[i,j]) < float_info.epsilon:
+            self.d[i,j] = 0.0
+            return
+
         eq2 = bc_interp_eq2(interp, ii, jj)
 
         def eqns(p):
@@ -197,11 +200,11 @@ class BiCubicInit(object):
 
         fprime = ( bc_interp_jacobian(interp),
                    bc_interp_eq2_jacobian(interp, ii, jj))
-
+        fprime = None
         # maybe try using the bilnear approximation as a starting value?
         # or try specifying the Jacobian of the functions
         # http://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant
-        sol, info, ier, mesg = fsolve(eqns, (0.5,0.5), maxfev=1e4,
+        sol, info, ier, mesg = fsolve(eqns, (0.5,0.5),
                                       full_output=1, fprime=fprime)
         sx,sy = sol
         if ier==1:
@@ -210,8 +213,9 @@ class BiCubicInit(object):
                 if self.d[i,j] > dist:
                     self.d[i,j]=dist
         else:
-            print ier, mesg
-            print sx,sy, interp(sx,sy), eq2(sx,sy)
+            pass
+            #print ier, mesg
+            #print sx,sy, interp(sx,sy), eq2(sx,sy)
 
 
 if __name__ == '__main__':

@@ -7,7 +7,7 @@ from skfmm import distance
 
 """
 
-for N in [21]:#, 41, 81, 161]:
+for N in [21, 41, 81, 161]:
 
     X, Y = np.meshgrid(np.linspace(-1,1,N), np.linspace(-1,1,N))
     dx = 2.0/(N-1)
@@ -19,14 +19,15 @@ for N in [21]:#, 41, 81, 161]:
     # plt.colorbar()
     # plt.show()
 
-    #d1 = distance(phi,dx=dx,order=1)
+    d1 = distance(phi,dx=dx)
     d2 = distance(phi,dx=dx,initorder=2)
+
     #plt.matshow(d2)
     #plt.colorbar()
     #plt.show()
     #import IPython; IPython.embed()
 
-    #print "order 1", N, d1[0,0] - (np.sqrt(2.0)-0.5)
+    print "order 1", N, d1[0,0] - (np.sqrt(2.0)-0.5)
     print "order 2", N, d2[0,0] - (np.sqrt(2.0)-0.5)
 
 # from  master 78a243d
