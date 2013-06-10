@@ -31,6 +31,21 @@ class bc_interp(object):
                 a[2,3]*x**2*y**3 + a[3,0]*x**3 + a[3,1]*x**3*y + \
                 a[3,2]*x**3*y**2 + a[3,3]*x**3*y**3
 
+class bc_interp_jacobian(object):
+    def __init__(self,interp):
+        self.a=interp.a
+    def __call__(self, c0, c1):
+        return (a_[1,0] + a_[1,1]*c1 + a_[1,2]*c1**2 + a_[1,3]*c1**3 +     \
+            2*a_[2,0]*c0 + \
+            2*a_[2,1]*c0*c1 + 2*a_[2,2]*c0*c1**2 + 2*a_[2,3]*c0*c1**3 +\
+            3*a_[3,0]*c0**2 + 3*a_[3,1]*c0**2*c1 + 3*a_[3,2]*c0**2*c1**2 +\
+            3*a_[3,3]*c0**2*c1**3,
+
+            a_[0,1] + 2*a_[0,2]*c1 + 3*a_[0,3]*c1**2 + a_[1,1]*c0 +\
+            2*a_[1,2]*c0*c1 + 3*a_[1,3]*c0*c1**2 + a_[2,1]*c0**2 +\
+            2*a_[2,2]*c0**2*c1 + 3*a_[2,3]*c0**2*c1**2 + a_[3,1]*c0**3 +\
+            2*a_[3,2]*c0**3*c1 + 3*a_[3,3]*c0**3*c1**2)
+
 class bc_interp_eq2(bc_interp):
     def __init__(self, interp, b0, b1):
         self.a = interp.a
@@ -52,6 +67,39 @@ class bc_interp_eq2(bc_interp):
              3*a[3,2]*x**2*y**2 +\
              3*a[3,3]*x**2*y**3)
 
+class bc_interp_eq2_jacobian(bc_interp):
+    def __init__(self, interp, b0, b1):
+        self.a = interp.a
+        self.b0, self.b1 = b0, b1
+    def __call__(self, c0, c1):
+        a=self.a
+        b0, b1 = self.b0, self.b1
+
+        return (  \
+          a_[0,1] + 2*a_[0,2]*c1 + 3*a_[0,3]*c1**2 + a_[1,1]*c0 + \
+                  2*a_[1,2]*c0*c1 + 3*a_[1,3]*c0*c1**2 + a_[2,1]*c0**2 +\
+          2*a_[2,2]*c0**2*c1 + 3*a_[2,3]*c0**2*c1**2 + a_[3,1]*c0**3 +\
+          2*a_[3,2]*c0**3*c1 + 3*a_[3,3]*c0**3*c1**2 - (b0 - c0)*(a_[1,1] +\
+          2*a_[1,2]*c1 + 3*a_[1,3]*c1**2 + 2*a_[2,1]*c0 + 4 * a_[2,2]*c0*c1 +\
+          6*a_[2,3]*c0*c1**2 + 3*a_[3,1]*c0**2 + 6*a_[3,2]*c0**2*c1 +\
+          9*a_[3,3]*c0**2*c1**2) + (b1 - c1)*(2*a_[2,0] + 2*a_[2,1]*c1 +\
+          2*a_[2,2]*c1**2 + 2*a_[2,3]*c1**3 + 6*a_[3,0]*c0 +\
+          6*a_[3,1]*c0*c1 + 6*a_[3,2]*c0*c1**2 + 6*a_[3,3]*c0*c1**3),
+
+          -a_[1,0] - a_[1,1]*c1 - a_[1,2]*c1**2 - a_[1,3]*c1**3 -\
+          2*a_[2,0]*c0 -\
+          2*a_[2,1]*c0*c1 - 2*a_[2,2]*c0*c1**2 - 2*a_[2,3]*c0*c1**3 -\
+          3*a_[3,0]*c0**2 - 3*a_[3,1]*c0**2*c1 - 3*a_[3,2]*c0**2*c1**2 -\
+          3*a_[3,3]*c0**2*c1**3 - (b0 - c0)*(2*a_[0,2] + 6*a_[0,3]*c1 +\
+          2*a_[1,2]*c0 + 6*a_[1,3]*c0*c1 + 2*a_[2,2]*c0**2 +\
+          6*a_[2,3]*c0**2*c1 + 2*a_[3,2]*c0**3 + 6*a_[3,3]*c0**3*c1) +\
+          (b1 - c1)*(a_[1,1] + 2*a_[1,2]*c1 + 3*a_[1,3]*c1**2 + 2*a_[2,1]*c0 +\
+          4*a_[2,2]*c0*c1 + 6*a_[2,3]*c0*c1**2 + 3*a_[3,1]*c0**2 +\
+          6*a_[3,2]*c0**2*c1 + 9*a_[3,3]*c0**2*c1**2))
+
+
+
+
 class BiCubicInit(object):
     def __init__(self, phi, h):
         self.phi = phi
@@ -71,6 +119,12 @@ class BiCubicInit(object):
         self.xgr = xgr
         self.find_frozen()
         self.ini_frozen()
+
+        mask = d==float_info.max
+
+        assert np.logical_and(self.aborders==True,
+                              np.logical_not(mask)).sum() == \
+            (self.aborders==True).sum()
 
     def find_frozen(self):
         phi = self.phi
@@ -141,11 +195,14 @@ class BiCubicInit(object):
             # try scaling these?
             return (interp(c0, c1), eq2(c0, c1))
 
+        fprime = ( bc_interp_jacobian(interp),
+                   bc_interp_eq2_jacobian(interp, ii, jj))
+
         # maybe try using the bilnear approximation as a starting value?
         # or try specifying the Jacobian of the functions
         # http://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant
         sol, info, ier, mesg = fsolve(eqns, (0.5,0.5), maxfev=1e4,
-                                      full_output=1)
+                                      full_output=1, fprime=fprime)
         sx,sy = sol
         if ier==1:
             if 0 <= sx <= 1 and 0 <= sy <= 1:

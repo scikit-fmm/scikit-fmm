@@ -23,3 +23,14 @@ eq1 = dpdx_c * (b1-c1) - dpdy_c * (b0-c0)
 print python(eq0)
 print
 print python(eq1)
+
+print "Jacobian elements"
+
+print diff(eq0, c0)
+print
+print diff(eq0, c1)
+
+print
+print diff(eq1, c0)
+print
+print diff(eq1, c1)
