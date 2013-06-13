@@ -90,6 +90,7 @@ __version__ = "0.0.5dev"
 __docformat__ = 'restructuredtext'
 
 from pfmm import distance, travel_time, extension_velocities
+from pheap import pheap as heap
 
 def testing():
     r"""
@@ -243,11 +244,11 @@ def testing():
     >>> phi = distance(phi)
     >>> print phi[2, 2] == phi[2, 3]
     True
-    
+
     >>> phi = distance(phi)
     >>> print phi[2, 2] == phi[2, 3]
     True
-    
+
     **Circle Example**
 
     Solve the level set equation in two dimensions for a circle.

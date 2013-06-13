@@ -66,6 +66,13 @@ int heap::push(int address, double value)
   return listLength_-1;
 }
 
+// caller must check that the heap is not empty!
+const double &heap::peek() const
+{
+  int loc=heap_[0];
+  return distance_[loc];
+}
+
 void heap::pop(int *address, double *value)
 {
   // out: address to element with min value and value

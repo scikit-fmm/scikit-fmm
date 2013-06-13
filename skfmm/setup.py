@@ -11,6 +11,7 @@ def configuration(parent_package='', top_path=None):
                                    "travel_time_marcher.cpp",
                                    "extension_velocity_marcher.cpp"],
                           include_dirs=['.'])
+    config.add_extension("pheap", sources=["pheap.cpp", "heap.cpp"])
     return config
 
 if __name__ == '__main__':

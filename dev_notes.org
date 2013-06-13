@@ -1,0 +1,32 @@
+* To make a release:
+
+increment version number. Currently the version number is hard-coded in
+the following locations:
+./doc/conf.py
+./setup.py
+./skfmm/__init__.py
+./README.txt
+
+git tag v0.0.n
+git push --tags origin master
+
+make html
+python setup.py upload_docs --upload-dir build/html
+
+python setup.py sdist upload register
+
+on a windows machine:
+python setup.py bdist_wininst register upload
+
+
+* Cython Wrapper for heap class
+
+The binary min heap C++ class has a Cython wrapper to expose it to
+Python. Cython is not required to build this module as the c++ files
+created by Cython are checked into the gir repo. If changes are made
+to skfmm/heap.h or skfmm/heap.cpp the Cython c++ file pheap.cpp needs
+to be updated. This is done with the command:
+
+cython --cplus pheap.pyx
+
+The updates pheap.cpp should also be checked into the git repo
