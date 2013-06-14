@@ -1,3 +1,5 @@
+# -*- mode: doctest -*-
+
 """
 scikit-fmm is a Python extension module which implements the fast
 marching method.
@@ -90,7 +92,7 @@ __version__ = "0.0.5dev"
 __docformat__ = 'restructuredtext'
 
 from pfmm import distance, travel_time, extension_velocities
-from pheap import pheap as heap
+from heap import heap
 
 def testing():
     r"""
@@ -735,6 +737,28 @@ def testing():
       ...
     ValueError: phi must be a 1 to 12-D array of doubles
 
+    >>> from skfmm import heap
+    >>> h = heap(10,True)
+    >>> h.push(0,0.2)
+    0
+    >>> h.push(1,0.3)
+    1
+    >>> h.push(2,0.1)
+    2
+    >>> h.set(1, 0.01)
+    >>> h.pop()
+    (1, 0.01)
+    >>> h.pop()
+    (2, 0.1)
+    >>> h.pop()
+    (0, 0.2)
+    >>> h.empty()
+    True
+    >>> h.pop()
+    Traceback (most recent call last):
+      ...
+    RuntimeError: heap pop error: empty heap
+    <BLANKLINE>
     """
 
 def  test(verbose=None):

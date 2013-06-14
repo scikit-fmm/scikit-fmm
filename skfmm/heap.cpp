@@ -66,9 +66,10 @@ int heap::push(int address, double value)
   return listLength_-1;
 }
 
-// caller must check that the heap is not empty!
 const double &heap::peek() const
 {
+  if (heapLength_==0)
+    throw std::runtime_error("heap peek error: empty heap\n");
   int loc=heap_[0];
   return distance_[loc];
 }
