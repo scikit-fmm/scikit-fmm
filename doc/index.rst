@@ -1,12 +1,9 @@
-.. scikit-fmm documentation master file, created by
-   sphinx-quickstart on Wed Feb  8 06:45:28 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. py:module:: skfmm
 
 scikit-fmm documentation
 ========================
 
-:py:mod:`scikit-fmm` is a python extension module which implements the
+:py:obj:`scikit-fmm` is a python extension module which implements the
 fast marching method.
 
 The fast marching method is used to model the evolution of boundaries
@@ -33,10 +30,10 @@ zero contour of the function is physically meaningful. The boundary
 grows outward in the local normal direction at a speed given by
 :math:`F(x)`.
 
-:py:mod:`scikit-fmm` is a simple module which provides the functions:
-:py:func:`skfmm.distance`, :py:func:`skfmm.travel_time` and
-:py:func:`skfmm.extension_velocities`. The import name of
-:py:mod:`scikit-fmm` is :py:mod:`skfmm`.
+:py:obj:`scikit-fmm` is a simple module which provides the functions:
+:py:func:`distance`, :py:func:`travel_time` and
+:py:func:`extension_velocities`. The import name of
+:py:obj:`scikit-fmm` is :py:mod:`skfmm`.
 
 
 Examples
@@ -53,7 +50,7 @@ First, a simple example::
            [ 1.20710678,  0.5       ,  1.20710678]])
 
 Here the zero contour of phi is around the (1, 1) point. The return
-value of :py:func:`skfmm.distance` gives the signed distance from zero
+value of :py:func:`distance` gives the signed distance from zero
 contour. No grid spacing is given, so it is taken as 1. To specify a
 spacing use the optional dx argument::
 
@@ -82,7 +79,7 @@ The boundary is specified as the zero contour of a scalar function phi:
 
  >>> d = skfmm.distance(phi, dx=1e-2)
 
-:py:mod:`scikit-fmm` can also calculate travel times from an interface
+:py:obj:`scikit-fmm` can also calculate travel times from an interface
 given an array containing the interface propogation speed at each
 point. Using the same initial interface position as above we set the
 interface propagation speed to be 1.5 times greater in the upper half
@@ -96,7 +93,7 @@ of the domain.
  >>> speed[Y > 0] = 1.5
  >>> t = skfmm.travel_time(phi, speed, dx=1e-2)
 
-both :py:func:`skfmm.travel_time` and :py:func:`skfmm.distance`
+both :py:func:`travel_time` and :py:func:`distance`
 support masked arrays for input. This allows an obstacle to be introduced.
 
 .. image:: 2d_phi_travel_time_mask.png
@@ -110,7 +107,7 @@ support masked arrays for input. This allows an obstacle to be introduced.
 The full example is in examples/2d_example.py.
 :doc:`examples`
 
-An example of using :py:mod:`scikit-fmm` to compute extension velocities.
+An example of using :py:obj:`scikit-fmm` to compute extension velocities.
 
 ::
 
@@ -131,20 +128,24 @@ The full example is in examples/extension_velocities_example.py.
    :maxdepth: 2
 
    examples
+   testing
 
 Limitations:
 ============
-:py:mod:`scikit-fmm` only works for regular Cartesian grids, but grid cells may
+:py:obj:`scikit-fmm` only works for regular Cartesian grids, but grid cells may
 have a different (uniform) length in each dimension.
 
 Function Reference
 ==================
 
-.. autofunction:: skfmm.distance
+.. autofunction:: distance
 
-.. autofunction:: skfmm.travel_time
+.. autofunction:: travel_time
 
-.. autofunction:: skfmm.extension_velocities
+.. autofunction:: extension_velocities
+
+.. autoclass:: heap
+   :members:
 
 Testing
 =======
@@ -154,6 +155,3 @@ To run all the tests use
    $ python -c "import skfmm; skfmm.test()"
 
 See the full :doc:`testing`.
-
-
-

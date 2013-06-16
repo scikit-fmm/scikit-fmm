@@ -37,4 +37,4 @@ cdef class pheap:
 
     def _peek(self):
         cdef double dist
-        dist = self.thisptr.peek()
+        return self.thisptr.peek()

@@ -745,7 +745,7 @@ def testing():
     1
     >>> h.push(2,0.1)
     2
-    >>> h.set(1, 0.01)
+    >>> h.update(1, 0.01)
     >>> h.pop()
     (1, 0.01)
     >>> h.pop()
@@ -761,10 +761,11 @@ def testing():
     <BLANKLINE>
     """
 
-def  test(verbose=None):
+def test(verbose=None):
     r"""
     Run all the doctests available.
     """
     import doctest
     import skfmm
     doctest.testmod(skfmm, verbose=verbose)
+    doctest.testfile("heap.py")

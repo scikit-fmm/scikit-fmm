@@ -30,7 +30,7 @@ class Mock(object):
         else:
             return Mock()
 
-MOCK_MODULES = ['cfmm', 'numpy']
+MOCK_MODULES = ['cfmm', 'numpy', 'pheap']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = Mock()
 
@@ -63,7 +63,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'scikit-fmm'
-copyright = u'2012, the scikit-fmm team'
+copyright = u'2013, the scikit-fmm team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
