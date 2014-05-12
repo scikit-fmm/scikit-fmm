@@ -44,7 +44,7 @@ PyPI: http://pypi.python.org/pypi/scikit-fmm
 
 Source Code: https://github.com/scikit-fmm/scikit-fmm
 
-Requirements: Numpy and a C/C++ compiler (gcc/MinGW)
+Requirements: Numpy and a C/C++ compiler (gcc, MinGW, MSVC)
 
 Bugs, questions, patches, feature requests, discussion & cetera:
   Email list: http://groups.google.com/group/scikit-fmm
@@ -80,5 +80,10 @@ Version History:
    * Many additional tests and migration to doctest format.
    * Additional optional input to extension_velocities() for FiPy compatibly.
 
-:Copyright: Copyright 2012 The scikit-fmm team.
+0.0.5: May 12th 2014
+   * Fix for building with MSVC (Ján Margeta).
+   * Corrected second-order point update.
+
+
+:Copyright: Copyright 2014 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
