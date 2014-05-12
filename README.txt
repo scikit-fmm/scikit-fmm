@@ -81,7 +81,7 @@ Version History:
    * Additional optional input to extension_velocities() for FiPy compatibly.
 
 0.0.5: May 12th 2014
-   * Fix for building with MSVC (Ján Margeta).
+   * Fix for building with MSVC (Jan Margeta).
    * Corrected second-order point update.
 
 
