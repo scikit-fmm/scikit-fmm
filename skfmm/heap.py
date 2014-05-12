@@ -31,10 +31,10 @@ class heap(object):
 
     New elements (an address and an initial value) are added to the
     heap with the :py:meth:`push` method. The :py:meth:`push` method
-    returns an integer (a heap id) which is used to update the value
-    of the element.
+    returns an integer (a :py:obj:`heap_id`) which is used to update
+    the value of the element.
 
-    As the solution evolves the distance of points already in the heap
+    As the solution evolves, the distance of points already in the heap
     are updated via the :py:meth:`update` method. The
     :py:meth:`update` method takes the :py:obj:`heap_id` returned by the
     :py:meth:`push` along with a new distance value.
