@@ -39,6 +39,9 @@ class heap
   void       set(int index, double value);
   bool       empty() const;
 
+  // return the distance of the top element on the heap
+  const double &peek() const;
+
  private:
   //void       print() const;
   void       test() const;
