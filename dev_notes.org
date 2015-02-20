@@ -23,7 +23,7 @@ python setup.py bdist_wininst register upload
 
 The binary min heap C++ class has a Cython wrapper to expose it to
 Python. Cython is not required to build this module as the c++ files
-created by Cython are checked into the gir repo. If changes are made
+created by Cython are checked into the git repo. If changes are made
 to skfmm/heap.h or skfmm/heap.cpp the Cython c++ file pheap.cpp needs
 to be updated. This is done with the command:
 

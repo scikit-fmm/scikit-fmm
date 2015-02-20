@@ -7,6 +7,7 @@ include skfmm/setup.py
 include skfmm/__init__.py
 include skfmm/pfmm.py
 include skfmm/heap.py
+include skfmm/pheap.pyx
 include Makefile
 include LICENSE.txt
 include CONTRIBUTORS.txt

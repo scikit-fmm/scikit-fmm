@@ -87,7 +87,7 @@ Version History:
 0.0.6: February 20 2015
    * Documentation clarification (Geordie McBain).
    * Python 3 port (Eugene Prilepin).
-
+   * Python wrapper for binary min-heap.
 
 :Copyright: Copyright 2015 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
