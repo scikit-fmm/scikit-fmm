@@ -85,14 +85,18 @@ Version History:
    * Fix for building with MSVC (Jan Margeta).
    * Corrected second-order point update.
 
+0.0.6: February 20 2015
+   * Documentation clarification (Geordie McBain).
+   * Python 3 port (Eugene Prilepin).
 
-:Copyright: Copyright 2014 The scikit-fmm team.
+
+:Copyright: Copyright 2015 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
 """
 
 from __future__ import print_function
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities
