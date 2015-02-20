@@ -27,7 +27,8 @@ double distanceMarcher::updatePointOrderOne(int i)
       c+=idx2_[dim]*pow(value,2);
     }
   }
-  return solveQuadratic(i,a,b,c);
+  double tmp = solveQuadratic(i,a,b,c);
+  return tmp;
 }
 
 
@@ -77,7 +78,8 @@ double distanceMarcher::updatePointOrderTwo(int i)
       c+=idx2_[dim]*pow(value1,2);
     }
   }
-  return solveQuadratic(i,a,b,c);
+  double tmp = solveQuadratic(i,a,b,c);
+  return tmp;
 }
 
 

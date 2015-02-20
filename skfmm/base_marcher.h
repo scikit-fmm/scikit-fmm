@@ -58,10 +58,10 @@ protected:
 
   int              _getN(int current, int dim, int dir, int flag)
   {
-    // assume c order.
-    // for a given point find his neighbor in the given dimension
-    // and direction. Return -1 if not possible.
-    // consult shape_ information
+    // for a given point find his neighbor in the given dimension and
+    // direction.
+    // Return -1 if neighbor point is invalid (out of bounds)
+    // Return -1 if neighbor point has flag_ value equal to the flag input
     int coord[MaximumDimension];
     _getIndex(current, coord);
     int newc = coord[dim]+dir;
