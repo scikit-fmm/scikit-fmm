@@ -15,7 +15,7 @@ def pre_process_args(phi, dx, ext_mask=None):
         phi = np.array(phi)
 
     if type(dx) is float or type(dx) is int:
-        dx = [dx for x in range(len(phi.shape))]
+        dx = [dx for x in range(phi.ndim)]
     dx = np.array(dx)
 
     if isinstance(phi, np.ma.MaskedArray):
@@ -53,7 +53,7 @@ def distance(phi, dx=1.0, self_test=False, order=2):
           the distance calculation. Phi can of 1,2,3 or higher
           dimension and can be a masked array.
 
-    dx  : float or an array-like of shape len(phi), optional
+    dx  : float or an array-like of len phi.ndim, optional
           the cell length in each dimension.
 
     self_test : bool, optional
@@ -94,7 +94,7 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2):
             contains the speed of interface propagation at each point
             in the domain.
 
-    dx  : float or an array-like of shape len(phi), optional
+    dx  : float or an array-like of len phi.ndim, optional
           the cell length in each dimension.
 
     self_test : bool, optional
@@ -139,7 +139,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2, ext_mask=
             contains the speed of interface propagation at each point
             in the domain.
 
-    dx  : float or an array-like of shape len(phi), optional
+    dx  : float or an array-like of len phi.ndim, optional
           the cell length in each dimension.
 
     self_test : bool, optional
