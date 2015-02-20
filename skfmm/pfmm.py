@@ -1,6 +1,7 @@
-import numpy as np
-from cfmm import cFastMarcher
 from sys import float_info
+import numpy as np
+
+from .cfmm import cFastMarcher
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
@@ -19,14 +20,14 @@ def pre_process_args(phi, dx, ext_mask=None):
     dx = np.array(dx)
 
     if isinstance(phi, np.ma.MaskedArray):
-        flag           = np.zeros(phi.shape, dtype=np.int)
+        flag = np.zeros(phi.shape, dtype=np.int)
         flag[phi.mask] = MASK
-        phi            = phi.data
+        phi = phi.data
     else:
         flag = np.zeros(phi.shape, dtype=np.int)
 
-	if ext_mask is None:
-		ext_mask = np.zeros(phi.shape, dtype=np.int)
+    if ext_mask is None:
+        ext_mask = np.zeros(phi.shape, dtype=np.int)
 
     return phi, dx, flag, ext_mask
 
@@ -36,9 +37,9 @@ def post_process_result(result):
     post-process results from the c module (add mask)
     """
     if (result == float_info.max).any():
-        mask         = (result == float_info.max)
+        mask = (result == float_info.max)
         result[mask] = 0
-        result       = np.ma.MaskedArray(result, mask)
+        result = np.ma.MaskedArray(result, mask)
     return result
 
 
@@ -167,6 +168,6 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2, ext_mask=
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY, order)
     distance = post_process_result(distance)
-    f_ext    = post_process_result(f_ext)
+    f_ext = post_process_result(f_ext)
 
     return distance, f_ext

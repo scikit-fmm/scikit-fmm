@@ -89,10 +89,14 @@ Version History:
 :Copyright: Copyright 2014 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
 """
+
+from __future__ import print_function
+
 __version__ = "0.0.5"
 __docformat__ = 'restructuredtext'
 
-from pfmm import distance, travel_time, extension_velocities
+from .pfmm import distance, travel_time, extension_velocities
+
 
 def testing():
     r"""
@@ -109,15 +113,15 @@ def testing():
 
     >>> import numpy as np
 
-    >>> print np.allclose(distance((-1., -1., -1., -1., 1., 1., 1., 1.), dx=.5),
-    ...                   (-1.75, -1.25, -.75, -0.25, 0.25, 0.75, 1.25, 1.75))
+    >>> print(np.allclose(distance((-1., -1., -1., -1., 1., 1., 1., 1.), dx=.5),
+    ...                   (-1.75, -1.25, -.75, -0.25, 0.25, 0.75, 1.25, 1.75)))
     True
 
     Small dimensions.
 
     >>> dx = 1e-10
-    >>> print np.allclose(distance((-1., -1., -1., -1., 1., 1., 1., 1.), dx=dx),
-    ...                   np.arange(8) * dx - 3.5 * dx)
+    >>> print(np.allclose(distance((-1., -1., -1., -1., 1., 1., 1., 1.), dx=dx),
+    ...                   np.arange(8) * dx - 3.5 * dx))
     True
 
     **Bug Fix**
@@ -135,8 +139,8 @@ def testing():
     >>> sqrt = crossProd**2 *(dsq - (vbr - vml)**2)
     >>> sqrt = np.sqrt(max(sqrt, 0))
     >>> vmr = (top + sqrt) / dsq
-    >>> print np.allclose(distance(((-1., 1., -1.), (1., 1., 1.)), dx=(dx, dy), order=1),
-    ...                   ((vbl, vml, vbl), (vbr, vmr, vbr)))
+    >>> print(np.allclose(distance(((-1., 1., -1.), (1., 1., 1.)), dx=(dx, dy), order=1),
+    ...                   ((vbl, vml, vbl), (vbr, vmr, vbr))))
     True
 
     **Test Extension Field Calculation**
@@ -147,9 +151,9 @@ def testing():
     ...                                    [[-1, .5], [2., -1.]],
     ...                                    ext_mask=phi < 0,
     ...                                    dx=1., order=1)
-    >>> print np.allclose(phi, ((-tmp / 2, 0.5), (0.5, 0.5 + tmp)))
+    >>> print(np.allclose(phi, ((-tmp / 2, 0.5), (0.5, 0.5 + tmp))))
     True
-    >>> print np.allclose(ext, [[1.25, .5], [2., 1.25]])
+    >>> print(np.allclose(ext, [[1.25, .5], [2., 1.25]]))
     True
 
     >>> phi = np.array(((-1., 1., 1.), (1., 1., 1.), (1., 1., 1.)))
@@ -163,14 +167,14 @@ def testing():
     >>> v2 = 1.5
     >>> tmp1 = (v1 + v2) / 2 + np.sqrt(2. - (v1 - v2)**2) / 2
     >>> tmp2 = tmp1 + 1 / np.sqrt(2)
-    >>> print np.allclose(phi, ((-tmp / 2, 0.5, 1.5),
+    >>> print(np.allclose(phi, ((-tmp / 2, 0.5, 1.5),
     ...                         (0.5, 0.5 + tmp, tmp1),
-    ...                         (1.5, tmp1, tmp2)))
+    ...                         (1.5, tmp1, tmp2))))
     True
-    >>> print np.allclose(ext, ((1.25, 2., 2.),
+    >>> print(np.allclose(ext, ((1.25, 2., 2.),
     ...                         (.5, 1.25, 1.5456),
     ...                         (.5, 0.9544, 1.25)),
-    ...                   rtol = 1e-4)
+    ...                   rtol = 1e-4))
     True
 
     **Bug Fix**
@@ -181,7 +185,7 @@ def testing():
     vectors. In fact the two closest cells could have opposite
     normals.
 
-    >>> print np.allclose(distance((-1., 1., -1.)), (-0.5, 0.5, -0.5))
+    >>> print(np.allclose(distance((-1., 1., -1.)), (-0.5, 0.5, -0.5)))
     True
 
     Testing second order. This example failed with Scikit-fmm_.
@@ -194,9 +198,9 @@ def testing():
     ...           (-0.5, -0.35355339, 0.5, 1.45118446),
     ...           (0.5, 0.5, 0.97140452, 1.76215286),
     ...           (1.49923009, 1.45118446, 1.76215286, 2.33721352))
-    >>> print np.allclose(distance(phi),
+    >>> print(np.allclose(distance(phi),
     ...                   answer,
-    ...                   rtol=1e-9)
+    ...                   rtol=1e-9))
     True
 
     **A test for a bug in both LSMLIB and Scikit-fmm**
@@ -233,7 +237,7 @@ def testing():
     slightly different order so gets a seemingly better answer, but
     this is just chance.
 
-    >>> print np.allclose(phi, answer, rtol=1e-9)
+    >>> print(np.allclose(phi, answer, rtol=1e-9))
     True
 
     The following tests for the same issue but is a better test case
@@ -244,11 +248,11 @@ def testing():
     ...                 [-1, -1, -1, -1, -1, -1]])
 
     >>> phi = distance(phi)
-    >>> print phi[2, 2] == phi[2, 3]
+    >>> print(phi[2, 2] == phi[2, 3])
     True
 
     >>> phi = distance(phi)
-    >>> print phi[2, 2] == phi[2, 3]
+    >>> print(phi[2, 2] == phi[2, 3])
     True
 
     **Circle Example**
@@ -310,7 +314,7 @@ def testing():
     ...     MASK,  MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK), 'd')
 
     >>> phi[trialValues == MASK] = MASK
-    >>> print np.allclose(phi, trialValues)
+    >>> print(np.allclose(phi, trialValues))
     True
 
     **Square Example**
@@ -360,7 +364,7 @@ def testing():
     ...     -3. * dx / 2., -dx / 2., v4              , -dx / 2., -3. * dx / 2.,
     ...     v1           , val     , -dy / 2.        , val     , v1           ,
     ...     v3           , v2      , -3. * dy / 2.   , v2      , v3           ))
-    >>> print np.allclose(arr, phi)
+    >>> print(np.allclose(arr, phi))
     True
 
     **Assertion Errors**
@@ -739,7 +743,8 @@ def testing():
 
     """
 
-def  test(verbose=None):
+
+def test(verbose=None):
     r"""
     Run all the doctests available.
     """
