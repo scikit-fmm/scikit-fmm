@@ -1,5 +1,4 @@
 # -*- mode: doctest -*-
-
 """
 scikit-fmm is a Python extension module which implements the fast
 marching method.
@@ -57,9 +56,9 @@ Installing:
  $ python setup.py install
 
 Testing (doctest):
-  $ python -c "import skfmm; skfmm.test()"
+  $ python -c "import skfmm; skfmm.test(True)"
 
-Building documentation (required sphinx and numpydoc):
+Building documentation (requires sphinx and numpydoc):
   $ make html
 
 Version History:
@@ -87,10 +86,11 @@ Version History:
    * Fix for building with MSVC (Jan Margeta).
    * Corrected second-order point update.
 
-0.0.6: February 20 2015
+0.0.6: February 20th 2015
    * Documentation clarification (Geordie McBain).
    * Python 3 port (Eugene Prilepin).
    * Python wrapper for binary min-heap.
+   * Freeze equidistant narrow-band points simultaneously.
 
 :Copyright: Copyright 2015 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
@@ -101,8 +101,8 @@ from __future__ import print_function
 __version__ = "0.0.6"
 __docformat__ = 'restructuredtext'
 
-from pfmm import distance, travel_time, extension_velocities
-from heap import heap
+from .pfmm import distance, travel_time, extension_velocities
+from .heap import heap
 
 def testing():
     r"""

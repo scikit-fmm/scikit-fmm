@@ -1,4 +1,4 @@
-from pheap import pheap as _pheap
+from .pheap import pheap as _pheap
 
 # This wrapper exists only to add docstrings to the heap class.
 # Cython cannot do this automatically at the time of writing.
