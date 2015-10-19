@@ -14,7 +14,7 @@ double distanceMarcher::updatePointOrderOne(int i)
       naddr = _getN(i,dim,j,Mask);
       if (naddr!=-1 && flag_[naddr]==Frozen)
       {
-        if (distance_[naddr]<value)
+        if (fabs(distance_[naddr])<fabs(value))
         {
           value = distance_[naddr];
         }
@@ -50,7 +50,7 @@ double distanceMarcher::updatePointOrderTwo(int i)
       naddr = _getN(i,dim,j,Mask);
       if (naddr!=-1 && flag_[naddr]==Frozen)
       {
-        if (distance_[naddr]<value1)
+        if (fabs(distance_[naddr])<fabs(value1))
         {
           value1 = distance_[naddr];
           int naddr2 = _getN(i,dim,j*2,Mask);
