@@ -132,6 +132,51 @@ def testing():
 
     **Bug Fix**
 
+    Test case for a bug in the upwind finite difference scheme for
+    negative phi. When computing finite differences we want to
+    preferentially use information from the frozen neighbours that
+    are closest to the zero contour in each dimension. This means
+    that we must compare absolute distances when checking neighbours
+    in the negative phi direction.
+
+    The error can result in incorrect values of the updated signed
+    distance function for regions close to the minimum contour of
+    the level set function, i.e. in the middle of holes.
+
+    To test we use a square matrix for the initial phi field that is
+    equal to -1 on the main diagonal and on the three diagonals above
+    and below this. The matrix is set to 1 everywhere else. The bug
+    results in errors in positions (1,1), (2,2), (3,3), (6,6), (7,7)
+    and (8,8) along the main diagonal.
+
+    This error occurs for first- and second-order updates. For
+    simplicity, we choose to only test the first-order update.
+
+    >>> phi = np.ones((10, 10))
+    >>> i,j = np.indices(phi.shape)
+    >>> phi[i==j-3] = -1
+    >>> phi[i==j-2] = -1
+    >>> phi[i==j-1] = -1
+    >>> phi[i==j] = -1
+    >>> phi[i==j+1] = -1
+    >>> phi[i==j+2] = -1
+    >>> phi[i==j+3] = -1
+    >>> phi = distance(phi, order=1)
+    >>> print(np.allclose(phi[1, 1], -2.70464, atol=1e-4))
+    True
+    >>> print(np.allclose(phi[2, 2], -2.50873, atol=1e-4))
+    True
+    >>> print(np.allclose(phi[3, 3], -2.47487, atol=1e-4))
+    True
+    >>> print(np.allclose(phi[6, 6], -2.47487, atol=1e-4))
+    True
+    >>> print(np.allclose(phi[7, 7], -2.50873, atol=1e-4))
+    True
+    >>> print(np.allclose(phi[8, 8], -2.70464, atol=1e-4))
+    True
+
+    **Bug Fix**
+
     A 2D test case to test trial values for a pathological case.
 
     >>> dx = 1.
