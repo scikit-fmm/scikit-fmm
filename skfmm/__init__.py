@@ -92,13 +92,17 @@ Version History:
    * Python wrapper for binary min-heap.
    * Freeze equidistant narrow-band points simultaneously.
 
+0.0.7: October 21th 2015
+   * Bug fix to upwind finite difference approximation for negative
+     phi from Lester Hedges.
+
 :Copyright: Copyright 2015 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.
 """
 
 from __future__ import print_function
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities
