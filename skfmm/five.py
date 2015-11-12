@@ -33,6 +33,8 @@ X,Y = np.meshgrid(x,x)
 
 phi = X**2 + Y**2 - 3**2
 
+dist = np.sqrt(X**2+Y**2) - 3
+
 #plot_array(phi)
 a=BiCubicInit(phi, 1)
 
@@ -43,9 +45,18 @@ arr=np.copy(a.d)
 mask = arr==float_info.max
 bb=np.ma.MaskedArray(arr,mask)
 bb[phi<0] *= -1
+exact_narrow = np.ma.MaskedArray(dist,mask)
+
+import skfmm
+linear_narrow = np.ma.MaskedArray(skfmm.distance(phi), mask)
 
 def my_extra():
     for k,v in a.pdict.iteritems():
         plt.plot((k[0], k[0]+v[0]), (k[1], k[1]+v[1]), "-o")
 
 plot_array(bb, my_extra)
+
+#plot_array(exact_narrow)
+
+print exact_narrow - bb
+print exact_narrow - linear_narrow
