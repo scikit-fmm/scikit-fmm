@@ -1,6 +1,8 @@
 #+TITLE:
 #+DATE:
 #+OPTIONS: toc:nil timestamp:nil
+#+STARTUP: showall
+
 * Bi-cubic interpolation function over a grid cell
 
 \(

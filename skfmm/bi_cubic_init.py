@@ -102,6 +102,7 @@ class BiCubicInit(object):
         self.phi = phi
         self.d = np.ones_like(phi) * float_info.max
         self.h = h
+        self.pdict = {}
         assert len(phi.shape)==2
 
         gx, gy = np.gradient(phi)
@@ -207,11 +208,14 @@ class BiCubicInit(object):
         sol, info, ier, mesg = fsolve(eqns, (0.5,0.5),
                                       full_output=1, fprime=fprime)
         sx,sy = sol
+
         if ier==1:
             if 0 <= sx <= 1 and 0 <= sy <= 1:
+                #print i+sx,j+sy
                 dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
                 if self.d[i,j] > dist:
                     self.d[i,j]=dist
+                    self.pdict[(i,j)] = (sx,sy)
         else:
             pass
             #print ier, mesg
@@ -228,13 +232,18 @@ if __name__ == '__main__':
     # given elliptic zero contour 0.5*x^2 + y^2 = 1
 
     phi = X**2 + Y**2 - 1.
-    #plt.matshow(phi)
+    plt.matshow(phi)
+    plt.colorbar()
+    plt.show()
 
     a=BiCubicInit(phi, 1)
 
-    # plt.matshow(a.aborders)
-    # plt.matshow(a.border_cells)
-    # plt.matshow(a.xgr[1:-1,1:-1])
+    plt.matshow(a.aborders)
+    plt.colorbar()
+    plt.show()
+
+    #plt.matshow(a.border_cells)
+    #plt.matshow(a.xgr[1:-1,1:-1])
 
     arr=np.copy(a.d)
     mask = arr==float_info.max
@@ -247,5 +256,4 @@ if __name__ == '__main__':
 
     plt.matshow(bb)
     plt.colorbar()
-
     plt.show()
