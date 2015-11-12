@@ -78,8 +78,8 @@ class BiCubicInit(object):
 
         mask = self.d==float_info.max
 
-        print self.aborders.sum()
-        print np.logical_not(self.d==float_info.max).sum()
+        #print self.aborders.sum()
+        #print np.logical_not(self.d==float_info.max).sum()
         # assert np.logical_and(self.aborders==True,
         #                       np.logical_not(mask)).sum() == \
         #     (self.aborders==True).sum()
@@ -168,7 +168,7 @@ class BiCubicInit(object):
         if ier==1:
             if 0 <= sx <= 1 and 0 <= sy <= 1:
                 #print i+sx,j+sy
-                print "test", eqns(sol)
+                #print "test", eqns(sol)
                 dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
                 if self.d[i,j] > dist:
                     self.d[i,j]=dist
