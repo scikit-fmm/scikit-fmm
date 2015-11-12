@@ -64,7 +64,7 @@ class BiCubicInit(object):
         assert len(phi.shape)==2
 
         gx, gy = np.gradient(phi)
-        self.gx, self.gy = gx/2./h, gy/2./h
+        self.gx, self.gy = gx/h, gy/h
 
         xgr = np.zeros_like(phi)
 
