@@ -24,13 +24,13 @@ print python(eq0)
 print
 print python(eq1)
 
-print "Jacobian elements"
+# print "Jacobian elements"
 
-print diff(eq0, c0)
-print
-print diff(eq0, c1)
+# print diff(eq0, c0)
+# print
+# print diff(eq0, c1)
 
-print
-print diff(eq1, c0)
-print
-print diff(eq1, c1)
+# print
+# print diff(eq1, c0)
+# print
+# print diff(eq1, c1)
