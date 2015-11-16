@@ -217,10 +217,12 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     case DISTANCE:
     {
 
-      dinit = (PyArrayObject *)PyArray_FROMANY(pdinit, PyArray_DOUBLE, 1,
-                                               10, NPY_IN_ARRAY);
-      if (dinit)
+      if (pdinit != Py_None)
       {
+        dinit = (PyArrayObject *)PyArray_FROMANY(pdinit, PyArray_DOUBLE, 1,
+                                                 10, NPY_IN_ARRAY);
+        // we should be testing the dimention here for safety.
+
         double * local_dinit   = (double *) PyArray_DATA(dinit);
 
         marcher = new distanceMarcherDInit(
