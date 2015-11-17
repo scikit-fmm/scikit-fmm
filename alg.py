@@ -1,4 +1,4 @@
-from sympy import summation, symbols, diff, MatrixSymbol
+from sympy import summation, symbols, diff, MatrixSymbol, Matrix
 import sympy.printing.python as python
 from sympy.abc import x,y,i,j
 
@@ -18,7 +18,11 @@ dpdx_c = diff(expr,x).subs(x,c0).subs(y,c1)
 dpdy_c = diff(expr,y).subs(x,c0).subs(y,c1)
 
 eq0 = expr.subs(x,c0).subs(y,c1)
-eq1 = dpdx_c * (b1-c1) - dpdy_c * (b0-c0)
+
+grad_p = Matrix((dpdx_c, dpdy_c, 0))
+eq1 = grad_p.cross(Matrix((b0-c0,b1-c1,0)))[2]
+
+# eq1 = dpdx_c * (b1-c1) - dpdy_c * (b0-c0)
 
 print python(eq0)
 print
