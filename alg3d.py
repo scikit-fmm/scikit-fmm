@@ -1,6 +1,7 @@
 from sympy import summation, symbols, diff, MatrixSymbol, Matrix
 import sympy.printing.python as python
 from sympy.abc import x,y,z,i,j,k,l
+import re
 
 a = symbols('a:64')
 
@@ -29,9 +30,16 @@ eq1 = grad_p.cross(Matrix((b0-c0,b1-c1,b2-c2)))
 
 # eq1 = dpdx_c * (b1-c1) - dpdy_c * (b0-c0)
 
-print python(eq0)
 print
-print python(eq1)
+print
+print re.sub(r"a(\d+)", r"a[\1-1]", str(eq1[0]))
+print
+print
+print re.sub(r"a(\d+)", r"a[\1-1]", str(eq1[1]))
+print
+print
+print re.sub(r"a(\d+)", r"a[\1-1]", str(eq1[2]))
+print
 
 # print "Jacobian elements"
 
