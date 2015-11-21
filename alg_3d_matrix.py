@@ -13,18 +13,25 @@ c0, c1, c2 = symbols('c:3')  # the unknown point on the zero level-set
 
 expr = 0
 l = 0
-for k in range(4):
+for i in range(4):
     for j in range(4):
-        for i in range(4):
+        for k in range(4):
             expr += a[l] * x**i * y**j * z**k
             l +=1
 
 
-offsets = np.array(((0,0,0), (1,0,0), (0,1,0),
-                    (1,1,0), (0,0,1), (1,0,1),
-                    (0,1,1), (1,1,1)))
+# offsets = np.array(((0,0,0), (1,0,0), (0,1,0),
+#                     (1,1,0), (0,0,1), (1,0,1),
+#                     (0,1,1), (1,1,1)))
 #offsets = list(itertools.product((0,1), (0,1), (0,1)))
-
+offsets = np.array(((0, 0, 0),
+                    (0, 0, 1),
+                    (0, 1, 0),
+                    (0, 1, 1),
+                    (1, 0, 0),
+                    (1, 0, 1),
+                    (1, 1, 0),
+                    (1, 1, 1)))
 matrix = []
 
 # ok these are the first 8 rows...
