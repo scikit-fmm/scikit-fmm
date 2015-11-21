@@ -13,9 +13,9 @@ c0, c1, c2 = symbols('c:3')  # the unknown point on the zero level-set
 
 expr = 0
 l = 0
-for i in range(4):
+for k in range(4):
     for j in range(4):
-        for k in range(4):
+        for i in range(4):
             expr += a[l] * x**i * y**j * z**k
             l +=1
 
@@ -158,6 +158,7 @@ for xo,yo,zo in offsets:
 for xo,yo,zo in offsets:
     row = np.zeros(64)
     v = str(expr.diff(x).diff(y).diff(z).subs(x,xo).subs(y,yo).subs(z,zo))
+    print v
     v1 = re.sub(r"a(\d+)", r"1", v)
     v1 = v1.replace("+", ",")
     v1 = "("+v1+",)"
