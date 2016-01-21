@@ -4,7 +4,7 @@ import sys
 import setuptools
 
 DISTNAME         = "scikit-fmm"
-DESCRIPTION      = "An extension module implimenting the fast marching method"
+DESCRIPTION      = "An extension module implementing the fast marching method"
 MAINTAINER       = "Jason Furtney"
 MAINTAINER_EMAIL = "jkfurtney@gmail.com"
 VERSION          = "0.0.7"
