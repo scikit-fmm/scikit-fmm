@@ -1,16 +1,27 @@
 # see: https://gist.github.com/dan-blanchard/7045057
 
+sudo: false
 language: python
 python:
   - 2.7
   - 3.4
   - 3.5
 
+cache: apt
+
+addons:
+  apt:
+    packages:
+    - libatlas-dev
+    - libatlas-base-dev
+    - liblapack-dev
+    - gfortran
+
 # Setup anaconda
 before_install:
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
-  - ./miniconda.sh -b
+  - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda update --yes conda
