@@ -1,4 +1,5 @@
-# see: https://gist.github.com/dan-blanchard/7045057
+# see : http://lmjohns3.com/2015/06/using-travis-ci-with-miniconda-scipy-and-nose.html
+# see: https://github.com/lmjohns3/theanets/blob/master/.travis.yml
 
 sudo: false
 language: python
@@ -30,7 +31,7 @@ before_install:
 # Install packages
 install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy
-  - python setup.py install
+  - python setup.py develop
 
 # Run test
 script:
