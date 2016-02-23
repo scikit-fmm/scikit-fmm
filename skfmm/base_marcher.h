@@ -20,7 +20,7 @@ class baseMarcher
 public:
   baseMarcher(double *phi,      double *dx,  long *flag,
               double *distance, int ndim,    int *shape,
-              bool self_test,   int order);
+              bool self_test,   int order,   double narrow);
 
   virtual          ~baseMarcher();
   void             march();

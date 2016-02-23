@@ -43,9 +43,8 @@ def post_process_result(result):
     return result
 
 
-def distance(phi, dx=1.0, self_test=False, order=2):
-    """
-    Return the distance from the zero contour of the array phi.
+def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
+    """Return the distance from the zero contour of the array phi.
 
     Parameters
     ----------
@@ -66,15 +65,26 @@ def distance(phi, dx=1.0, self_test=False, order=2):
             order of computational stencil to use in updating points during
             the fast marching method. Must be 1 or 2, the default is 2.
 
+    narrow : int, optional
+
+             narrow band length. If this optional argument is
+             specified the marching algorithm is limited to a given
+             narrow band length. If far-field points remain when this
+             condition is met a masked array is return. The default
+             value is 0.0 which means no narrow band limit.
+
     Returns
     -------
     d : an array the same shape as phi
         contains the distance from the zero contour (zero level set)
         of phi to each point in the array.
+
     """
+    if narrow < 0:
+        raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
     phi, dx, flag, ext_mask = pre_process_args(phi, dx)
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
-                     int(self_test), DISTANCE, order)
+                     int(self_test), DISTANCE, order, narrow)
     d = post_process_result(d)
     return d
 

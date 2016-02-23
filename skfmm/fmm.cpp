@@ -73,13 +73,16 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask;
   int       self_test, mode, order;
   PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
+  double narrow=0;
   distance = 0;
   f_ext    = 0;
   speed    = 0;
   ext_mask = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOOiii", &pphi, &pdx, &pflag,
-                        &pspeed, &pext_mask, &self_test, &mode, &order))
+
+  if (!PyArg_ParseTuple(args, "OOOOOiiid", &pphi, &pdx, &pflag,
+                        &pspeed, &pext_mask, &self_test, &mode,
+                        &order, &narrow))
   {
     return NULL;
   }
@@ -254,7 +257,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         PyArray_NDIM(phi),
         shape,
         self_test,
-        order);
+        order,
+        narrow);
     }
     break;
     case TRAVEL_TIME:
@@ -268,7 +272,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         shape,
         self_test,
         order,
-        local_speed);
+        local_speed,
+        narrow);
     }
     break;
     case EXTENSION_VELOCITY:
@@ -285,7 +290,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         order,
         local_ext_mask,
         local_speed,
-        local_fext);
+        local_fext,
+        narrow);
     }
     break;
   default: error=1;

@@ -8,8 +8,8 @@ public:
   travelTimeMarcher(double *phi,      double *dx, long *flag,
                     double *distance, int ndim,   int *shape,
                     bool self_test,   int order,
-                    double *speed) :
-    distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test, order),
+                    double *speed, double narrow) :
+    distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test, order, narrow),
     speed_(speed)
   {
     for (int i=0; i<size_; i++)

@@ -14,8 +14,9 @@ extern "C" {
 baseMarcher::baseMarcher(
   double *phi,      double *dx,   long *flag,
   double *distance, int     ndim, int *shape,
-  bool self_test,   int order)
+  bool self_test,   int order,    double narrow )
 {
+  narrow_     =   narrow;
   order_      =   order;
   error_      =   1;
   phi_        =   phi;
@@ -123,6 +124,11 @@ void baseMarcher::solve()
     double  value   = 0;
     int     addr    = 0;
     heap_->pop(&addr, &value);
+
+    if ((narrow_ != 0) && (abs(value) > narrow_))
+    {
+      break;
+    }
     flag_[addr]=Frozen;
     finalizePoint(addr, value);
     toFreeze.push_back(addr);
