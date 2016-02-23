@@ -102,7 +102,7 @@ Version History:
 
 from __future__ import print_function
 
-__version__ = "0.0.7"
+__version__ = "0.0.8dev"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities

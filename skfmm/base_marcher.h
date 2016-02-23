@@ -39,6 +39,7 @@ private:
     }
   }
 
+  double            narrow_;
   int               order_;
   int             * heapptr_;        // heap back pointers
   heap            * heap_;

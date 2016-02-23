@@ -80,6 +80,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   ext_mask = 0;
 
 
+
   if (!PyArg_ParseTuple(args, "OOOOOiiid", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
                         &order, &narrow))

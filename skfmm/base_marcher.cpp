@@ -125,7 +125,7 @@ void baseMarcher::solve()
     int     addr    = 0;
     heap_->pop(&addr, &value);
 
-    if ((narrow_ != 0) && (abs(value) > narrow_))
+    if ((narrow_ != 0) && (fabs(value) > narrow_))
     {
       break;
     }
@@ -220,6 +220,8 @@ void baseMarcher::solve()
   {
     if (flag_[i] == Mask) distance_[i] = maxDouble;
     if (flag_[i] == Far)  distance_[i] = maxDouble;
+    if (flag_[i] == Narrow)  distance_[i] = maxDouble;
+
   }
   error_ = 0;
   return;
