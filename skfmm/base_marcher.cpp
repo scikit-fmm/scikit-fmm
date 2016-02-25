@@ -217,11 +217,8 @@ void baseMarcher::solve()
   // add back mask here. The python wrapper will look for elements
   // equal to maxDouble and add the mask back
   for (int i=0; i<size_; i++)
-  {
-    if (flag_[i] == Mask) distance_[i] = maxDouble;
-    if (flag_[i] == Far)  distance_[i] = maxDouble;
-    if (flag_[i] == Narrow)  distance_[i] = maxDouble;
-
+  {    
+    if (flag_[i] != Frozen) distance_[i] = maxDouble;
   }
   error_ = 0;
   return;

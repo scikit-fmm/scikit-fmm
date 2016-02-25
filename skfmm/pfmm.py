@@ -7,7 +7,7 @@ FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
 
 
-def pre_process_args(phi, dx, ext_mask=None):
+def pre_process_args(phi, dx, narrow, ext_mask=None):
     """
     get input data into the correct form for calling the c extension module
     This wrapper allows for a little bit of flexibility in the input types
@@ -29,6 +29,9 @@ def pre_process_args(phi, dx, ext_mask=None):
     if ext_mask is None:
         ext_mask = np.zeros(phi.shape, dtype=np.int)
 
+    if narrow < 0:
+        raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
+        
     return phi, dx, flag, ext_mask
 
 
@@ -65,13 +68,12 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
             order of computational stencil to use in updating points during
             the fast marching method. Must be 1 or 2, the default is 2.
 
-    narrow : int, optional
-
-             narrow band length. If this optional argument is
-             specified the marching algorithm is limited to a given
-             narrow band length. If far-field points remain when this
+    narrow : float, optional
+             narrow band half-width. If this optional argument is
+             specified the marching algorithm is limited to within a
+             given narrow band. If far-field points remain when this
              condition is met a masked array is return. The default
-             value is 0.0 which means no narrow band limit.
+             value is 0.0 which means no narrow band limit. 
 
     Returns
     -------
@@ -80,9 +82,7 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
         of phi to each point in the array.
 
     """
-    if narrow < 0:
-        raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
-    phi, dx, flag, ext_mask = pre_process_args(phi, dx)
+    phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow)
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), DISTANCE, order, narrow)
     d = post_process_result(d)
@@ -90,8 +90,7 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
 
 
 def travel_time(phi, speed, dx=1.0, self_test=False, order=2, narrow=0.0):
-    """
-    Return the travel from the zero contour of the array phi given the
+    """Return the travel from the zero contour of the array phi given the
     scalar velocity field speed.
 
     Parameters
@@ -117,6 +116,15 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2, narrow=0.0):
             order of computational stencil to use in updating points during
             the fast marching method. Must be 1 or 2, the default is 2.
 
+    narrow : float, optional
+             narrow band half-width. If this optional argument is
+             specified the marching algorithm is limited to travel
+             times within a given value. If far-field points
+             remain when this condition is met a masked array is
+             return. The default value is 0.0 which means no narrow
+             band limit. 
+    
+
     Returns
     -------
     t : an array the same shape as phi
@@ -124,8 +132,9 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2, narrow=0.0):
         set) of phi to each point in the array given the scalar
         velocity field speed. If the input array speed has values less
         than or equal to zero the return value will be a masked array.
+
     """
-    phi, dx, flag, ext_mask = pre_process_args(phi, dx)
+    phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow)
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
                      int(self_test), TRAVEL_TIME, order, narrow)
     t = post_process_result(t)
@@ -168,13 +177,21 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
                calculating the value at the interface before the
                values are extended away from the interface.
 
+    narrow : float, optional
+             narrow band half-width. If this optional argument is
+             specified the marching algorithm is limited to within a
+             given narrow band. If far-field points remain when this
+             condition is met a masked arrays are return. The default
+             value is 0.0 which means no narrow band limit. 
+
+    
     Returns
     -------
     (d, f_ext) : tuple
         a tuple containing the signed distance function d and the
         extension velocities f_ext.
     """
-    phi, dx, flag, ext_mask = pre_process_args(phi, dx, ext_mask)
+    phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow, ext_mask)
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,

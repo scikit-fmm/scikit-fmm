@@ -146,7 +146,6 @@ void extensionVelocityMarcher::cleanUp()
 {
   for (int i=0; i<size_; i++)
   {
-    if (flag_[i] == Mask) f_ext_[i] = maxDouble;
-    if (flag_[i] == Far)  f_ext_[i] = maxDouble;
+    if (flag_[i] != Frozen) f_ext_[i] = maxDouble;
   }
 }

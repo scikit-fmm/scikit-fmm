@@ -827,7 +827,48 @@ def testing():
     masked_array(data = [-- -- -0.5 0.5 -- --],
                  mask = [ True  True False False  True  True],
            fill_value = 1e+20)
-    <BLANKLINE>    
+    <BLANKLINE>
+    >>> N     = 50
+    >>> X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+    >>> r     = 0.5
+    >>> dx    = 2.0 / (N - 1)
+    >>> phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+    >>> exact = np.sqrt(X ** 2 + Y ** 2) - r
+
+    >>> d = distance(phi, dx)
+    >>> bandwidth=5*dx
+    >>> d2 = distance(phi, dx, narrow=bandwidth)
+    >>> np.testing.assert_allclose(d, exact, atol=dx)
+    >>> # make sure we get a normal array if there are no points outside the narrow band
+    >>> np.testing.assert_allclose(distance(phi, dx, narrow=1000*dx), exact, atol=dx)
+
+    >>> assert  (d2<bandwidth).all()
+    >>> assert type(d2) is np.ma.masked_array
+
+    >>> speed = np.ones_like(phi)
+    >>> speed[X>0] = 1.8
+    >>> t = travel_time(phi, speed, dx)
+    >>> t2 = travel_time(phi, speed, dx, narrow=bandwidth)
+    >>> assert type(t2) is np.ma.masked_array
+    >>> assert (t2<bandwidth).all()
+
+    >>> speed = np.ones_like(phi)
+    >>> speed = X + Y
+    >>> ed, ev = extension_velocities(phi, speed, dx)
+    >>> ed2, ev2 = extension_velocities(phi, speed, dx, narrow=bandwidth)
+    >>> assert type(ed2) is np.ma.masked_array
+    >>> assert type(ev2) is np.ma.masked_array
+    >>> assert (ed2<bandwidth).all()
+    >>> assert ed2.shape == ed.shape == ev.shape == ev2.shape
+    >>> distance(phi, dx, narrow=-1)
+    Traceback (most recent call last):
+      ...
+    ValueError: parameter "narrow" must be greater than or equal to zero.
+    >>> # make sure the narrow options works with an existing mask.
+    >>> mask = abs(X)<0.25
+    >>> d3 = distance(np.ma.masked_array(phi, mask), dx, narrow=bandwidth)
+    >>> assert (d3.mask[mask]==True).all()
+    >>> assert d3.mask.sum() > mask.sum()    
     """
 
 def test(verbose=None):
