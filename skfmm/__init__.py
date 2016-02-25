@@ -138,9 +138,9 @@ def testing():
 
     Test case for a bug in the upwind finite difference scheme for
     negative phi. When computing finite differences we want to
-    preferentially use information from the frozen neighbours that
+    preferentially use information from the frozen neighbors that
     are closest to the zero contour in each dimension. This means
-    that we must compare absolute distances when checking neighbours
+    that we must compare absolute distances when checking neighbors
     in the negative phi direction.
 
     The error can result in incorrect values of the updated signed
@@ -296,7 +296,7 @@ def testing():
     True
 
     The following tests for the same issue but is a better test case
-    guarentted to fail.
+    guaranteed to fail.
 
     >>> phi = np.array([[-1,  1,  1,  1,  1, -1],
     ...                 [-1, -1, -1, -1, -1, -1],
@@ -525,13 +525,13 @@ def testing():
     >>> d, f_ext = extension_velocities(phi, speed, dx, self_test=True)
     >>> np.testing.assert_allclose(f_ext, 1.0)
 
-    Constant value marchout test
+    Constant value march-out test
 
     >>> speed[abs(Y)<0.3] = 10.0
     >>> d, f_ext = extension_velocities(phi, speed, dx, self_test=True)
     >>> np.testing.assert_allclose(f_ext, 10.0)
 
-    Test distance from extenstion
+    Test distance from extension
 
     >>> speed = np.ones_like(phi)
     >>> d, f_ext = extension_velocities(phi, speed, dx, self_test=True)
@@ -689,7 +689,7 @@ def testing():
 
     >>> assert diff > 635 and diff < 645
 
-    Test eikonal solution
+    Test Eikonal solution
 
     >>> N     = 50
     >>> X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
@@ -818,6 +818,16 @@ def testing():
       ...
     RuntimeError: heap pop error: empty heap
     <BLANKLINE>
+    
+    Test narrow optional argument.
+
+    >>> phi = np.array([-1,-1,-1,1,1,1])
+    >>> d = distance(phi, narrow=1.0)
+    >>> d
+    masked_array(data = [-- -- -0.5 0.5 -- --],
+                 mask = [ True  True False False  True  True],
+           fill_value = 1e+20)
+    <BLANKLINE>    
     """
 
 def test(verbose=None):
