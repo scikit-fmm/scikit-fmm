@@ -1,3 +1,5 @@
+[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)
+
 scikit-fmm is a Python extension module which implements the fast
 marching method.
 
@@ -7,10 +9,10 @@ the fast marching method is a numerical technique for finding
 approximate solutions to boundary value problems of the Eikonal
 equation:
 
-F(x) | grad T(x) | = 1.
+$$F(x) | grad T(x) | = 1$$
 
 Typically, such a problem describes the evolution of a closed curve as
-a function of time T with speed F(x)>0 in the normal direction at a
+a function of time T with speed $F(x)>0$ in the normal direction at a
 point x on the curve. The speed function is specified, and the time at
 which the contour crosses a point x is obtained by solving the
 equation.
@@ -90,9 +92,13 @@ Version History:
    * Python wrapper for binary min-heap.
    * Freeze equidistant narrow-band points simultaneously.
 
-0.0.7: October 21th 2015
+0.0.7: October 21st 2015
    * Bug fix to upwind finite difference approximation for negative
      phi from Lester Hedges.
 
-:Copyright: Copyright 2015 The scikit-fmm team.
+0.0.8: March 1st 2016
+   * Narrow band capability: an optional "narrow" keyword argument
+     limits the extent of the marching algorithm.
+
+:Copyright: Copyright 2016 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the scipy source directory.

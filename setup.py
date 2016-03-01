@@ -3,12 +3,22 @@ import os
 import sys
 import setuptools
 
+long_description = """scikit-fmm is a Python extension module which implements the fast
+marching method.
+
+- Signed distance functions
+- Travel time transforms (solutions to the Eikonal equation)
+- Extension velocities
+
+https://github.com/scikit-fmm/scikit-fmm
+"""
+
 DISTNAME         = "scikit-fmm"
 DESCRIPTION      = "An extension module implementing the fast marching method"
 MAINTAINER       = "Jason Furtney"
 MAINTAINER_EMAIL = "jkfurtney@gmail.com"
-VERSION          = "0.0.8dev"
-URL              = 'https://github.com/scikit-fmm/'
+VERSION          = "0.0.8"
+URL              = 'https://github.com/scikit-fmm/scikit-fmm'
 LICENSE          = 'BSD'
 KEYWORDS         = "fast marching method, Eikonal equation, interface, boundary"
 
@@ -39,16 +49,17 @@ def setup_package():
         url              = URL,
         license          = LICENSE,
         keywords         = KEYWORDS,
-        long_description = read("README.txt"),
+        long_description = long_description,
         configuration    = configuration,
         install_requires = ['numpy >= 1.0.2'],
-        classifiers      = [
-                           "Development Status :: 3 - Alpha",
-                           "License :: OSI Approved :: BSD License",
-                           "Operating System :: OS Independent",
-                           "Topic :: Scientific/Engineering",
-                           "Intended Audience :: Science/Research",
-                           "Programming Language :: C++"])
+        classifiers      = ["Development Status :: 5 - Production/Stable",
+                            "License :: OSI Approved :: BSD License",
+                            "Operating System :: OS Independent",
+                            "Topic :: Scientific/Engineering",
+                            "Intended Audience :: Science/Research",
+                            "Programming Language :: C++",
+                            "Programming Language :: Python :: 2",
+                            "Programming Language :: Python :: 3"])
 
 if __name__ == '__main__':
     setup_package()

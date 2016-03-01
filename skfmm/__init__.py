@@ -102,7 +102,7 @@ Version History:
 
 from __future__ import print_function
 
-__version__ = "0.0.8dev"
+__version__ = "0.0.8"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities
@@ -818,7 +818,7 @@ def testing():
       ...
     RuntimeError: heap pop error: empty heap
     <BLANKLINE>
-    
+
     Test narrow optional argument.
 
     >>> phi = np.array([-1,-1,-1,1,1,1])
@@ -868,7 +868,7 @@ def testing():
     >>> mask = abs(X)<0.25
     >>> d3 = distance(np.ma.masked_array(phi, mask), dx, narrow=bandwidth)
     >>> assert (d3.mask[mask]==True).all()
-    >>> assert d3.mask.sum() > mask.sum()    
+    >>> assert d3.mask.sum() > mask.sum()
     """
 
 def test(verbose=None):
