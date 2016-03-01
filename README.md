@@ -57,16 +57,17 @@ masked array. A function is provided to compute extension velocities.
 * http://pypi.python.org/pypi/scikit-fmm
 
 ### Requirements
-  * Numpy >= 1.0.2
-  * Building requires a C/C++ compiler (gcc, MinGW, MSVC)
+* Numpy >= 1.0.2
+* Building requires a C/C++ compiler (gcc, MinGW, MSVC)
 
 ### Bugs, questions, patches, feature requests, discussion & cetera
-  * Email list: http://groups.google.com/group/scikit-fmm
+* github pull request or open a github issue
+* Email list: http://groups.google.com/group/scikit-fmm
   * Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
 
 ### Installing
 * Via pip: `pip install scikit-fmm`
-* From source `python setup.py install`
+* From source: `python setup.py install`
 * 64-bit Windows binaries from Christoph Gohlke:
   * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
 * 64-bit Conda package for Py27:
