@@ -1,7 +1,8 @@
-[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)
+[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)[![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)
 
-# scikit-fmm is a Python extension module which implements the fast marching method.
+# scikit-fmm: the fast marching method for Python
 
+`scikit-fmm` is a Python extension module which implements the fast marching method.
 The fast marching method is used to model the evolution of boundaries
 and interfaces in a variety of application areas. More specifically,
 the fast marching method is a numerical technique for finding
@@ -11,7 +12,7 @@ equation:
 F(x) | grad T(x) | = 1
 
 Typically, such a problem describes the evolution of a closed curve as
-a function of time T with speed $F(x)>0$ in the normal direction at a
+a function of time T with speed F(x)>0 in the normal direction at a
 point x on the curve. The speed function is specified, and the time at
 which the contour crosses a point x is obtained by solving the
 equation.
@@ -27,41 +28,58 @@ phi = np.ones((3, 3))
 phi[1, 1] = -1
 skfmm.distance(phi)
 ```
-array([[ 1.20710678,  0.5       ,  1.20710678],
-       [ 0.5       , -0.35355339,  0.5       ],
-       [ 1.20710678,  0.5       ,  1.20710678]])
 
+  ```python
+   array([[ 1.20710678,  0.5       ,  1.20710678],
+          [ 0.5       , -0.35355339,  0.5       ],
+          [ 1.20710678,  0.5       ,  1.20710678]])
+  ```
+---
 ```python
 skfmm.travel_time(phi, speed = 3.0 * np.ones_like(phi))
 ```
-array([[ 0.40236893,  0.16666667,  0.40236893],
-       [ 0.16666667,  0.11785113,  0.16666667],
-       [ 0.40236893,  0.16666667,  0.40236893]])
+
+   ```python
+   array([[ 0.40236893,  0.16666667,  0.40236893],
+          [ 0.16666667,  0.11785113,  0.16666667],
+          [ 0.40236893,  0.16666667,  0.40236893]])
+   ```
+---
 
 The input array can be of 1, 2, 3 or higher dimensions and can be a
 masked array. A function is provided to compute extension velocities.
 
-Documentation:
-    Release Version:     http://packages.python.org/scikit-fmm
-    Development Version: http://scikit-fmm.readthedocs.org/en/latest/
+### Documentation
+    * Release Version:     http://packages.python.org/scikit-fmm
+    * Development Version: http://scikit-fmm.readthedocs.org/en/latest/
 
-PyPI: http://pypi.python.org/pypi/scikit-fmm
+### PyPI
+ * http://pypi.python.org/pypi/scikit-fmm
 
-Source Code: https://github.com/scikit-fmm/scikit-fmm
+### Requirements
+  * Numpy >= 1.0.2
+  * building requires a C/C++ compiler (gcc, MinGW, MSVC)
 
-Requirements: Numpy and a C/C++ compiler (gcc, MinGW, MSVC)
-
-Bugs, questions, patches, feature requests, discussion & cetera:
+### Bugs, questions, patches, feature requests, discussion & cetera
   * Email list: http://groups.google.com/group/scikit-fmm
   * Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
 
-Installing: `pip install scikit-fmm` or  `python setup.py install`
+### Installing
+* via pip: `pip install scikit-fmm`
+* from source `python setup.py install`
+* 64-bit Windows binaries from Christoph Gohlke:
+  * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
+* 64-bit Conda package for Py27:
+  *https://binstar.org/jmargeta/scikit-fmm
 
-Testing (doctest):  `python -c "import skfmm; skfmm.test(True)"`
+### Running Tests
+`python -c "import skfmm; skfmm.test(True)"`
 
-Building documentation (requires sphinx and numpydoc): `make html`
+### Building documentation
+* (requires sphinx and numpydoc)
+* `make html`
 
-## Version History:
+### Version History:
 
 * 0.0.1: February 13 2012
   * Initial release
