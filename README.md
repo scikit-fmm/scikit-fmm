@@ -50,70 +50,64 @@ The input array can be of 1, 2, 3 or higher dimensions and can be a
 masked array. A function is provided to compute extension velocities.
 
 ### Documentation
-    * Release Version:     http://packages.python.org/scikit-fmm
-    * Development Version: http://scikit-fmm.readthedocs.org/en/latest/
+* Release Version:     http://packages.python.org/scikit-fmm
+* Development Version: http://scikit-fmm.readthedocs.org/en/latest/
 
 ### PyPI
- * http://pypi.python.org/pypi/scikit-fmm
+* http://pypi.python.org/pypi/scikit-fmm
 
 ### Requirements
   * Numpy >= 1.0.2
-  * building requires a C/C++ compiler (gcc, MinGW, MSVC)
+  * Building requires a C/C++ compiler (gcc, MinGW, MSVC)
 
 ### Bugs, questions, patches, feature requests, discussion & cetera
   * Email list: http://groups.google.com/group/scikit-fmm
   * Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
 
 ### Installing
-* via pip: `pip install scikit-fmm`
-* from source `python setup.py install`
+* Via pip: `pip install scikit-fmm`
+* From source `python setup.py install`
 * 64-bit Windows binaries from Christoph Gohlke:
   * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
 * 64-bit Conda package for Py27:
-  *https://binstar.org/jmargeta/scikit-fmm
+  * https://binstar.org/jmargeta/scikit-fmm
 
 ### Running Tests
-`python -c "import skfmm; skfmm.test(True)"`
+* `python -c "import skfmm; skfmm.test(True)"`
+* When running the tests from the source directory use `python setup.py develop`
+* Tests are doctests in skfmm/__init__.py
 
 ### Building documentation
-* (requires sphinx and numpydoc)
+* Requires sphinx and numpydoc
 * `make html`
 
 ### Version History:
-
 * 0.0.1: February 13 2012
   * Initial release
-
 * 0.0.2: February 26th 2012
   * Including tests and docs in source distribution. Minor changes to
     documentation.
-
 * 0.0.3: August 4th 2012
   * Extension velocities.
   * Fixes for 64 bit platforms.
   * Optional keyword argument for point update order.
   * Bug reports and patches from three contributors.
-
 * 0.0.4: October 15th 2012
    * Contributions from Daniel Wheeler:
      * Bug fixes in extension velocity.
      * Many additional tests and migration to doctest format.
      * Additional optional input to extension_velocities() for FiPy compatibly.
-
 * 0.0.5: May 12th 2014
    * Fix for building with MSVC (Jan Margeta).
    * Corrected second-order point update.
-
 * 0.0.6: February 20th 2015
    * Documentation clarification (Geordie McBain).
    * Python 3 port (Eugene Prilepin).
    * Python wrapper for binary min-heap.
    * Freeze equidistant narrow-band points simultaneously.
-
 * 0.0.7: October 21st 2015
    * Bug fix to upwind finite difference approximation for negative
      phi from Lester Hedges.
-
 * 0.0.8: March 1st 2016
    * Narrow band capability: an optional "narrow" keyword argument
      limits the extent of the marching algorithm (Adrian Butscher).
