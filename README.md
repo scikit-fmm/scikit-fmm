@@ -1,7 +1,6 @@
 [![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)
 
-scikit-fmm is a Python extension module which implements the fast
-marching method.
+# scikit-fmm is a Python extension module which implements the fast marching method.
 
 The fast marching method is used to model the evolution of boundaries
 and interfaces in a variety of application areas. More specifically,
@@ -9,7 +8,7 @@ the fast marching method is a numerical technique for finding
 approximate solutions to boundary value problems of the Eikonal
 equation:
 
-$$F(x) | grad T(x) | = 1$$
+F(x) | grad T(x) | = 1
 
 Typically, such a problem describes the evolution of a closed curve as
 a function of time T with speed $F(x)>0$ in the normal direction at a
@@ -21,16 +20,20 @@ scikit-fmm is a simple module which provides functions to calculate
 the signed distance and travel time to an interface described by the
 zero contour of the input array phi.
 
->>> import skfmm
->>> import numpy as np
->>> phi = np.ones((3, 3))
->>> phi[1, 1] = -1
->>> skfmm.distance(phi)
+```python
+import skfmm
+import numpy as np
+phi = np.ones((3, 3))
+phi[1, 1] = -1
+skfmm.distance(phi)
+```
 array([[ 1.20710678,  0.5       ,  1.20710678],
        [ 0.5       , -0.35355339,  0.5       ],
        [ 1.20710678,  0.5       ,  1.20710678]])
 
->>> skfmm.travel_time(phi, speed = 3.0 * np.ones_like(phi))
+```python
+skfmm.travel_time(phi, speed = 3.0 * np.ones_like(phi))
+```
 array([[ 0.40236893,  0.16666667,  0.40236893],
        [ 0.16666667,  0.11785113,  0.16666667],
        [ 0.40236893,  0.16666667,  0.40236893]])
@@ -49,56 +52,54 @@ Source Code: https://github.com/scikit-fmm/scikit-fmm
 Requirements: Numpy and a C/C++ compiler (gcc, MinGW, MSVC)
 
 Bugs, questions, patches, feature requests, discussion & cetera:
-  Email list: http://groups.google.com/group/scikit-fmm
-  Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
+  * Email list: http://groups.google.com/group/scikit-fmm
+  * Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
 
-Installing:
- $ python setup.py install
+Installing: `pip install scikit-fmm` or  `python setup.py install`
 
-Testing (doctest):
-  $ python -c "import skfmm; skfmm.test(True)"
+Testing (doctest):  `python -c "import skfmm; skfmm.test(True)"`
 
-Building documentation (requires sphinx and numpydoc):
-  $ make html
+Building documentation (requires sphinx and numpydoc): `make html`
 
-Version History:
+## Version History:
 
-0.0.1: February 13 2012
-  Initial release
+* 0.0.1: February 13 2012
+  * Initial release
 
-0.0.2: February 26th 2012
-  Including tests and docs in source distribution. Minor changes to
-  documentation.
+* 0.0.2: February 26th 2012
+  * Including tests and docs in source distribution. Minor changes to
+    documentation.
 
-0.0.3: August 4th 2012
-  Extension velocities.
-  Fixes for 64 bit platforms.
-  Optional keyword argument for point update order.
-  Bug reports and patches from three contributors.
+* 0.0.3: August 4th 2012
+  * Extension velocities.
+  * Fixes for 64 bit platforms.
+  * Optional keyword argument for point update order.
+  * Bug reports and patches from three contributors.
 
-0.0.4: October 15th 2012
-  Contributions from Daniel Wheeler:
-   * Bug fixes in extension velocity.
-   * Many additional tests and migration to doctest format.
-   * Additional optional input to extension_velocities() for FiPy compatibly.
+* 0.0.4: October 15th 2012
+   * Contributions from Daniel Wheeler:
+     * Bug fixes in extension velocity.
+     * Many additional tests and migration to doctest format.
+     * Additional optional input to extension_velocities() for FiPy compatibly.
 
-0.0.5: May 12th 2014
+* 0.0.5: May 12th 2014
    * Fix for building with MSVC (Jan Margeta).
    * Corrected second-order point update.
 
-0.0.6: February 20th 2015
+* 0.0.6: February 20th 2015
    * Documentation clarification (Geordie McBain).
    * Python 3 port (Eugene Prilepin).
    * Python wrapper for binary min-heap.
    * Freeze equidistant narrow-band points simultaneously.
 
-0.0.7: October 21st 2015
+* 0.0.7: October 21st 2015
    * Bug fix to upwind finite difference approximation for negative
      phi from Lester Hedges.
 
-0.0.8: March 1st 2016
+* 0.0.8: March 1st 2016
    * Narrow band capability: an optional "narrow" keyword argument
-     limits the extent of the marching algorithm.
+     limits the extent of the marching algorithm (Adrian Butscher).
 
-:Copyright: Copyright 2016 The scikit-fmm team.
-:License: BSD-style license. See LICENSE.txt in the scipy source directory.
+Copyright 2016 The scikit-fmm team.
+
+BSD-style license. See LICENSE.txt in the source directory.
