@@ -50,7 +50,7 @@ The input array can be of 1, 2, 3 or higher dimensions and can be a
 masked array. A function is provided to compute extension velocities.
 
 ### Documentation
-* Release Version:     http://packages.python.org/scikit-fmm
+* Release Version: http://packages.python.org/scikit-fmm
 * Development Version: http://scikit-fmm.readthedocs.org/en/latest/
 
 ### PyPI
@@ -61,7 +61,7 @@ masked array. A function is provided to compute extension velocities.
 * Building requires a C/C++ compiler (gcc, MinGW, MSVC)
 
 ### Bugs, questions, patches, feature requests, discussion & cetera
-* github pull request or open a github issue
+* Open a GitHub pull request or a GitHub issue
 * Email list: http://groups.google.com/group/scikit-fmm
   * Send an email to scikit-fmm+subscribe@googlegroups.com to subscribe.
 
@@ -76,7 +76,7 @@ masked array. A function is provided to compute extension velocities.
 ### Running Tests
 * `python -c "import skfmm; skfmm.test(True)"`
 * When running the tests from the source directory use `python setup.py develop`
-* Tests are doctests in skfmm/__init__.py
+* Tests are doctests in `skfmm/__init__.py`
 
 ### Building documentation
 * Requires sphinx and numpydoc
