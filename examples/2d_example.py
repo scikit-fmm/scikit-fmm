@@ -7,7 +7,6 @@ phi = -1*np.ones_like(X)
 
 phi[X>-0.5] = 1
 phi[np.logical_and(np.abs(Y)<0.25, X>-0.75)] = 1
-
 pl.contour(X, Y, phi,[0], linewidths=(3), colors='black')
 pl.title('Boundary location: the zero contour of phi')
 pl.savefig('2d_phi.png')
@@ -41,4 +40,15 @@ pl.contour(X, Y, phi.mask, [0], linewidths=(3), colors='red')
 pl.contour(X, Y, t, 15)
 pl.colorbar()
 pl.savefig('2d_phi_travel_time_mask.png')
+pl.show()
+
+phi = -1 * np.ones_like(X)
+phi[X > -0.5] = 1
+phi[np.logical_and(np.abs(Y) < 0.25, X > -0.75)] = 1
+d = skfmm.distance(phi, dx=1e-2, narrow=0.3)
+pl.title('Distance calculation limited to narrow band')
+pl.contour(X, Y, phi, [0], linewidths=(3), colors='black')
+pl.contour(X, Y, d, 15)
+pl.colorbar()
+pl.savefig('2d_phi_distance_narrow.png')
 pl.show()

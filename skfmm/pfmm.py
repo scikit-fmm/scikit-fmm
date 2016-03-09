@@ -31,7 +31,7 @@ def pre_process_args(phi, dx, narrow, ext_mask=None):
 
     if narrow < 0:
         raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
-        
+
     return phi, dx, flag, ext_mask
 
 
@@ -72,8 +72,8 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
              narrow band half-width. If this optional argument is
              specified the marching algorithm is limited to within a
              given narrow band. If far-field points remain when this
-             condition is met a masked array is return. The default
-             value is 0.0 which means no narrow band limit. 
+             condition is met a masked array is returned. The default
+             value is 0.0 which means no narrow band limit.
 
     Returns
     -------
@@ -121,9 +121,9 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2, narrow=0.0):
              specified the marching algorithm is limited to travel
              times within a given value. If far-field points
              remain when this condition is met a masked array is
-             return. The default value is 0.0 which means no narrow
-             band limit. 
-    
+             returned. The default value is 0.0 which means no narrow
+             band limit.
+
 
     Returns
     -------
@@ -181,10 +181,10 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
              narrow band half-width. If this optional argument is
              specified the marching algorithm is limited to within a
              given narrow band. If far-field points remain when this
-             condition is met a masked arrays are return. The default
-             value is 0.0 which means no narrow band limit. 
+             condition is met a masked arrays are returned. The default
+             value is 0.0 which means no narrow band limit.
 
-    
+
     Returns
     -------
     (d, f_ext) : tuple

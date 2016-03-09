@@ -64,6 +64,7 @@ A more detailed example:
 .. image:: 2d_phi.png
 
 The boundary is specified as the zero contour of a scalar function phi:
+
 ::
 
  >>> import numpy as np
@@ -72,12 +73,9 @@ The boundary is specified as the zero contour of a scalar function phi:
  >>> phi = -1 * np.ones_like(X)
  >>> phi[X > -0.5] = 1
  >>> phi[np.logical_and(np.abs(Y) < 0.25, X > -0.75)] = 1
+ >>> d = skfmm.distance(phi, dx=1e-2)
 
 .. image:: 2d_phi_distance.png
-
-::
-
- >>> d = skfmm.distance(phi, dx=1e-2)
 
 :py:obj:`scikit-fmm` can also calculate travel times from an interface
 given an array containing the interface propogation speed at each
@@ -85,24 +83,42 @@ point. Using the same initial interface position as above we set the
 interface propagation speed to be 1.5 times greater in the upper half
 of the domain.
 
-.. image:: 2d_phi_travel_time.png
-
 ::
 
  >>> speed = np.ones_like(X)
  >>> speed[Y > 0] = 1.5
  >>> t = skfmm.travel_time(phi, speed, dx=1e-2)
 
+.. image:: 2d_phi_travel_time.png
+
+
+
 both :py:func:`travel_time` and :py:func:`distance`
 support masked arrays for input. This allows an obstacle to be introduced.
-
-.. image:: 2d_phi_travel_time_mask.png
 
 ::
 
  >>> mask = np.logical_and(abs(X) < 0.1, abs(Y) < 0.5)
  >>> phi  = np.ma.MaskedArray(phi, mask)
  >>> t    = skfmm.travel_time(phi, speed, dx=1e-2)
+
+.. image:: 2d_phi_travel_time_mask.png
+
+The distance function, travel time or extension velocities can be
+limited to with in a narrow band around the zero contour by specifying
+the `narrow` keyword.
+
+::
+
+ >>> phi = -1 * np.ones_like(X)
+ >>> phi[X > -0.5] = 1
+ >>> phi[np.logical_and(np.abs(Y) < 0.25, X > -0.75)] = 1
+ >>> d = skfmm.distance(phi, dx=1e-2, narrow=0.3)
+ >>> pl.contour(X, Y, phi, [0], linewidths=(3), colors='black')
+ >>> pl.contourf(X, Y, d, 15)
+ >>> pl.colorbar()
+
+.. image:: 2d_phi_distance_narrow.png
 
 The full example is in examples/2d_example.py.
 :doc:`examples`
