@@ -114,9 +114,6 @@ the `narrow` keyword.
  >>> phi[X > -0.5] = 1
  >>> phi[np.logical_and(np.abs(Y) < 0.25, X > -0.75)] = 1
  >>> d = skfmm.distance(phi, dx=1e-2, narrow=0.3)
- >>> pl.contour(X, Y, phi, [0], linewidths=(3), colors='black')
- >>> pl.contourf(X, Y, d, 15)
- >>> pl.colorbar()
 
 .. image:: 2d_phi_distance_narrow.png
 
