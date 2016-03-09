@@ -109,7 +109,7 @@ masked array. A function is provided to compute extension velocities.
 * 0.0.7: October 21st 2015
    * Bug fix to upwind finite difference approximation for negative
      phi from Lester Hedges.
-* 0.0.8: March 1st 2016
+* 0.0.8: March 9th 2016
    * Narrow band capability: an optional "narrow" keyword argument
      limits the extent of the marching algorithm (Adrian Butscher).
 
