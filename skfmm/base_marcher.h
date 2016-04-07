@@ -6,8 +6,8 @@ const char Narrow = 1;
 const char Frozen = 2;
 const char Mask   = 3;
 
-using namespace std;
 #include <limits>
+using namespace std;
 const double doubleEpsilon    = numeric_limits<double>::epsilon();
 const double maxDouble        = numeric_limits<double>::max();
 

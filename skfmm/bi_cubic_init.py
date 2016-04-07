@@ -63,26 +63,42 @@ class BiCubicInit(object):
         self.pdict = {}
         assert len(phi.shape)==2
 
-        gx, gy = np.gradient(phi)
-        self.gx, self.gy = gx/h, gy/h
+        gx, gy = np.gradient(phi, edge_order=2)
+        self.gx, self.gy = gx/h, gy/h # is this correct for h != 1?
 
         xgr = np.zeros_like(phi)
 
-        xgr[1:-1,1:-1] = (phi[2:,2:] - phi[2:,:-2] - phi[:-2,2:] + \
-                          phi[:-2,:-2])/(4*h**2)
-        # TODO: need to also define this for the outside edges.
+        denom = (4*h**2)
+        xgr[1:-1,1:-1] = (phi[2:,2:] - phi[2:,:-2] - phi[:-2,2:] + phi[:-2,:-2])
+        # there are 8 special cases, 4 corners and 4 sides
+        # The cross derivative stencil looks like this:
+        #   C---.---A
+        #   |       |     phi_xy = (phi_A - phi_B - phi_C + phi_D) / (4*h**2)
+        #   .   .   .
+        #   |       |
+        #   D---.---B
+        #                A            B           C           D
+        nx, ny = phi.shape
+        xgr[   0,   0] = -(phi[ 2, 0] - phi[ 2, 2] - phi[ 0, 0] + phi[ 0, 2])
+        xgr[nx-1,ny-1] = -(phi[-1,-3] - phi[-1,-1] - phi[-3,-3] + phi[-3,-1])
+        xgr[   0,ny-1] =  (phi[ 0,-3] - phi[ 0,-1] - phi[ 2,-3] + phi[ 2,-1])
+        xgr[nx-1,   0] = -(phi[-1, 0] - phi[-1, 2] - phi[-3, 0] + phi[-3, 2])
+        xgr[0,1:-1] = -(phi[ 2, :-2] - phi[ 2, 2:] - phi[0, :-2] + phi[0, 2:])
+        xgr[nx-1,1:-1] =  (phi[ -3, :-2] - phi[ -3, 2:] - phi[-1, :-2] + phi[-1, 2:])
+        xgr[1:-1, 0] =   -(phi[ 2:,  0] - phi[2:, 2] - phi[:-2,   0] + phi[:-2, 2])
+        xgr[1:-1,ny-1] = -(phi[ 2:, -3] - phi[2:, -1] - phi[:-2, -3] + phi[:-2, -1])
+        xgr /= denom
 
         self.xgr = xgr
         self.find_frozen()
         self.ini_frozen()
 
         mask = self.d==float_info.max
+        if not np.logical_and(self.aborders==True, np.logical_not(mask)).sum() == \
+            (self.aborders==True).sum():
+            raise RuntimeError("scikit-fmm (skfmm) error, some initially \
+            frozen points were not initilized correctly.")
 
-        #print self.aborders.sum()
-        #print np.logical_not(self.d==float_info.max).sum()
-        # assert np.logical_and(self.aborders==True,
-        #                       np.logical_not(mask)).sum() == \
-        #     (self.aborders==True).sum()
 
     def find_frozen(self):
         phi = self.phi
@@ -90,20 +106,28 @@ class BiCubicInit(object):
         aborders[phi==0.0] = True
         self.d[phi==0.0] = 0.0
         border_cells = np.zeros_like(phi, dtype=bool)[:-1,:-1]
-        x, y = phi.shape
-        for i in range(x-2):
-            for j in range(y-2):
-                ii=i+1
-                jj=j+1
-                for k in [-1,1]:
-                    if phi[ii,jj] * phi[ii+k,jj] < 0:
-                        aborders[ii,jj] = True
-                        border_cells[ii][jj] = True
-                        border_cells[ii][jj-1] = True
-                    elif phi[ii,jj] * phi[ii,jj+k] < 0:
-                        aborders[ii,jj] = True
-                        border_cells[ii][jj] = True
-                        border_cells[ii-1][jj] = True
+        nx, ny = phi.shape
+        for i in range(nx):
+            for j in range(ny):
+                for k in [-1,1]: # each direction
+                    # logic to not read off the edge of the arrays
+                    # skip this test if:
+                    ## i==0 and k == -1
+                    ## i==nx-1 and k==1
+                    ok_first =  not ((i==0 and k==-1) or (i==(nx-1) and k==1))
+                    ok_second =  not ((j==0 and k==-1) or (j==(ny-1) and k==1))
+                    if ok_first and phi[i, j] * phi[i+k,j] < 0:
+                        aborders[i,j] = True
+                        border_cells[i][j] = True
+                        if j > 0:
+                            border_cells[i][j-1] = True
+                    elif ok_second and phi[i,j] * phi[i,j+k] < 0:
+                        aborders[i,j] = True
+                        border_cells[i][j] = True
+                        if j > 0:
+                            border_cells[i][j-1] = True
+                        if i > 0:
+                            border_cells[i-1][j] = True
 
         self.aborders = aborders
         self.border_cells = border_cells
@@ -145,6 +169,7 @@ class BiCubicInit(object):
     def process_point(self, i, j, ii, jj, interp):
         # ii and jj are b here in the dimensionless reference cell
         #print ii,jj
+        nx, ny = self.phi.shape
         if not self.aborders[i,j]: return
         if abs(self.phi[i,j]) < float_info.epsilon:
             self.d[i,j] = 0.0
@@ -173,10 +198,27 @@ class BiCubicInit(object):
                 if self.d[i,j] > dist:
                     self.d[i,j]=dist
                     self.pdict[(i,j)] = (sx-ii,sy-jj)
+            else:
+                # for boundary points we need to accept points outside [0,1]
+                # this could/should be done more cleverly/safely
+                # which direction to let sx or sy exceed the interval should be known?
+                if i==0 or j==0 or i==nx-1 or j==ny-1:
+                    dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
+                    if self.d[i,j] > dist:
+                        self.d[i,j]=dist
+                        self.pdict[(i,j)] = (sx-ii,sy-jj)
+
+                # print "-"*20
+                # print sx, sy
+                # print "point {} cell {}".format((i, j), (ii, jj))
+                # dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
+                # print "distance {}".format(dist)
+                # print eqns(sol)
+                # print
         else:
-            pass
-            #print ier, mesg
-            #print sx,sy, interp(sx,sy), eq2(sx,sy)
+            #pass
+            print ier, mesg
+            print sx,sy, interp(sx,sy), eq2(sx,sy)
 
 
 if __name__ == '__main__':
