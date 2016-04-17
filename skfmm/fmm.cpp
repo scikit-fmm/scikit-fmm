@@ -5,6 +5,7 @@
 #include "numpy/noprefix.h"
 
 #include "distance_marcher.h"
+#include "distance_marcher_dinit.h"
 #include "travel_time_marcher.h"
 #include "extension_velocity_marcher.h"
 
@@ -70,20 +71,20 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- phi, dx, flag, and speed
   // -- and the input error checking should be done
 
-  PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask;
+  PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask, *pdinit;
   int       self_test, mode, order;
   PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
+  PyArrayObject *dinit;
   double narrow=0;
   distance = 0;
   f_ext    = 0;
   speed    = 0;
   ext_mask = 0;
+  dinit    = 0;
 
-
-
-  if (!PyArg_ParseTuple(args, "OOOOOiiid", &pphi, &pdx, &pflag,
+  if (!PyArg_ParseTuple(args, "OOOOOiiidO", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
-                        &order, &narrow))
+                        &order, &narrow, &pdinit))
   {
     return NULL;
   }
@@ -250,16 +251,39 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   {
     case DISTANCE:
     {
-      marcher = new distanceMarcher(
-        local_phi,
-        local_dx,
-        local_flag,
-        local_distance,
-        PyArray_NDIM(phi),
-        shape,
-        self_test,
-        order,
-        narrow);
+      if (pdinit != Py_None)
+      {
+        dinit = (PyArrayObject *)PyArray_FROMANY(pdinit, PyArray_DOUBLE, 1,
+                                                 10, NPY_IN_ARRAY);
+        // we should be testing the dimention here for safety.
+
+        double * local_dinit   = (double *) PyArray_DATA(dinit);
+
+        marcher = new distanceMarcherDInit(
+                                      local_phi,
+                                      local_dx,
+                                      local_flag,
+                                      local_distance,
+                                      PyArray_NDIM(phi),
+                                      shape,
+                                      self_test,
+                                      order,
+                                      narrow,
+                                      local_dinit);
+      }
+      else
+      {
+        marcher = new distanceMarcher(
+          local_phi,
+          local_dx,
+          local_flag,
+          local_distance,
+          PyArray_NDIM(phi),
+          shape,
+          self_test,
+          order,
+          narrow);
+      }
     }
     break;
     case TRAVEL_TIME:
@@ -308,6 +332,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   Py_DECREF(dx);
   Py_XDECREF(speed);
   Py_XDECREF(ext_mask);
+  Py_XDECREF(dinit);
 
   switch (error)
   {

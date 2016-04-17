@@ -2,6 +2,7 @@ from sys import float_info
 import numpy as np
 
 from .cfmm import cFastMarcher
+from bi_cubic_init import BiCubicInit
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
@@ -46,7 +47,8 @@ def post_process_result(result):
     return result
 
 
-def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
+def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
+             initorder=1):
     """Return the distance from the zero contour of the array phi.
 
     Parameters
@@ -83,8 +85,23 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
 
     """
     phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow)
+
+    distance_init = None
+    if initorder==2:
+        # experimental 2d only bicubic initialization
+        if len(phi.shape) != 2 or dx[0] != dx[1] or order != 2:
+            raise ValueError("Second order narrow band initialization only works for 2d arrays where spacing is the same in each dimension.")
+        dinit = BiCubicInit(phi, 1)
+        mask = dinit.aborders == False
+        distance_init = dinit.d
+        distance_init[mask] = 0.0
+        distance_init *= dx[0]
+        distance_init[phi<0] *= -1
+        distance_init[mask] = float_info.max
+
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
-                     int(self_test), DISTANCE, order, narrow)
+                     int(self_test), DISTANCE, order, narrow,
+                     distance_init)
     d = post_process_result(d)
     return d
 
@@ -136,7 +153,7 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2, narrow=0.0):
     """
     phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow)
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
-                     int(self_test), TRAVEL_TIME, order, narrow)
+                     int(self_test), TRAVEL_TIME, order, narrow, None)
     t = post_process_result(t)
     return t
 
@@ -195,7 +212,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,
-                                   order, narrow)
+                                   order, narrow, None)
     distance = post_process_result(distance)
     f_ext = post_process_result(f_ext)
 
