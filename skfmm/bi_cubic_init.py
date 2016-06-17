@@ -1,5 +1,4 @@
 import numpy as np
-import pylab as plt
 from sys import float_info
 from scipy.optimize import fsolve
 
