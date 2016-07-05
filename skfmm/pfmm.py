@@ -7,7 +7,7 @@ FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
 
 
-def pre_process_args(phi, dx, narrow, ext_mask=None):
+def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
     """
     get input data into the correct form for calling the c extension module
     This wrapper allows for a little bit of flexibility in the input types
@@ -29,10 +29,22 @@ def pre_process_args(phi, dx, narrow, ext_mask=None):
     if ext_mask is None:
         ext_mask = np.zeros(phi.shape, dtype=np.int)
 
+    periodic_data = 0
+    if isinstance(periodic, bool):
+        if periodic:
+            periodic_data = int(2**phi.ndim-1)
+    else:
+        if hasattr(periodic, "__len__") and len(periodic) == phi.ndim:
+            for i, value in enumerate(periodic):
+                if value:
+                    periodic_data |= 1<<i
+        else:
+            raise ValueError("parameter \"periodic\" must be of type bool or sequence of type bool of length phi.ndim.")
+
     if narrow < 0:
         raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
 
-    return phi, dx, flag, ext_mask
+    return phi, dx, flag, ext_mask, periodic_data
 
 
 def post_process_result(result):
@@ -46,7 +58,8 @@ def post_process_result(result):
     return result
 
 
-def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
+def distance(phi, dx=1.0, self_test=False, order=2,
+             narrow=0.0, periodic=False):
     """Return the distance from the zero contour of the array phi.
 
     Parameters
@@ -82,14 +95,16 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0):
         of phi to each point in the array.
 
     """
-    phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow)
+    phi, dx, flag, ext_mask, periodic = \
+                        pre_process_args(phi, dx, narrow, periodic)
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
-                     int(self_test), DISTANCE, order, narrow)
+                     int(self_test), DISTANCE, order, narrow, periodic)
     d = post_process_result(d)
     return d
 
 
-def travel_time(phi, speed, dx=1.0, self_test=False, order=2, narrow=0.0):
+def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
+                narrow=0.0, periodic=False):
     """Return the travel from the zero contour of the array phi given the
     scalar velocity field speed.
 
@@ -134,15 +149,16 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2, narrow=0.0):
         than or equal to zero the return value will be a masked array.
 
     """
-    phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow)
+    phi, dx, flag, ext_mask, periodic \
+        = pre_process_args(phi, dx, narrow, periodic)
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
-                     int(self_test), TRAVEL_TIME, order, narrow)
+                     int(self_test), TRAVEL_TIME, order, narrow, periodic)
     t = post_process_result(t)
     return t
 
 
 def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
-                         ext_mask=None, narrow=0.0):
+                         ext_mask=None, narrow=0.0, periodic=False):
     """
     Extend the velocities defined at the zero contour of phi to the
     rest of the domain. Extend the velocities such that
@@ -191,11 +207,12 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
         a tuple containing the signed distance function d and the
         extension velocities f_ext.
     """
-    phi, dx, flag, ext_mask = pre_process_args(phi, dx, narrow, ext_mask)
+    phi, dx, flag, ext_mask, periodic = \
+                pre_process_args(phi, dx, narrow, periodic, ext_mask)
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,
-                                   order, narrow)
+                                   order, narrow, periodic)
     distance = post_process_result(distance)
     f_ext = post_process_result(f_ext)
 
