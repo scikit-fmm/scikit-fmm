@@ -91,10 +91,11 @@ of the domain.
 
 .. image:: 2d_phi_travel_time.png
 
-
-
-both :py:func:`travel_time` and :py:func:`distance`
-support masked arrays for input. This allows an obstacle to be introduced.
+Consider an obstacle within which the speed is vanishing. In principle this may
+lead to singularities (division by zero) in the update algorithm. Therefore,
+both :py:func:`travel_time` and :py:func:`distance` support masked arrays for
+input. This allows an obstacle to be introduced. (Note that if the speed in a cell
+is less than machine precision, a cell is masked internally to prevent division by 0.)
 
 ::
 
