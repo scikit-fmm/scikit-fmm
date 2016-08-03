@@ -60,7 +60,7 @@ def post_process_result(result):
 
 def distance(phi, dx=1.0, self_test=False, order=2,
              narrow=0.0, periodic=False):
-    """Return the distance from the zero contour of the array phi.
+    """Return the signed distance from the zero contour of the array phi.
 
     Parameters
     ----------
@@ -88,11 +88,20 @@ def distance(phi, dx=1.0, self_test=False, order=2,
              condition is met a masked array is returned. The default
              value is 0.0 which means no narrow band limit.
 
+    periodic : bool / tuple, optional
+               specifies whether and in which directions periodic boundary
+               conditions are used. True sets periodic boundary conditions
+               in all directions. A tuple consisting of 0 and 1 specifies
+               the absence or presence of periodic boundaries, respectively,
+               in individual directions. The default value is False, i.e.,
+               no periodic boundaries in any direction.
+
     Returns
     -------
     d : an array the same shape as phi
-        contains the distance from the zero contour (zero level set)
-        of phi to each point in the array.
+        contains the signed distance from the zero contour (zero level set)
+        of phi to each point in the array. The sign is specified by the sign
+        of phi at the given point.
 
     """
     phi, dx, flag, ext_mask, periodic = \
@@ -139,6 +148,13 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
              returned. The default value is 0.0 which means no narrow
              band limit.
 
+    periodic : bool / tuple, optional
+               specifies whether and in which directions periodic boundary
+               conditions are used. True sets periodic boundary conditions
+               in all directions. A tuple consisting of 0 and 1 specifies
+               the absence or presence of periodic boundaries, respectively,
+               in individual directions. The default value is False, i.e.,
+               no periodic boundaries in any direction.
 
     Returns
     -------
@@ -200,6 +216,13 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
              condition is met a masked arrays are returned. The default
              value is 0.0 which means no narrow band limit.
 
+    periodic : bool / tuple, optional (currently untested and undocumented)
+               specifies whether and in which directions periodic boundary
+               conditions are used. True sets periodic boundary conditions
+               in all directions. A tuple consisting of 0 and 1 specifies
+               the absence or presence of periodic boundaries, respectively,
+               in individual directions. The default value is False, i.e.,
+               no periodic boundaries in any direction.
 
     Returns
     -------

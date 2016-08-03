@@ -2,7 +2,7 @@ import numpy as np
 import pylab as pl
 import skfmm
 
-X, Y = np.meshgrid(np.linspace(-1,1,200), np.linspace(-1,1,200))
+X, Y = np.meshgrid(np.linspace(-1,1,201), np.linspace(-1,1,201))
 phi = -1*np.ones_like(X)
 
 phi[X>-0.5] = 1
