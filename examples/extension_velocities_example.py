@@ -1,4 +1,5 @@
 import numpy as np
+import pylab as plt
 from skfmm import extension_velocities
 
 N     = 150
@@ -9,25 +10,22 @@ phi   = (X) ** 2 + (Y+1.85) ** 2 - r ** 2
 speed = X+1.25
 d, f_ext = extension_velocities(phi, speed, dx)
 
-import pylab as pl
 
-pl.subplot(131)
-pl.title("Zero-contour of phi")
-pl.contour(X, Y, phi,[0], colors='black', linewidths=(3))
-pl.gca().set_aspect(1)
+plt.subplot(131)
+plt.title("Zero-contour of phi")
+plt.contour(X, Y, phi,[0], colors='black', linewidths=(3))
+plt.gca().set_aspect(1)
 
-pl.subplot(132)
-pl.title("Interface velocity")
-pl.contour(X, Y, phi,[0], colors='black', linewidths=(3))
-pl.contourf(X, Y, speed)
-pl.gca().set_aspect(1)
+plt.subplot(132)
+plt.title("Interface velocity")
+plt.contour(X, Y, phi,[0], colors='black', linewidths=(3))
+plt.contourf(X, Y, speed)
+plt.gca().set_aspect(1)
 
-pl.subplot(133)
-pl.title("Extension velocities")
-pl.contour(X, Y, phi,[0], colors='black', linewidths=(3))
-pl.contourf(X, Y, f_ext)
-pl.gca().set_aspect(1)
-#pl.colorbar()
+plt.subplot(133)
+plt.title("Extension velocities")
+plt.contour(X, Y, phi,[0], colors='black', linewidths=(3))
+plt.contourf(X, Y, f_ext)
+plt.gca().set_aspect(1)
 
-pl.show()
-
+plt.show()
