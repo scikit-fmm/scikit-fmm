@@ -827,11 +827,22 @@ def testing():
     True
     >>> np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=(1,1)))
     True
+    >>> np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=[1,1]))
+    True
+    >>> np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=[True,True]))
+    True
     >>> phi = -1*np.ones_like(X); phi[X**2+(Y-0.9)**2<0.5] = 1.0
     >>> speed = np.ones_like(X); speed[(X-0.9)**2+Y**2<1.0] = 2.0
     >>> np.allclose(distance(np.roll(phi,137,axis=0),periodic=True),np.roll(distance(phi,periodic=True),137,axis=0))
     True
     >>> np.allclose(travel_time(np.roll(phi,-77,axis=1),np.roll(speed,-77,axis=1),periodic=True),np.roll(travel_time(phi,speed,periodic=True),-77,axis=1))
+    True
+
+    >>> phi=[1,-1,1,1,1,1]
+    >>> speed=[4,1,2,2,2,2]
+    >>> np.allclose(extension_velocities(phi,speed)[1],(2.5,2.5,1.5,1.5,1.5,1.5))
+    True
+    >>> np.allclose(extension_velocities(phi,speed,periodic=True)[1],(2.5,2.5,1.5,1.5,1.5,2.5))
     True
 
     """

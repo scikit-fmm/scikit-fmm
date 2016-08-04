@@ -88,13 +88,14 @@ def distance(phi, dx=1.0, self_test=False, order=2,
              condition is met a masked array is returned. The default
              value is 0.0 which means no narrow band limit.
 
-    periodic : bool / tuple, optional
-               specifies whether and in which directions periodic boundary
-               conditions are used. True sets periodic boundary conditions
-               in all directions. A tuple consisting of 0 and 1 specifies
-               the absence or presence of periodic boundaries, respectively,
-               in individual directions. The default value is False, i.e.,
-               no periodic boundaries in any direction.
+    periodic : bool or an array-like of len phi.ndim, optional
+               specifies whether and in which directions periodic
+               boundary conditions are used. True sets periodic
+               boundary conditions in all directions. An array-like
+               (interpreted as True or False values) specifies the
+               absence or presence of periodic boundaries in
+               individual directions. The default value is False,
+               i.e., no periodic boundaries in any direction.
 
     Returns
     -------
@@ -148,13 +149,14 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
              returned. The default value is 0.0 which means no narrow
              band limit.
 
-    periodic : bool / tuple, optional
-               specifies whether and in which directions periodic boundary
-               conditions are used. True sets periodic boundary conditions
-               in all directions. A tuple consisting of 0 and 1 specifies
-               the absence or presence of periodic boundaries, respectively,
-               in individual directions. The default value is False, i.e.,
-               no periodic boundaries in any direction.
+    periodic : bool or an array-like of len phi.ndim, optional
+               specifies whether and in which directions periodic
+               boundary conditions are used. True sets periodic
+               boundary conditions in all directions. An array-like
+               (interpreted as True or False values) specifies the
+               absence or presence of periodic boundaries in
+               individual directions. The default value is False,
+               i.e., no periodic boundaries in any direction.
 
     Returns
     -------
@@ -216,13 +218,14 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
              condition is met a masked arrays are returned. The default
              value is 0.0 which means no narrow band limit.
 
-    periodic : bool / tuple, optional (currently untested and undocumented)
-               specifies whether and in which directions periodic boundary
-               conditions are used. True sets periodic boundary conditions
-               in all directions. A tuple consisting of 0 and 1 specifies
-               the absence or presence of periodic boundaries, respectively,
-               in individual directions. The default value is False, i.e.,
-               no periodic boundaries in any direction.
+    periodic : bool or an array-like of len phi.ndim, optional
+               specifies whether and in which directions periodic
+               boundary conditions are used. True sets periodic
+               boundary conditions in all directions. An array-like
+               (interpreted as True or False values) specifies the
+               absence or presence of periodic boundaries in
+               individual directions. The default value is False,
+               i.e., no periodic boundaries in any direction.
 
     Returns
     -------
