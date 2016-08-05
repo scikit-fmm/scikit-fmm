@@ -32,19 +32,20 @@ skfmm.travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 skfmm.extension_velocities(phi, speed, dx=1.0, self_test=False,
   order=2, ext_mask=None, narrow=0.0, periodic=False)
 
-  Extend the velocities defined at the zero contour of phi to the rest
-  of the domain. Extend the velocities such that grad f_ext dot grad d
-  = 0 where where f_ext is the extension velocity and d is the signed
-  distance function.
+  Extend the velocities defined at the zero contour of phi, in the
+  normal direction, to the rest of the domain. Extend the velocities
+  such that grad f_ext dot grad d = 0 where where f_ext is the
+  extension velocity and d is the signed distance function.
 
 
 :Copyright: Copyright 2016 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the source directory.
+
 """
 
 from __future__ import print_function
 
-__version__ = "0.0.8"
+__version__ = "0.0.9"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities
@@ -853,5 +854,8 @@ def test(verbose=None):
     """
     import doctest
     import skfmm
-    doctest.testmod(skfmm, verbose=verbose)
-    doctest.testfile("heap.py")
+    fail0, test0 = doctest.testmod(skfmm,      verbose=verbose)
+    fail1, test1 = doctest.testfile("heap.py", verbose=verbose)
+
+    print ("Summary: {} tests run {} failures".format(test0+test1,
+                                                      fail0+fail1))

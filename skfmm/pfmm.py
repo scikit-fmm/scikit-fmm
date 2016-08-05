@@ -177,10 +177,9 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 
 def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
                          ext_mask=None, narrow=0.0, periodic=False):
-    """
-    Extend the velocities defined at the zero contour of phi to the
-    rest of the domain. Extend the velocities such that
-    grad f_ext dot grad d = 0 where where f_ext is the
+    """Extend the velocities defined at the zero contour of phi, in the
+    normal direction, to the rest of the domain. Extend the velocities
+    such that grad f_ext dot grad d = 0 where where f_ext is the
     extension velocity and d is the signed distance function.
 
     Parameters
@@ -232,6 +231,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
     (d, f_ext) : tuple
         a tuple containing the signed distance function d and the
         extension velocities f_ext.
+
     """
     phi, dx, flag, ext_mask, periodic = \
                 pre_process_args(phi, dx, narrow, periodic, ext_mask)

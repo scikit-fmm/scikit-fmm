@@ -112,6 +112,10 @@ masked array. A function is provided to compute extension velocities.
 * 0.0.8: March 9th 2016
    * Narrow band capability: an optional "narrow" keyword argument
      limits the extent of the marching algorithm (Adrian Butscher).
+* 0.0.9: August 5th 2016
+   * Periodic boundaries: an optional "periodic" keyword argument
+     enables periodic boundaries in one or more directions (Wolfram Moebius).
+
 
 Copyright 2016 The scikit-fmm team.
 
