@@ -8,8 +8,8 @@ const char Mask   = 3;
 
 #include <limits>
 using namespace std;
-const double doubleEpsilon    = numeric_limits<double>::epsilon();
-const double maxDouble        = numeric_limits<double>::max();
+#define doubleEpsilon            numeric_limits<double>::epsilon()
+#define maxDouble                numeric_limits<double>::max()
 
 class heap;
 
