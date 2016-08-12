@@ -844,7 +844,7 @@ def testing():
     >>> np.allclose(extension_velocities(phi,speed)[1],(2.5,2.5,1.5,1.5,1.5,1.5))
     True
     >>> np.allclose(extension_velocities(phi,speed,periodic=True)[1],(2.5,2.5,1.5,1.5,1.5,2.5))
-    True2
+    True
 
     """
 
