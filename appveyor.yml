@@ -32,7 +32,7 @@ environment:
       PYTHON_VERSION: "3.4.4"
       PYTHON_ARCH: "64"
 
-    fast_finish: true
+
 
 
 cache:
