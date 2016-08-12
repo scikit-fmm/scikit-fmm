@@ -43,11 +43,6 @@ cache:
   - C:\tmp -> \appveyor\install_numpy.ps1
 
 install:
-  - ECHO "Filesystem root:"
-  - ps: "ls \"C:/\""
-
-  - ECHO "Installed SDKs:"
-  - ps: "ls \"C:/Program Files/Microsoft SDKs/Windows\""
 
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
@@ -68,7 +63,7 @@ install:
   # target Python version and architecture.
   # [NOTE] I took numpy out of my appveyor-reqs.txt file because I don't want
   # numpy to be built each time I run appveyor.
-  - "%CMD_IN_ENV% pip install setuptools"
+  - "%CMD_IN_ENV% pip install setuptools wheel"
 
   # Now that wheel has been installed, check to see if a numpy wheel has been
   # made yet. If it hasn't, compile it and put it in C:\tmp.
