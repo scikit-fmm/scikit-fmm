@@ -844,7 +844,7 @@ def testing():
     >>> np.allclose(extension_velocities(phi,speed)[1],(2.5,2.5,1.5,1.5,1.5,1.5))
     True
     >>> np.allclose(extension_velocities(phi,speed,periodic=True)[1],(2.5,2.5,1.5,1.5,1.5,2.5))
-    True
+    True2
 
     """
 
@@ -859,3 +859,4 @@ def test(verbose=None):
 
     print ("Summary: {} tests run {} failures".format(test0+test1,
                                                       fail0+fail1))
+    return fail0+fail1
