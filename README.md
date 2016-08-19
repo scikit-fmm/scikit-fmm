@@ -1,6 +1,12 @@
 [![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)[![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)[![Build status](https://ci.appveyor.com/api/projects/status/qhdwo9ut8vjyqf96?svg=true)](https://ci.appveyor.com/project/jkfurtney/scikit-fmm)
 
+# *Warning* this is an experimental branch of scikit-fmm
+
+This branch uses bicubic interpolation to initialize the initially
+frozen cells (adjacent to the zero-levelset). This is a work in progress.
+
 # scikit-fmm: the fast marching method for Python
+
 
 `scikit-fmm` is a Python extension module which implements the fast marching method.
 The fast marching method is used to model the evolution of boundaries
