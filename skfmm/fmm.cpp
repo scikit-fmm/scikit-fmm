@@ -72,7 +72,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- and the input error checking should be done
 
   PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask, *pdinit;
-  int       self_test, mode, order;
+  int       self_test, mode, order, periodic;
   PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
   PyArrayObject *dinit;
   double narrow=0;
@@ -82,9 +82,9 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   ext_mask = 0;
   dinit    = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOOiiidO", &pphi, &pdx, &pflag,
+  if (!PyArg_ParseTuple(args, "OOOOOiiidiO", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
-                        &order, &narrow, &pdinit))
+                        &order, &narrow, &periodic, &pdinit))
   {
     return NULL;
   }
@@ -269,6 +269,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                                       self_test,
                                       order,
                                       narrow,
+                                      periodic,
                                       local_dinit);
       }
       else
@@ -282,7 +283,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
           shape,
           self_test,
           order,
-          narrow);
+          narrow,
+          periodic);
       }
     }
     break;
@@ -298,7 +300,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         self_test,
         order,
         local_speed,
-        narrow);
+        narrow,
+        periodic);
     }
     break;
     case EXTENSION_VELOCITY:
@@ -316,7 +319,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         local_ext_mask,
         local_speed,
         local_fext,
-        narrow);
+        narrow,
+        periodic);
     }
     break;
   default: error=1;

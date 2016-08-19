@@ -14,7 +14,8 @@ extern "C" {
 baseMarcher::baseMarcher(
   double *phi,      double *dx,   long *flag,
   double *distance, int     ndim, int *shape,
-  bool self_test,   int order,    double narrow )
+  bool self_test,   int order,    double narrow,
+  int periodic)
 {
   narrow_     =   narrow;
   order_      =   order;
@@ -28,6 +29,7 @@ baseMarcher::baseMarcher(
   self_test_  =   self_test;
   heapptr_    =   0;
   heap_       =   0;
+  periodic_   =   periodic;
 
   for (int i=0; i<dim_; i++)
   {
@@ -217,7 +219,7 @@ void baseMarcher::solve()
   // add back mask here. The python wrapper will look for elements
   // equal to maxDouble and add the mask back
   for (int i=0; i<size_; i++)
-  {    
+  {
     if (flag_[i] != Frozen) distance_[i] = maxDouble;
   }
   error_ = 0;

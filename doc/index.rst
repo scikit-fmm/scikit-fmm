@@ -91,10 +91,11 @@ of the domain.
 
 .. image:: 2d_phi_travel_time.png
 
-
-
-both :py:func:`travel_time` and :py:func:`distance`
-support masked arrays for input. This allows an obstacle to be introduced.
+Consider an obstacle within which the speed is vanishing. In principle this may
+lead to singularities (division by zero) in the update algorithm. Therefore,
+both :py:func:`travel_time` and :py:func:`distance` support masked arrays for
+input. This allows an obstacle to be introduced. (Note that if the speed in a cell
+is less than machine precision, a cell is masked internally to prevent division by 0.)
 
 ::
 
@@ -118,6 +119,24 @@ the `narrow` keyword.
 .. image:: 2d_phi_distance_narrow.png
 
 The full example is in examples/2d_example.py.
+:doc:`examples`
+
+
+
+An example of using periodic boundary conditions.
+
+::
+
+ >>> X, Y = np.meshgrid(np.linspace(-1,1,501), np.linspace(-1,1,501))
+ >>> phi = (X+0.8)**2+(Y+0.8)**2 - 0.01
+ >>> speed = 1+X**2+Y**2
+ >>> skfmm.distance(phi, dx=2.0/500)
+ >>> skfmm.distance(phi, dx=2.0/500, periodic=True)
+ >>> skfmm.travel_time(phi, speed, dx=2.0/500, periodic=(1,0))
+
+.. image:: periodic.png
+
+The full example is in examples/boundaryconditions_example.py
 :doc:`examples`
 
 An example of using :py:obj:`scikit-fmm` to compute extension velocities.

@@ -184,7 +184,7 @@ void heap::test() const
   }
   for (int i=0; i<heapLength_; i++)
   {
-    if (! backPointer_[heap_[i]]==i)
+    if (! (backPointer_[heap_[i]]==i))
     {
       printf("error %i\n",i);
       throw std::runtime_error("heap backpointer inconsistancy");

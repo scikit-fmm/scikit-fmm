@@ -35,4 +35,4 @@ install:
 
 # Run test
 script:
-  - python -c "import skfmm; skfmm.test(True)"
+  - python -c "import skfmm, sys; sys.exit(skfmm.test(True))"

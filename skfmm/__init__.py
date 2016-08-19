@@ -18,32 +18,34 @@ point x on the curve. The speed function is specified, and the time at
 which the contour crosses a point x is obtained by solving the
 equation.
 
-skfmm.distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0)
+skfmm.distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
+  periodic=False)
 
-  Return the distance from the zero contour of the array phi.
+  Return the signed distance from the zero contour of the array phi.
 
 skfmm.travel_time(phi, speed, dx=1.0, self_test=False, order=2,
-  narrow=0.0)
+  narrow=0.0, periodic=False)
 
   Return the travel from the zero contour of the array phi given the
   scalar velocity field speed.
 
 skfmm.extension_velocities(phi, speed, dx=1.0, self_test=False,
-  order=2, ext_mask=None, narrow=0.0)
+  order=2, ext_mask=None, narrow=0.0, periodic=False)
 
-  Extend the velocities defined at the zero contour of phi to the rest
-  of the domain. Extend the velocities such that grad f_ext dot grad d
-  = 0 where where f_ext is the extension velocity and d is the signed
-  distance function.
+  Extend the velocities defined at the zero contour of phi, in the
+  normal direction, to the rest of the domain. Extend the velocities
+  such that grad f_ext dot grad d = 0 where where f_ext is the
+  extension velocity and d is the signed distance function.
 
 
 :Copyright: Copyright 2016 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the source directory.
+
 """
 
 from __future__ import print_function
 
-__version__ = "0.0.8"
+__version__ = "0.0.9"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities
@@ -810,6 +812,40 @@ def testing():
     >>> d3 = distance(np.ma.masked_array(phi, mask), dx, narrow=bandwidth)
     >>> assert (d3.mask[mask]==True).all()
     >>> assert d3.mask.sum() > mask.sum()
+
+    Testing periodic argument
+
+    >>> X, Y = np.meshgrid(np.linspace(-2,2,200), np.linspace(-2,2,200))
+    >>> phi = -1*np.ones_like(X); phi[X**2+(Y-0.9)**2<0.5] = 1.0
+    >>> speed = np.ones_like(X); speed[(X-0.9)**2+Y**2<1.0] = 2.0
+    >>> np.allclose(distance(phi),distance(phi,periodic=False)) and np.allclose(distance(phi),distance(phi,periodic=(0,0)))
+    True
+    >>> np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=False)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=(0,0)))
+    True
+    >>> phi = -1*np.ones_like(X); phi[X**2+Y**2<0.5] = 1.0
+    >>> speed = np.ones_like(X); speed[X**2+Y**2<1.0] = 2.0
+    >>> np.allclose(distance(phi),distance(phi,periodic=True)) and np.allclose(distance(phi),distance(phi,periodic=(1,1)))
+    True
+    >>> np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=(1,1)))
+    True
+    >>> np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=[1,1]))
+    True
+    >>> np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=[True,True]))
+    True
+    >>> phi = -1*np.ones_like(X); phi[X**2+(Y-0.9)**2<0.5] = 1.0
+    >>> speed = np.ones_like(X); speed[(X-0.9)**2+Y**2<1.0] = 2.0
+    >>> np.allclose(distance(np.roll(phi,137,axis=0),periodic=True),np.roll(distance(phi,periodic=True),137,axis=0))
+    True
+    >>> np.allclose(travel_time(np.roll(phi,-77,axis=1),np.roll(speed,-77,axis=1),periodic=True),np.roll(travel_time(phi,speed,periodic=True),-77,axis=1))
+    True
+
+    >>> phi=[1,-1,1,1,1,1]
+    >>> speed=[4,1,2,2,2,2]
+    >>> np.allclose(extension_velocities(phi,speed)[1],(2.5,2.5,1.5,1.5,1.5,1.5))
+    True
+    >>> np.allclose(extension_velocities(phi,speed,periodic=True)[1],(2.5,2.5,1.5,1.5,1.5,2.5))
+    True
+
     """
 
 def test(verbose=None):
@@ -818,5 +854,9 @@ def test(verbose=None):
     """
     import doctest
     import skfmm
-    doctest.testmod(skfmm, verbose=verbose)
-    doctest.testfile("heap.py")
+    fail0, test0 = doctest.testmod(skfmm,      verbose=verbose)
+    fail1, test1 = doctest.testfile("heap.py", verbose=verbose)
+
+    print ("Summary: {} tests run {} failures".format(test0+test1,
+                                                      fail0+fail1))
+    return fail0+fail1

@@ -9,9 +9,9 @@ public:
   distanceMarcherDInit(double *phi,      double *dx, long *flag,
                        double *distance, int ndim,   int *shape,
                        bool self_test,   int order,  double narrow,
-                       double *dinit) :
+                       int periodic, double *dinit) :
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test,
-                    order, narrow)
+                    order, narrow, periodic)
   {
     dinit_ = dinit;
   }

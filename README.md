@@ -1,4 +1,4 @@
-[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)[![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)
+[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)[![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)[![Build status](https://ci.appveyor.com/api/projects/status/qhdwo9ut8vjyqf96?svg=true)](https://ci.appveyor.com/project/jkfurtney/scikit-fmm)
 
 # scikit-fmm: the fast marching method for Python
 
@@ -72,6 +72,10 @@ masked array. A function is provided to compute extension velocities.
   * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
 * 64-bit Conda package for Py27:
   * https://binstar.org/jmargeta/scikit-fmm
+* Experimental Windows wheels and exe installers:
+  * These installers are build from `master` after each commit.
+  * Choose your Python version and platform, then click the Artifacts tab.
+  * https://ci.appveyor.com/project/jkfurtney/scikit-fmm
 
 ### Running Tests
 * `python -c "import skfmm; skfmm.test(True)"`
@@ -112,6 +116,10 @@ masked array. A function is provided to compute extension velocities.
 * 0.0.8: March 9th 2016
    * Narrow band capability: an optional "narrow" keyword argument
      limits the extent of the marching algorithm (Adrian Butscher).
+* 0.0.9: August 5th 2016
+   * Periodic boundaries: an optional "periodic" keyword argument
+     enables periodic boundaries in one or more directions (Wolfram Moebius).
+
 
 Copyright 2016 The scikit-fmm team.
 
