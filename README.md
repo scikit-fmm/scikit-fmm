@@ -76,6 +76,8 @@ masked array. A function is provided to compute extension velocities.
   * These installers are build from `master` after each commit.
   * Choose your Python version and platform, then click the Artifacts tab.
   * https://ci.appveyor.com/project/jkfurtney/scikit-fmm
+* Ubuntu PPA 
+  * https://launchpad.net/~nvidia-digits/+archive/ubuntu/dev
 
 ### Running Tests
 * `python -c "import skfmm; skfmm.test(True)"`
