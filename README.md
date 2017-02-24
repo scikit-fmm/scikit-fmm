@@ -123,6 +123,6 @@ masked array. A function is provided to compute extension velocities.
      enables periodic boundaries in one or more directions (Wolfram Moebius).
 
 
-Copyright 2016 The scikit-fmm team.
+Copyright 2017 The scikit-fmm team.
 
 BSD-style license. See LICENSE.txt in the source directory.
