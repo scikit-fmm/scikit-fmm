@@ -67,7 +67,9 @@ masked array. A function is provided to compute extension velocities.
 
 ### Installing
 * Via pip: `pip install scikit-fmm`
-* From source: `python setup.py install`
+* From source: 
+  * On Ubuntu 16.04 with Anaconda amd64 give the command `conda install libgcc`.
+  * `python setup.py install`
 * 64-bit Windows binaries from Christoph Gohlke:
   * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
 * 64-bit Conda package for Py27:
