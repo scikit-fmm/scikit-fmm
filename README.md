@@ -67,7 +67,7 @@ masked array. A function is provided to compute extension velocities.
 
 ### Installing
 * Via pip: `pip install scikit-fmm`
-* From source: 
+* From source:
   * On Ubuntu 16.04 with Anaconda amd64 give the command `conda install libgcc`.
   * `python setup.py install`
 * 64-bit Windows binaries from Christoph Gohlke:
@@ -78,7 +78,7 @@ masked array. A function is provided to compute extension velocities.
   * These installers are build from `master` after each commit.
   * Choose your Python version and platform, then click the Artifacts tab.
   * https://ci.appveyor.com/project/jkfurtney/scikit-fmm
-* Ubuntu PPA 
+* Ubuntu PPA
   * https://launchpad.net/~nvidia-digits/+archive/ubuntu/dev
 
 ### Running Tests
@@ -89,6 +89,34 @@ masked array. A function is provided to compute extension velocities.
 ### Building documentation
 * Requires sphinx and numpydoc
 * `make html`
+
+### Publications using scikit-fmm
+
+* Moon, K. R., V. Delouille, J.J. Li, R. De Visscher, F. Watson and
+  A.O. Hero III (2016) "Image patch analysis of sunspots and active
+  regions." J. Space Weather Space Clim., 6, A3, DOI:
+  10.1051/swsc/2015043.
+
+* Tao, M., J. Solomon and A. Butscher (2016) "Near-Isometric Level Set
+  Tracking." in Eurographics Symposium on Geometry Processing 2016
+  Eds: M. Ovsjanikov and D. Panozzo. Volume 35 (2016), Number 5
+
+* Chalmers, S., C.D. Saunter, J.M. Girkin and J.G. McCarron (2016)
+  "Age decreases mitochondrial motility and increases mitochondrial
+  size in vascular smooth muscle." Journal of Physiology, 594.15 pp
+  4283–4295.
+
+* Vargiu, Antioco, M. Marrocu, L. Massidda (2015) "Implementazione e
+  valutazione su un caso reale del servizio di Cloud Computing per la
+  simulazione di incendi boschivi in Sardegna" (Implementation and
+  evaluation on a real case of Cloud computing service for simulation
+  of Forest fires in Sardinia). Sardinia Department of Energy and
+  Environment. CRS4 PIA 2010 D5.4.
+
+* Diogo Brandão Amorim (2014) "Efficient path planning of a mobile
+  robot on rough terrain" Master's Thesis, Department of Aerospace
+  Engineering, University of Lisbon.
+
 
 ### Version History:
 * 0.0.1: February 13 2012
