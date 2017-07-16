@@ -3,6 +3,7 @@
 #include "travel_time_marcher.h"
 #include "math.h"
 #include "heap.h"
+#include <stdexcept>
 
 void travelTimeMarcher::initalizeFrozen()
 {
@@ -82,9 +83,7 @@ double travelTimeMarcher::solveQuadratic(int i, const double &a,
   }
   else
   {
-    return 0;
+    throw std::runtime_error("Negative discriminant in time marcher quadratic.");
   }
   return r0;
 }
-
-
