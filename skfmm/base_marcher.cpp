@@ -121,6 +121,7 @@ void baseMarcher::solve()
   int i=0;
   std::vector<int> toFreeze;
 
+  int percent_complete = 100*frozenCount/(size_ + 0.0);
   while (! heap_->empty())
   {
     toFreeze.clear();
@@ -139,7 +140,6 @@ void baseMarcher::solve()
     frozenCount++;
 
     bool done=false;
-    int percent_complete = 100*frozenCount/(size_ + 0.0);
     while (!done)
     {
       if (! heap_->empty() && value == heap_->peek())
