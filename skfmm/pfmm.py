@@ -1,5 +1,6 @@
 from sys import float_info
 import numpy as np
+import numbers
 
 from .cfmm import cFastMarcher
 
@@ -7,7 +8,7 @@ FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
 
 
-def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
+def pre_process_args(phi, dx, narrow, periodic, verbose, ext_mask=None):
     """
     get input data into the correct form for calling the c extension module
     This wrapper allows for a little bit of flexibility in the input types
@@ -44,6 +45,13 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
     if narrow < 0:
         raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
 
+
+    if not isinstance(verbose, numbers.Integral):
+        raise ValueError("parameter \"verbose\" must be an integer.")
+    iverbose = int(verbose)
+    if not (iverbose==0 or iverbose==1 or iverbose==2):
+        raise ValueError("parameter \"verbose\" must be an integer equal to 0, 1 or 2.")
+
     return phi, dx, flag, ext_mask, periodic_data
 
 
@@ -59,7 +67,7 @@ def post_process_result(result):
 
 
 def distance(phi, dx=1.0, self_test=False, order=2,
-             narrow=0.0, periodic=False):
+             narrow=0.0, periodic=False, verbose=0):
     """Return the signed distance from the zero contour of the array phi.
 
     Parameters
@@ -97,6 +105,14 @@ def distance(phi, dx=1.0, self_test=False, order=2,
                individual directions. The default value is False,
                i.e., no periodic boundaries in any direction.
 
+    verbose : int, optional
+              print algorithm progress to stdout. The
+              default is verbose==0 which is no output. If verbose==1
+              an update is given for each percent complete. If
+              verbose==2 additional information about the marching
+              progress is given. The progress indications are only approximate as
+              inaccessible regions may exist.
+
     Returns
     -------
     d : an array the same shape as phi
@@ -106,15 +122,15 @@ def distance(phi, dx=1.0, self_test=False, order=2,
 
     """
     phi, dx, flag, ext_mask, periodic = \
-                        pre_process_args(phi, dx, narrow, periodic)
+                        pre_process_args(phi, dx, narrow, periodic, verbose)
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
-                     int(self_test), DISTANCE, order, narrow, periodic)
+                     int(self_test), DISTANCE, order, narrow, periodic, verbose)
     d = post_process_result(d)
     return d
 
 
 def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
-                narrow=0.0, periodic=False):
+                narrow=0.0, periodic=False, verbose=0):
     """Return the travel from the zero contour of the array phi given the
     scalar velocity field speed.
 
@@ -168,15 +184,15 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 
     """
     phi, dx, flag, ext_mask, periodic \
-        = pre_process_args(phi, dx, narrow, periodic)
+        = pre_process_args(phi, dx, narrow, periodic, verbose)
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
-                     int(self_test), TRAVEL_TIME, order, narrow, periodic)
+                     int(self_test), TRAVEL_TIME, order, narrow, periodic, verbose)
     t = post_process_result(t)
     return t
 
 
 def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
-                         ext_mask=None, narrow=0.0, periodic=False):
+                         ext_mask=None, narrow=0.0, periodic=False, verbose=0):
     """Extend the velocities defined at the zero contour of phi, in the
     normal direction, to the rest of the domain. Extend the velocities
     such that grad f_ext dot grad d = 0 where where f_ext is the
@@ -234,11 +250,11 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
 
     """
     phi, dx, flag, ext_mask, periodic = \
-                pre_process_args(phi, dx, narrow, periodic, ext_mask)
+                pre_process_args(phi, dx, narrow, periodic, verbose, ext_mask)
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,
-                                   order, narrow, periodic)
+                                   order, narrow, periodic, verbose)
     distance = post_process_result(distance)
     f_ext = post_process_result(f_ext)
 

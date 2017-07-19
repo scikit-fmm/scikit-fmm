@@ -8,9 +8,9 @@ public:
   distanceMarcher(double *phi,      double *dx, long *flag,
                   double *distance, int ndim,   int *shape,
                   bool self_test,   int order,  double narrow,
-                  int periodic):
+                  int periodic,     int verbose):
     baseMarcher(phi, dx, flag, distance, ndim, shape, self_test, order,
-                narrow, periodic) { }
+                narrow, periodic, verbose) { }
   virtual ~distanceMarcher() { }
 
 protected:

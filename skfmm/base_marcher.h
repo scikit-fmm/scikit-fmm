@@ -21,7 +21,7 @@ public:
   baseMarcher(double *phi,      double *dx,  long *flag,
               double *distance, int ndim,    int *shape,
               bool self_test,   int order,   double narrow,
-              int periodic);
+              int periodic,     int verbose);
 
   virtual          ~baseMarcher();
   void             march();
@@ -55,6 +55,7 @@ private:
   int               shift_[MaximumDimension];
   int               periodic_;
   bool              self_test_;
+  int               verbose_;
 
 protected:
   // derived classes must implement these functions

@@ -7,6 +7,7 @@
 #include "heap.h"
 #include "math.h"
 #include <vector>
+#include <iostream>
 
 extern "C" {
 
@@ -15,7 +16,7 @@ baseMarcher::baseMarcher(
   double *phi,      double *dx,   long *flag,
   double *distance, int     ndim, int *shape,
   bool self_test,   int order,    double narrow,
-  int periodic)
+  int periodic,     int verbose)
 {
   narrow_     =   narrow;
   order_      =   order;
@@ -30,6 +31,7 @@ baseMarcher::baseMarcher(
   heapptr_    =   0;
   heap_       =   0;
   periodic_   =   periodic;
+  verbose_    =   verbose;
 
   for (int i=0; i<dim_; i++)
   {
@@ -134,8 +136,10 @@ void baseMarcher::solve()
     flag_[addr]=Frozen;
     finalizePoint(addr, value);
     toFreeze.push_back(addr);
+    frozenCount++;
 
     bool done=false;
+    int percent_complete = 100*frozenCount/(size_ + 0.0);
     while (!done)
     {
       if (! heap_->empty() && value == heap_->peek())
@@ -145,6 +149,20 @@ void baseMarcher::solve()
         heap_->pop(&l_addr, &l_value);
         flag_[l_addr]=Frozen;
         finalizePoint(l_addr, l_value);
+        frozenCount++;
+        if (verbose_) {
+          int progress = 100*frozenCount/(size_ + 0.0);
+          if (progress > percent_complete) {
+            percent_complete = progress;
+            if (verbose_==1) {
+              cout << percent_complete << " %" << endl;
+            } else if (verbose_==2) {
+              cout << percent_complete << " %, " << frozenCount << "/" << size_ << " points frozen, value: " << value << endl;
+            }
+
+          }
+
+        }
         toFreeze.push_back(l_addr);
       }
       else
