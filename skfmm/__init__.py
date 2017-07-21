@@ -23,3 +23,4 @@ masked array.
 """
 
 from pfmm import distance, travel_time
+__version__ = "0.0.1"

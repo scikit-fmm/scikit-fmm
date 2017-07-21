@@ -70,7 +70,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  flag = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_INT, 1,
+  flag = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_LONG, 1,
                                           10, NPY_IN_ARRAY);
   if (!flag)
   {
@@ -202,4 +202,3 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // python wrapper adds mask back
   return (PyObject *)distance;
 }
-
