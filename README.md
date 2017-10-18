@@ -72,8 +72,8 @@ masked array. A function is provided to compute extension velocities.
   * `python setup.py install`
 * 64-bit Windows binaries from Christoph Gohlke:
   * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
-* 64-bit Conda package for Py27:
-  * https://binstar.org/jmargeta/scikit-fmm
+* Anaconda linux-64 and linux-ppc64le packages:
+  * `conda install scikit-fmm`
 * Experimental Windows wheels and exe installers:
   * These installers are build from `master` after each commit.
   * Choose your Python version and platform, then click the Artifacts tab.
