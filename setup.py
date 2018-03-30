@@ -38,9 +38,32 @@ def configuration(parent_package='',top_path=None):
 
     return config
 
+
+def parse_setuppy_commands():
+    """Check the commands and respond appropriately
+    
+    Inspired heavily from SciPy's setup script : https://github.com/scipy/scipy/blob/master/setup.py
+    """
+    if len(sys.argv) < 2:
+        # User forgot to give an argument probably, let setuptools handle that.
+        return True
+    
+    info_commands= ['--help-commands', 
+                        'egg_info',  
+                        '--version',
+                        'clean', 
+                        'install_egg_info',
+                        'rotate'
+                   ]
+
+    for command in info_commands:
+        if command in sys.argv[1:]:
+            return False
+
+
 def setup_package():
-    from numpy.distutils.core import setup
-    setup(
+    
+    metadata = {
         name             = DISTNAME,
         version          = VERSION,
         maintainer       = MAINTAINER,
@@ -59,7 +82,23 @@ def setup_package():
                             "Intended Audience :: Science/Research",
                             "Programming Language :: C++",
                             "Programming Language :: Python :: 2",
-                            "Programming Language :: Python :: 3"])
+                            "Programming Language :: Python :: 3"]
+    }
+    
+    if "--force" in sys.argv:
+        run_build = True
+        sys.argv.remove('--force')
+    else:
+        # Raise errors for unsupported commands, improve help output, etc.
+        run_build = parse_setuppy_commands()
+    
+    from setuptools import setup
+    
+    if run_build:
+        from numpy.distutils.core import setup
+
+    setup(**metadata)
+    
 
 if __name__ == '__main__':
     setup_package()
