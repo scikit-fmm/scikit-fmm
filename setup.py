@@ -63,7 +63,7 @@ def parse_setuppy_commands():
 
 def setup_package():
     
-    metadata = {
+    metadata = dict(
         name             = DISTNAME,
         version          = VERSION,
         maintainer       = MAINTAINER,
@@ -83,7 +83,7 @@ def setup_package():
                             "Programming Language :: C++",
                             "Programming Language :: Python :: 2",
                             "Programming Language :: Python :: 3"]
-    }
+    )
     
     if "--force" in sys.argv:
         run_build = True
