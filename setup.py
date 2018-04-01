@@ -17,7 +17,7 @@ DISTNAME         = "scikit-fmm"
 DESCRIPTION      = "An extension module implementing the fast marching method"
 MAINTAINER       = "Jason Furtney"
 MAINTAINER_EMAIL = "jkfurtney@gmail.com"
-VERSION          = "0.0.9"
+VERSION          = "0.0.9rev0"
 URL              = 'https://github.com/scikit-fmm/scikit-fmm'
 LICENSE          = 'BSD'
 KEYWORDS         = "fast marching method, Eikonal equation, interface, boundary"
@@ -72,10 +72,9 @@ def parse_setuppy_commands():
     # The following commands are supported, but we need to show more
     # useful messages to the user
     if 'install' in sys.argv[1:]:
-        print(textwrap.dedent("""
-            Note: if you need reliable uninstall behavior, then install
-            with pip (`pip install scikit-fmm`) instead of using `setup.py install`
-            """))
+        print("""
+            Note: if you need to uninstall you should `pip install scikit-fmm` instead of using `setup.py install`
+            """)
         return True
 
 
