@@ -59,6 +59,24 @@ def parse_setuppy_commands():
     for command in info_commands:
         if command in sys.argv[1:]:
             return False
+        
+    good_commands = ('develop', 'sdist', 'build', 'build_ext', 'build_py',
+                     'build_clib', 'build_scripts', 'bdist_wheel', 'bdist_rpm',
+                     'bdist_wininst', 'bdist_msi', 'bdist_mpkg',
+                     'build_sphinx')
+
+    for command in good_commands:
+        if command in sys.argv[1:]:
+            return True
+
+    # The following commands are supported, but we need to show more
+    # useful messages to the user
+    if 'install' in sys.argv[1:]:
+        print(textwrap.dedent("""
+            Note: if you need reliable uninstall behavior, then install
+            with pip (`pip install scikit-fmm`) instead of using `setup.py install`
+            """))
+        return True
 
 
 def setup_package():
