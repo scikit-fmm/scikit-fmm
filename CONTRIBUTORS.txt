@@ -10,3 +10,4 @@ jakirkham
 Adrian Butscher
 Wolfram Moebius
 Jens Glaser
+ManifoldFR

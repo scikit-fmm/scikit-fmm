@@ -17,7 +17,7 @@ DISTNAME         = "scikit-fmm"
 DESCRIPTION      = "An extension module implementing the fast marching method"
 MAINTAINER       = "Jason Furtney"
 MAINTAINER_EMAIL = "jkfurtney@gmail.com"
-VERSION          = "0.0.9rev0"
+VERSION          = "2019.1.30"
 URL              = 'https://github.com/scikit-fmm/scikit-fmm'
 LICENSE          = 'BSD'
 KEYWORDS         = "fast marching method, Eikonal equation, interface, boundary"
@@ -41,17 +41,17 @@ def configuration(parent_package='',top_path=None):
 
 def parse_setuppy_commands():
     """Check the commands and respond appropriately
-    
+
     Inspired heavily from SciPy's setup script : https://github.com/scipy/scipy/blob/master/setup.py
     """
     if len(sys.argv) < 2:
         # User forgot to give an argument probably, let setuptools handle that.
         return True
-    
-    info_commands= ['--help-commands', 
-                        'egg_info',  
+
+    info_commands= ['--help-commands',
+                        'egg_info',
                         '--version',
-                        'clean', 
+                        'clean',
                         'install_egg_info',
                         'rotate'
                    ]
@@ -59,7 +59,7 @@ def parse_setuppy_commands():
     for command in info_commands:
         if command in sys.argv[1:]:
             return False
-        
+
     good_commands = ('develop', 'sdist', 'build', 'build_ext', 'build_py',
                      'build_clib', 'build_scripts', 'bdist_wheel', 'bdist_rpm',
                      'bdist_wininst', 'bdist_msi', 'bdist_mpkg',
@@ -79,7 +79,7 @@ def parse_setuppy_commands():
 
 
 def setup_package():
-    
+
     metadata = dict(
         name             = DISTNAME,
         version          = VERSION,
@@ -101,21 +101,21 @@ def setup_package():
                             "Programming Language :: Python :: 2",
                             "Programming Language :: Python :: 3"]
     )
-    
+
     if "--force" in sys.argv:
         run_build = True
         sys.argv.remove('--force')
     else:
         # Raise errors for unsupported commands, improve help output, etc.
         run_build = parse_setuppy_commands()
-    
+
     from setuptools import setup
-    
+
     if run_build:
         from numpy.distutils.core import setup
 
     setup(**metadata)
-    
+
 
 if __name__ == '__main__':
     setup_package()
