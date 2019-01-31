@@ -151,8 +151,12 @@ masked array. A function is provided to compute extension velocities.
 * 0.0.9: August 5th 2016
    * Periodic boundaries: an optional "periodic" keyword argument
      enables periodic boundaries in one or more directions (Wolfram Moebius).
+* 2019.1.30 January 30th 2019
+   * Abrupt change to version numbering scheme.
+   * Bugfix in setup.py to allow installing via pip with numpy (ManifoldFR).
+   * Handle C++ exceptions during fast marching (Jens Glaser).
+   * Accept a zero discriminant in travel time point update.
 
-
-Copyright 2017 The scikit-fmm team.
+Copyright 2019 The scikit-fmm team.
 
 BSD-style license. See LICENSE.txt in the source directory.
