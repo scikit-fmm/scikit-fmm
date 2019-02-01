@@ -768,8 +768,7 @@ def testing():
     >>> d = distance(phi, narrow=1.0)
     >>> d.data[2:-2]
     array([-0.5,  0.5])
-    >>> d.mask
-    array([ True,  True, False, False,  True,  True], dtype=bool)
+    >>> assert (d.mask == [ True,  True, False, False,  True,  True]).all()
     >>> N     = 50
     >>> X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
     >>> r     = 0.5
