@@ -1,35 +1,13 @@
-# see : http://lmjohns3.com/2015/06/using-travis-ci-with-miniconda-scipy-and-nose.html
-# see: https://github.com/lmjohns3/theanets/blob/master/.travis.yml
-
 sudo: false
 language: python
 python:
   - 2.7
-  - 3.4
-  - 3.5
-
-cache: apt
-
-addons:
-  apt:
-    packages:
-    - libatlas-dev
-    - libatlas-base-dev
-    - liblapack-dev
-    - gfortran
-
-# Setup anaconda
-before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda info -a
+  - 3.6
+  - 3.7
 
 # Install packages
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy
+  - pip install numpy
   - python setup.py develop
 
 # Run test
