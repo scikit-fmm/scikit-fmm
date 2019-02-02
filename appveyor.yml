@@ -1,105 +1,75 @@
-# copied from: https://github.com/rdireen/spherepy/blob/master/appveyor.yml
+#   from: https://raw.githubusercontent.com/AndrewAnnex/SpiceyPy/master/appveyor.yml
+# retrieved feb 2 2019
+
+build: off
 
 environment:
   global:
-    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
-    # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # See: http://stackoverflow.com/a/13751649/163740
-    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
+      WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
 
   matrix:
-    - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7.13"
-      PYTHON_ARCH: "32"
+      - PYTHON: "C:\\Python27-x64"
+        PYTHON_VERSION: "2.7.x"
+        ARCH: "64"
+        PLAT_NAME: "win-amd64"
+        PY_TAG: "cp27"
 
-    - PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7.13"
-      PYTHON_ARCH: "64"
+      - PYTHON: "C:\\Python36-x64"
+        PYTHON_VERSION: "3.6.x"
+        ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        PLAT_NAME: "win-amd64"
+        PY_TAG: "cp36"
 
-    - PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.4"
-      PYTHON_ARCH: "32"
+      - PYTHON: "C:\\Python37-x64"
+        PYTHON_VERSION: "3.7.x"
+        ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        PLAT_NAME: "win-amd64"
+        PY_TAG: "cp37"
 
-    - PYTHON: "C:\\Python34-x64"
-      PYTHON_VERSION: "3.4.4"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.3"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.3"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6.0"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.0"
-      PYTHON_ARCH: "64"
+platform:
+  - x64
 
 cache:
-  # I keep pre-built python wheels in this tmp folder so that I don't
-  # compile them each session. (This is where I put the numpy wheels.)
-  # The file install_numpy.ps1 has been set as a cache item dependency,
-  # numpy will be rebuilt.
-  - C:\tmp -> \appveyor\install_numpy.ps1
+  - C:\Users\appveyor\Downloads -> setup.py
 
 install:
-
-  # Install Python (from the official .msi of http://python.org) and pip when
-  # not already installed.
-  - "powershell ./appveyor/install.ps1"
-
-  # Prepend newly installed Python to the PATH of this build (this cannot be
-  # done from inside the powershell script as it would require to restart
-  # the parent CMD process).
-  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-
   # Check that we have the expected version and architecture for Python
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
-  # Install the build dependencies of the project. If some dependencies contain
-  # compiled extensions and are not provided as pre-built wheel packages,
-  # pip will build them from source using the MSVC compiler matching the
-  # target Python version and architecture.
-  # [NOTE] I took numpy out of my appveyor-reqs.txt file because I don't want
-  # numpy to be built each time I run appveyor.
-  - "%CMD_IN_ENV% pip install setuptools wheel"
+# Log out the python version just so we know it
+  - ECHO "%PYTHON_VERSION%"
 
-  # Now that wheel has been installed, check to see if a numpy wheel has been
-  # made yet. If it hasn't, compile it and put it in C:\tmp.
-  - "powershell ./appveyor/install_numpy.ps1"
+  # update path to use installed pip
+  - set PATH=%PYTHON%\\scripts;%PATH%
 
-  # This is where I install numpy from the pre-built wheel I compiled either
-  # earlier in this session, or in a previous session.
-  - "%CMD_IN_ENV% pip install --no-index --find-links=c:\\tmp numpy"
+  # Download things we absolutely need
+  - pip install numpy setuptools wheel
 
+  # Now install spiceypy
+  - IF "%ARCH%"=="32" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86) ELSE (ECHO "probably a 64bit build")
+  - IF "%ARCH%"=="64" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64) ELSE (ECHO "probably a 32bit build")
+  - "%PYTHON%/python setup.py develop"
 
-build: false  # Not a C# project, build stuff at the test step instead.
+  - ECHO "Installed scikit-fmm!"
+  - "%PYTHON% -c \"import skfmm; print(skfmm.__version__)\""
+
+test_script:
+  - "python -c \"import skfmm, sys; sys.exit(skfmm.test())\""
+
+after_test:
+  - ECHO "DONE!"
+  - ECHO "BUILDING WHEELS..."
+  - "%PYTHON%/python setup.py sdist bdist_wheel --plat-name=%PLAT_NAME% --python-tag=%PY_TAG%"
+  - "%PYTHON%/python setup.py sdist bdist_wininst --plat-name=%PLAT_NAME% --python-tag=%PY_TAG%"
+
+  - ps: "ls dist"
 
 branches:
   only:
     - master
 
-test_script:
-  # Build the compiled extension and run the project tests
-  - "%CMD_IN_ENV% python setup.py develop"
-  - "python -c \"import skfmm, sys; sys.exit(skfmm.test())\""
-
-after_test:
-  # If tests are successful, create a whl package for the project.
-  - "%CMD_IN_ENV% python setup.py bdist_wheel"
-  - "%CMD_IN_ENV% python setup.py bdist_wininst"
-  - ps: "ls dist"
-
 artifacts:
-  # Archive the generated wheel package in the ci.appveyor.com build report.
   - path: dist\*
-
-#on_success:
-#  - TODO: upload the content of dist/*.whl to a public wheelhouse
-#
