@@ -36,8 +36,8 @@ cache:
 
 install:
   # Check that we have the expected version and architecture for Python
-  - "python --version"
-  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+  - "%PYTHON%/python --version"
+  - "%PYTHON%/python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
 # Log out the python version just so we know it
   - ECHO "%PYTHON_VERSION%"
@@ -54,10 +54,10 @@ install:
   - "%PYTHON%/python setup.py develop"
 
   - ECHO "Installed scikit-fmm!"
-  - "%PYTHON% -c \"import skfmm; print(skfmm.__version__)\""
+  - "%PYTHON%/python -c \"import skfmm; print(skfmm.__version__)\""
 
 test_script:
-  - "python -c \"import skfmm, sys; sys.exit(skfmm.test())\""
+  - "%PYTHON%/python -c \"import skfmm, sys; sys.exit(skfmm.test())\""
 
 after_test:
   - ECHO "DONE!"
