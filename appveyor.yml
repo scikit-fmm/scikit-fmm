@@ -63,7 +63,7 @@ after_test:
   - ECHO "DONE!"
   - ECHO "BUILDING WHEELS..."
   - "%PYTHON%/python setup.py sdist bdist_wheel --plat-name=%PLAT_NAME% --python-tag=%PY_TAG%"
-  - "%PYTHON%/python setup.py sdist bdist_wininst --plat-name=%PLAT_NAME% --python-tag=%PY_TAG%"
+  - "%PYTHON%/python setup.py sdist bdist_wininst
 
   - ps: "ls dist"
 
