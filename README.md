@@ -1,4 +1,4 @@
-[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)[![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)[![Build status](https://ci.appveyor.com/api/projects/status/qhdwo9ut8vjyqf96?svg=true)](https://ci.appveyor.com/project/jkfurtney/scikit-fmm)
+[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)[![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)[![Build status](https://ci.appveyor.com/api/projects/status/qhdwo9ut8vjyqf96?svg=true)](https://ci.appveyor.com/project/jkfurtney/scikit-fmm)[![Documentation Status](https://readthedocs.org/projects/scikit-fmm/badge/?version=latest)](https://scikit-fmm.readthedocs.io/en/latest/?badge=latest)
 
 # scikit-fmm: the fast marching method for Python
 
@@ -50,8 +50,7 @@ The input array can be of 1, 2, 3 or higher dimensions and can be a
 masked array. A function is provided to compute extension velocities.
 
 ### Documentation
-* Release Version: http://packages.python.org/scikit-fmm
-* Development Version: http://scikit-fmm.readthedocs.org/en/latest/
+* http://scikit-fmm.readthedocs.org/en/latest/
 
 ### PyPI
 * http://pypi.python.org/pypi/scikit-fmm
