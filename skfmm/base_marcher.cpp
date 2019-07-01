@@ -8,8 +8,6 @@
 #include "math.h"
 #include <vector>
 
-#include <stdio.h>
-
 extern "C" {
 
 
