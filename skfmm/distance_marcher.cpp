@@ -115,6 +115,7 @@ void distanceMarcher::initalizeFrozen()
     {
       flag_[i]=Frozen;
       distance_[i]=0.0;
+      nearest_contour_[i] = i;
     }
   }
   //loop over all of phi and for each point check each direction

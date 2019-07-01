@@ -74,12 +74,13 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 
   PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask;
   int       self_test, mode, order, periodic;
-  PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
+  PyArrayObject *phi, *dx, *flag, *speed, *distance, *nearest_mask, *f_ext, *ext_mask;
   double narrow=0;
   distance = 0;
   f_ext    = 0;
   speed    = 0;
   ext_mask = 0;
+  nearest_mask = 0;
 
 
 
@@ -215,6 +216,10 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                                             shape2, PyArray_DOUBLE, 0);
   if (! distance) return NULL;
 
+  nearest_mask = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
+                                                shape2, PyArray_INT, 0);
+  if (! nearest_mask) return NULL;
+
   if (mode == EXTENSION_VELOCITY)
   {
     f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
@@ -245,6 +250,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   double * local_distance   = (double *) PyArray_DATA(distance);
+  int * local_nearest_mask  = (int *)    PyArray_DATA(nearest_mask);
   int error;
 
   baseMarcher *marcher = 0;
@@ -257,6 +263,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         local_dx,
         local_flag,
         local_distance,
+        local_nearest_mask,
         PyArray_NDIM(phi),
         shape,
         self_test,
@@ -272,6 +279,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         local_dx,
         local_flag,
         local_distance,
+        local_nearest_mask,
         PyArray_NDIM(phi),
         shape,
         self_test,
@@ -289,6 +297,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         local_dx,
         local_flag,
         local_distance,
+        local_nearest_mask,
         PyArray_NDIM(phi),
         shape,
         self_test,
@@ -334,17 +343,18 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                     "an unknown error has occurred in the scikit-fmm c "
                     "extension module");
     Py_XDECREF(distance);
+    Py_XDECREF(nearest_mask);
     return NULL;
   case 2:
     PyErr_SetString(PyExc_ValueError,
                     "the array phi contains no zero contour (no zero level set)");
     Py_XDECREF(distance);
+    Py_XDECREF(nearest_mask);
     return NULL;
   }
 
   if (mode == EXTENSION_VELOCITY)
-  {
-    return Py_BuildValue("OO", distance, f_ext);
-  }
-  return (PyObject *)distance;
+    return Py_BuildValue("NNN", distance, nearest_mask, f_ext);
+
+  return Py_BuildValue("NN", distance, nearest_mask);
 }

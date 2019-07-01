@@ -6,10 +6,10 @@ class distanceMarcher : public baseMarcher
 {
 public:
   distanceMarcher(double *phi,      double *dx, long *flag,
-                  double *distance, int ndim,   int *shape,
+                  double *distance, int* nearest_mask, int ndim,   int *shape,
                   bool self_test,   int order,  double narrow,
                   int periodic):
-    baseMarcher(phi, dx, flag, distance, ndim, shape, self_test, order,
+    baseMarcher(phi, dx, flag, distance, nearest_mask, ndim, shape, self_test, order,
                 narrow, periodic) { }
   virtual ~distanceMarcher() { }
 

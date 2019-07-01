@@ -18,10 +18,10 @@ extern "C" {
 class baseMarcher
 {
 public:
-  baseMarcher(double *phi,      double *dx,  long *flag,
-              double *distance, int ndim,    int *shape,
-              bool self_test,   int order,   double narrow,
-              int periodic);
+  baseMarcher(double *phi,      double *dx,           long *flag,
+              double *distance, int* nearest_contour, int ndim,
+              int *shape,       bool self_test,       int order,
+              double narrow,    int periodic);
 
   virtual          ~baseMarcher();
   void             march();
@@ -95,6 +95,7 @@ protected:
   double          * phi_;
   double          * dx_;
   long            * flag_;
+  int             * nearest_contour_;
   int               error_;
   int               dim_;            // number of dimensions
   int               size_;           // flat size
