@@ -27,7 +27,8 @@ double distanceMarcher::updatePointOrderOne(int i)
       c+=idx2_[dim]*pow(value,2);
     }
   }
-  double tmp = solveQuadratic(i,a,b,c);
+  bool pass;
+  double tmp = solveQuadratic(i, a, b, c, &pass);
   return tmp;
 }
 
@@ -78,7 +79,8 @@ double distanceMarcher::updatePointOrderTwo(int i)
       c+=idx2_[dim]*pow(value1,2);
     }
   }
-  double tmp = solveQuadratic(i,a,b,c);
+  bool pass;
+  double tmp = solveQuadratic(i, a, b, c, &pass);
   return tmp;
 }
 
@@ -86,7 +88,7 @@ double distanceMarcher::updatePointOrderTwo(int i)
 // find and return the correct root
 double distanceMarcher::solveQuadratic(int i, const double &a,
                                        const double &b,
-                                       double &c)
+                                       double &c, bool *pass)
 {
   c-=1;
   double r0=0;

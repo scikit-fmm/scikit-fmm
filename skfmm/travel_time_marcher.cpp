@@ -27,15 +27,19 @@ double travelTimeMarcher::updatePointOrderTwo(int i)
   double a,b,c;
   a=b=c=0;
   int naddr=0;
-  for (int dim=0; dim<dim_; dim++)
+  double closest_neighbor = maxDouble;
+  for (int dim=0; dim<dim_; dim++)  // each dimension
   {
     double value1 = maxDouble;
     double value2 = maxDouble;
-    for (int j=-1; j<2; j+=2) // each direction
+    for (int j=-1; j<2; j+=2)  // each direction (positive or negative)
     {
       naddr = _getN(i,dim,j,Mask);
       if (naddr!=-1 && flag_[naddr]==Frozen)
       {
+        if (distance_[naddr]<closest_neighbor) {
+          closest_neighbor = distance_[naddr];
+        }
         if (fabs(distance_[naddr])<fabs(value1))
         {
           value1 = distance_[naddr];
@@ -66,13 +70,19 @@ double travelTimeMarcher::updatePointOrderTwo(int i)
       c+=idx2_[dim]*pow(value1,2);
     }
   }
-  return solveQuadratic(i,a,b,c);
+  bool pass;
+  double trial_value = solveQuadratic(i,a,b,c,&pass);
+  if (pass) {
+    return trial_value;
+  } else {
+    return 1/speed_[i] + closest_neighbor;
+  }
 }
 
 
 double travelTimeMarcher::solveQuadratic(int i, const double &a,
                                          const double &b,
-                                         double &c)
+                                         double &c, bool *pass)
 {
   c -= 1/pow(speed_[i],2);
   double r0=0;
@@ -83,7 +93,10 @@ double travelTimeMarcher::solveQuadratic(int i, const double &a,
   }
   else
   {
-    throw std::runtime_error("Negative discriminant in time marcher quadratic.");
+    //throw std::runtime_error("Negative discriminant in time marcher quadratic.");
+    //double result = 1/speed_[i] +
+    *pass = false;
+    return 0;
   }
   return r0;
 }

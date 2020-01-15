@@ -28,7 +28,7 @@ protected:
   virtual void             initalizeFrozen();
   virtual double           updatePointOrderTwo(int i);
   virtual double           solveQuadratic(int i, const double &a,
-                                          const double &b, double &c);
+                                          const double &b, double &c, bool *pass);
 private:
   double *speed_;
 };
