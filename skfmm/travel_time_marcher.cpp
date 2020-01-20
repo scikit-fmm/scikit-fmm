@@ -84,19 +84,18 @@ double travelTimeMarcher::solveQuadratic(int i, const double &a,
                                          const double &b,
                                          double &c, bool *pass)
 {
-  c -= 1/pow(speed_[i],2);
+  c -= 1/pow(speed_[i], 2);
   double r0=0;
-  double det = pow(b,2)-4*a*c;
+  double det = pow(b, 2) - 4*a*c;
   if (det>=0)
   {
-    r0 = (-b+sqrt(det))/2.0/a;
+    r0 = (-b + sqrt(det))/2.0/a;
   }
   else
   {
-    //throw std::runtime_error("Negative discriminant in time marcher quadratic.");
-    //double result = 1/speed_[i] +
     *pass = false;
     return 0;
   }
+  *pass = true;
   return r0;
 }
