@@ -247,6 +247,11 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   double * local_distance   = (double *) PyArray_DATA(distance);
   int error;
 
+  //Hipotesys: this is threadable, but the macros are not directly usables
+  //https://docs.python.org/3/c-api/init.html#c.Py_BEGIN_ALLOW_THREADS
+  //use directly the expansions
+  {
+  PyThreadState *_save; _save = PyEval_SaveThread();
   baseMarcher *marcher = 0;
   switch (mode)
   {
@@ -307,8 +312,10 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
       marcher->march();
       error = marcher->getError();
       delete marcher;
+	  PyEval_RestoreThread(_save);
     } catch (const std::exception& exn) {
       // propagate error
+	  PyEval_RestoreThread(_save);
       PyErr_SetString(PyExc_RuntimeError, exn.what());
       Py_XDECREF(phi);
       Py_XDECREF(dx);
@@ -317,7 +324,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
       Py_XDECREF(ext_mask);
       return NULL;
     }
-
+  }
   Py_DECREF(phi);
   Py_DECREF(flag);
   Py_DECREF(dx);
