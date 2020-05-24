@@ -858,14 +858,20 @@ def testing():
     ...                   [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ],
     ...                   [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ]])
     >>> assert not travel_time(phi,speed)[0][3] == 0
-    Traceback (most recent call last):
-      File "/usr/lib/python2.7/doctest.py", line 1315, in __run
-        compileflags, 1) in test.globs
-      File "<doctest skfmm.testing[347]>", line 1, in <module>
-        assert not travel_time(phi,speed)[0][3] == 0
-      File "skfmm/pfmm.py", line 173, in travel_time
-        int(self_test), TRAVEL_TIME, order, narrow, periodic)
-    RuntimeError: Negative discriminant in time marcher quadratic.
+
+    >>> phi = np.array([[1, -1, -1],
+    ...                 [0,  0, -1],
+    ...                 [0,  0,  1]])
+    >>> value = 0.01
+    >>> speed = np.array([[ 1, value, 0.1],
+    ...                   [ 0, 0,     1. ],
+    ...                  [ 0, 0,     1. ]])
+    >>> phi = np.ma.MaskedArray(phi, phi==0)
+    >>> tt = travel_time(phi,speed)
+    >>> tt.fill_value=0
+    >>> np.testing.assert_allclose(tt.data, ((0.5, 50, 7.5),
+    ...                                      (0,    0, 0.5),
+    ...                                      (0,    0, 0.5)))
     """
 
 def test(verbose=None):
