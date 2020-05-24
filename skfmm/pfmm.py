@@ -7,6 +7,14 @@ FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
 
 
+def unravel_indices(indices):
+    indices_flat = np.reshape(indices, (-1,))
+    unraveled = np.unravel_index(indices_flat, indices.shape)
+    unraveled = np.array(list(zip(*unraveled)), np.int)
+    unraveled = np.reshape(unraveled, tuple(list(indices.shape) + [indices.ndim]))
+    return unraveled
+
+
 def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
     """
     get input data into the correct form for calling the c extension module
@@ -59,7 +67,7 @@ def post_process_result(result):
 
 
 def distance(phi, dx=1.0, self_test=False, order=2,
-             narrow=0.0, periodic=False):
+             narrow=0.0, periodic=False, return_nearest_contour=False):
     """Return the signed distance from the zero contour of the array phi.
 
     Parameters
@@ -107,14 +115,18 @@ def distance(phi, dx=1.0, self_test=False, order=2,
     """
     phi, dx, flag, ext_mask, periodic = \
                         pre_process_args(phi, dx, narrow, periodic)
-    d = cFastMarcher(phi, dx, flag, None, ext_mask,
-                     int(self_test), DISTANCE, order, narrow, periodic)
+    d, nc = cFastMarcher(phi, dx, flag, None, ext_mask,
+                         int(self_test), DISTANCE, order, narrow, periodic)
     d = post_process_result(d)
-    return d
+    if return_nearest_contour:
+        nc = unravel_indices(nc)
+        return d, nc
+    else:
+        return d
 
 
 def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
-                narrow=0.0, periodic=False):
+                narrow=0.0, periodic=False, return_nearest_contour=False):
     """Return the travel from the zero contour of the array phi given the
     scalar velocity field speed.
 
@@ -169,14 +181,18 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
     """
     phi, dx, flag, ext_mask, periodic \
         = pre_process_args(phi, dx, narrow, periodic)
-    t = cFastMarcher(phi, dx, flag, speed, ext_mask,
-                     int(self_test), TRAVEL_TIME, order, narrow, periodic)
+    t, nc = cFastMarcher(phi, dx, flag, speed, ext_mask,
+                         int(self_test), TRAVEL_TIME, order, narrow, periodic)
     t = post_process_result(t)
-    return t
+    if return_nearest_contour:
+        nc = unravel_indices(nc)
+        return t, nc
+    else:
+        return t
 
 
 def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
-                         ext_mask=None, narrow=0.0, periodic=False):
+                         ext_mask=None, narrow=0.0, periodic=False, return_nearest_contour=False):
     """Extend the velocities defined at the zero contour of phi, in the
     normal direction, to the rest of the domain. Extend the velocities
     such that grad f_ext dot grad d = 0 where where f_ext is the
@@ -236,10 +252,14 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
     phi, dx, flag, ext_mask, periodic = \
                 pre_process_args(phi, dx, narrow, periodic, ext_mask)
 
-    distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
+    distance, nc, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,
                                    order, narrow, periodic)
     distance = post_process_result(distance)
     f_ext = post_process_result(f_ext)
 
-    return distance, f_ext
+    if return_nearest_contour:
+        nc = unravel_indices(nc)
+        return distance, f_ext, nc
+    else:
+        return distance, f_ext

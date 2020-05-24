@@ -11,25 +11,24 @@
 extern "C" {
 
 
-baseMarcher::baseMarcher(
-  double *phi,      double *dx,   long *flag,
-  double *distance, int     ndim, int *shape,
-  bool self_test,   int order,    double narrow,
-  int periodic)
+baseMarcher::baseMarcher(double *phi,          double *dx,    long *flag,
+  double *distance,      int* nearest_contour, int    ndim,   int *shape,
+  bool self_test,        int order,            double narrow, int periodic)
 {
-  narrow_     =   narrow;
-  order_      =   order;
-  error_      =   1;
-  phi_        =   phi;
-  dx_         =   dx;
-  flag_       =   flag;
-  distance_   =   distance;
-  dim_        =   ndim;
-  size_       =   1;
-  self_test_  =   self_test;
-  heapptr_    =   0;
-  heap_       =   0;
-  periodic_   =   periodic;
+  narrow_          =   narrow;
+  order_           =   order;
+  error_           =   1;
+  phi_             =   phi;
+  dx_              =   dx;
+  flag_            =   flag;
+  distance_        =   distance;
+  nearest_contour_ = nearest_contour;
+  dim_             =   ndim;
+  size_            =   1;
+  self_test_       =   self_test;
+  heapptr_         =   0;
+  heap_            =   0;
+  periodic_        =   periodic;
 
   for (int i=0; i<dim_; i++)
   {
@@ -89,6 +88,7 @@ void baseMarcher::initalizeNarrow()
               d =  updatePointOrderOne(i);
 
             distance_[i] =  d;
+            nearest_contour_[i] = nearest_contour_[naddr];
             heapptr_[i]  =  heap_->push(i,fabs(d));
           }
         } // for each direction
@@ -186,6 +186,7 @@ void baseMarcher::solve()
               {
                 distance_[naddr]=d;
                 flag_[naddr]=Narrow;
+                nearest_contour_[naddr] = nearest_contour_[addr];
                 heapptr_[naddr] = heap_->push(naddr,fabs(d));
               }
             }
