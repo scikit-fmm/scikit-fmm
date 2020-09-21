@@ -344,7 +344,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 
   if (mode == EXTENSION_VELOCITY)
   {
-    return Py_BuildValue("OO", distance, f_ext);
+    return Py_BuildValue("NN", distance, f_ext);
   }
   return (PyObject *)distance;
 }
