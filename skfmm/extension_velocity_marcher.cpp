@@ -119,7 +119,7 @@ void extensionVelocityMarcher::finalizePoint(int i, double phi_i)
         if (ldistance[dim]==0 || ldistance[dim]>d)
         {
           // this condition avoids a rare div by zero case where d = 0
-          if (fabs(d) > 0.5 * dx_[dim])
+          if (fabs(d) > std::numeric_limits<double>::epsilon())
           {
             ldistance[dim] = d;
             lspeed[dim] = f_ext_[naddr];
