@@ -1,6 +1,7 @@
 #include "distance_marcher.h"
 #include "math.h"
 
+
 double distanceMarcher::updatePointOrderOne(int i)
 {
   double a,b,c;
@@ -24,7 +25,7 @@ double distanceMarcher::updatePointOrderOne(int i)
     {
       a+=idx2_[dim];
       b-=idx2_[dim]*2*value;
-      c+=idx2_[dim]*pow(value,2);
+      c+=idx2_[dim]*value*value;
     }
   }
   double tmp = solveQuadratic(i,a,b,c);
@@ -41,6 +42,7 @@ double distanceMarcher::updatePointOrderTwo(int i)
   double a,b,c;
   a=b=c=0;
   int naddr=0;
+
   for (int dim=0; dim<dim_; dim++)
   {
     double value1 = maxDouble;
@@ -59,7 +61,7 @@ double distanceMarcher::updatePointOrderTwo(int i)
               ((distance_[naddr2]<=value1 && value1 >=0) ||
                (distance_[naddr2]>=value1 && value1 <=0)))
           {
-            value2=distance_[naddr2];
+            value2 = distance_[naddr2];
           }
         }
       }
@@ -69,13 +71,13 @@ double distanceMarcher::updatePointOrderTwo(int i)
       double tp = oneThird*(4*value1-value2);
       a+=idx2_[dim]*aa;
       b-=idx2_[dim]*2*aa*tp;
-      c+=idx2_[dim]*aa*pow(tp,2);
+      c+=idx2_[dim]*aa*tp*tp;
     }
     else if (value1<maxDouble)
     {
       a+=idx2_[dim];
       b-=idx2_[dim]*2*value1;
-      c+=idx2_[dim]*pow(value1,2);
+      c+=idx2_[dim]*value1*value1;
     }
   }
   double tmp = solveQuadratic(i,a,b,c);
@@ -89,7 +91,7 @@ double distanceMarcher::solveQuadratic(int i, const double &a,
                                        double &c)
 {
   c-=1;
-  double det = pow(b,2)-4*a*c;
+  double det = b*b-4*a*c;
   if (det > 0)
   {
     if (phi_[i] > doubleEpsilon) { return (-b + sqrt(det)) / 2.0 / a; }
@@ -100,7 +102,6 @@ double distanceMarcher::solveQuadratic(int i, const double &a,
     return 0;
   }
 }
-
 
 void distanceMarcher::initalizeFrozen()
 {

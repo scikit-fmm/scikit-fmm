@@ -8,6 +8,7 @@
 #include "math.h"
 #include <vector>
 
+
 extern "C" {
 
 
@@ -17,8 +18,8 @@ baseMarcher::baseMarcher(
   bool self_test,   int order,    double narrow,
   int periodic)
 {
-  narrow_     =   narrow;
-  order_      =   order;
+  narrow_ =  narrow;
+  order_ =  order;
   error_      =   1;
   phi_        =   phi;
   dx_         =   dx;
@@ -73,26 +74,30 @@ void baseMarcher::initalizeNarrow()
   {
     if (flag_[i] == Far)
     {
-      for (int dim=0; dim<dim_; dim++)
+      bool foundFrozenNeighbor = false;
+      for (int dim = 0; dim < dim_ && !foundFrozenNeighbor; dim++)
       {
-        for (int j=-1; j<2; j+=2) // each direction
+        for (int j = -1; j < 2 && !foundFrozenNeighbor; j += 2) // each direction
         {
           int naddr = _getN(i,dim,j,Mask);
           if (naddr!=-1 && flag_[naddr]==Frozen)
-          if (flag_[i]==Far)
           {
-            flag_[i]     =  Narrow;
-            double d;
-            if (order_ == 2)
-              d =  updatePointOrderTwo(i);
-            else
-              d =  updatePointOrderOne(i);
-
-            distance_[i] =  d;
-            heapptr_[i]  =  heap_->push(i,fabs(d));
+            foundFrozenNeighbor = true;
           }
         } // for each direction
       } // for each dimension
+      if (foundFrozenNeighbor)
+      {
+        flag_[i] = Narrow;
+        double d;
+        if (order_ == 2)
+          d = updatePointOrderTwo(i);
+        else
+          d = updatePointOrderOne(i);
+
+        distance_[i] = d;
+        heapptr_[i] = heap_->push(i, fabs(d));
+      }
     } // each far field point
   }
 }
@@ -116,21 +121,17 @@ void baseMarcher::solve()
     error_ = 2;
     return;
   }
-  int i=0;
+
   std::vector<int> toFreeze;
 
   while (! heap_->empty())
   {
     toFreeze.clear();
-    i++;
+
     double  value   = 0;
     int     addr    = 0;
     heap_->pop(&addr, &value);
 
-    if ((narrow_ != 0) && (fabs(value) > narrow_))
-    {
-      break;
-    }
     flag_[addr]=Frozen;
     finalizePoint(addr, value);
     toFreeze.push_back(addr);
@@ -153,14 +154,14 @@ void baseMarcher::solve()
 
     for (unsigned int k=0; k<toFreeze.size(); k++)
     {
-      int addr = toFreeze[k];
-
+      const int currentAddr = toFreeze[k];
+            
       for (int dim=0; dim<dim_; dim++)
       {
         for (int j=-1; j<2; j+=2) // each direction
         {
-          int naddr = _getN(addr,dim,j,Frozen);
-          if (naddr!=-1 && flag_[naddr]!=Frozen)
+          int naddr = _getN(currentAddr,dim,j,Frozen);
+          if (naddr!=-1)
           {
             if (flag_[naddr]==Narrow)
             {
@@ -171,8 +172,8 @@ void baseMarcher::solve()
                 d =  updatePointOrderOne(naddr);
               if (d)
               {
-                heap_->set(heapptr_[naddr],fabs(d));
-                distance_[naddr]=d;
+                heap_->set(heapptr_[naddr], fabs(d));
+                distance_[naddr] = d;
               }
             }
             else if (flag_[naddr]==Far)
@@ -186,7 +187,7 @@ void baseMarcher::solve()
               {
                 distance_[naddr]=d;
                 flag_[naddr]=Narrow;
-                heapptr_[naddr] = heap_->push(naddr,fabs(d));
+                heapptr_[naddr] = heap_->push(naddr, fabs(d));
               }
             }
           }
@@ -195,17 +196,17 @@ void baseMarcher::solve()
           // "jump" over a Frozen point if needed
           if (order_ == 2)
           {
-            int local_naddr = _getN(addr,dim,j,Mask);
+            int local_naddr = _getN(currentAddr, dim, j, Mask);
             if (local_naddr!=-1 && flag_[local_naddr]==Frozen)
             {
-              int naddr2 = _getN(addr,dim,j*2,Frozen);
+              int naddr2 = _getN(currentAddr, dim, j * 2, Frozen);
               if (naddr2!=-1 && flag_[naddr2]==Narrow)
               {
                 double d = updatePointOrderTwo(naddr2);
                 if (d)
                 {
-                  heap_->set(heapptr_[naddr2], fabs(d));
-                  distance_[naddr2]=d;
+                  heap_->set(heapptr_[naddr2], fabs(d)); 
+                  distance_[naddr2] = d;
                 }
               }
             }
@@ -216,12 +217,14 @@ void baseMarcher::solve()
     }
   } // main loop of Fast Marching Method
 
-  // add back mask here. The python wrapper will look for elements
-  // equal to maxDouble and add the mask back
-  for (int i=0; i<size_; i++)
+  for (int i = 0; i < size_; i++)
   {
-    if (flag_[i] != Frozen) distance_[i] = maxDouble;
+    if (flag_[i] == Far)
+    {
+      distance_[i] = maxDouble;
+    }
   }
+
   error_ = 0;
   return;
 }

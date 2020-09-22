@@ -81,7 +81,7 @@ void heap::pop(int *address, double *value)
     throw std::runtime_error("heap pop error: empty heap\n");
   int loc                 = heap_[0];
   *value                  = distance_[loc];
-  *address                = address_[heap_[0]];
+  *address                = address_[loc];
   heap_[0]                = heap_[heapLength_-1];
   backPointer_[heap_[0]]  = 0;
   heapLength_--;
