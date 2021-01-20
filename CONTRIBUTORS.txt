@@ -11,3 +11,6 @@ Adrian Butscher
 Wolfram Moebius
 Jens Glaser
 ManifoldFR
+Murray Cutforth
+okonrad
+f-fanni

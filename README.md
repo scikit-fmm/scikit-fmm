@@ -186,7 +186,10 @@ masked array. A function is provided to compute extension velocities.
    * Bugfix in setup.py to allow installing via pip with numpy (ManifoldFR).
    * Handle C++ exceptions during fast marching (Jens Glaser).
    * Accept a zero discriminant in travel time point update.
+* 2021.1.20 January 20th 2021
+   * Fix divide by zero bugs in travel_time and extension_velocities
+   * Contributions from Murray Cutforth, f-fanni, and okonrad
 
-Copyright 2019 The scikit-fmm team.
+Copyright 2021 The scikit-fmm team.
 
 BSD-style license. See LICENSE.txt in the source directory.
