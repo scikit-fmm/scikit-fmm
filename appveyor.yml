@@ -3,6 +3,8 @@
 
 build: off
 
+image: Visual Studio 2019
+
 environment:
   global:
       WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
@@ -57,7 +59,6 @@ install:
   # Download things we absolutely need
   - pip install numpy setuptools wheel
 
-  # Now install spiceypy
   - IF "%ARCH%"=="32" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86) ELSE (ECHO "probably a 64bit build")
   - IF "%ARCH%"=="64" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64) ELSE (ECHO "probably a 32bit build")
   - "%PYTHON%/python setup.py develop"
