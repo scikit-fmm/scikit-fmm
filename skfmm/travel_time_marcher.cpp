@@ -79,17 +79,17 @@ double travelTimeMarcher::updatePointOrderTwo(int i, std::set<int>avoid_dim)
       c+=idx2_[dim]*pow(value1,2);
     }
   }
-  try{
+  try {
     double res = solveQuadratic(i,a,b,c);
     return res;
-  }catch(std::runtime_error& err){
+  } catch(std::runtime_error& err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
     if(avoid_dim.size() == dim_) return std::numeric_limits<double>::infinity(); //end of the recursion, use inf so that it is discarded selecting the minimum
     std::vector<double> sols;
     for (int ind=0; ind<dim_; ind++){
         //remove one dimension more than what we are already doing
         std::set<int> tempset = avoid_dim;
-        auto ret = tempset.insert(ind);
+        std::pair<std::set<int>::iterator, bool> ret = tempset.insert(ind);
         if(!ret.second) continue; //avoid recursive call on identical parameters (the set already had *ind* in it)
         sols.push_back(updatePointOrderTwo(i,tempset));
     }

@@ -3,8 +3,6 @@
 
 build: off
 
-image: Visual Studio 2019
-
 environment:
   global:
       WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
@@ -30,14 +28,6 @@ environment:
         WINDOWS_SDK_VERSION: "v7.1"
         PLAT_NAME: "win-amd64"
         PY_TAG: "cp38"
-
-      - PYTHON: "C:\\Python39-x64"
-        PYTHON_VERSION: "3.9.x"
-        ARCH: "64"
-        WINDOWS_SDK_VERSION: "v7.1"
-        PLAT_NAME: "win-amd64"
-        PY_TAG: "cp39"
-
 
 platform:
   - x64
