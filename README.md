@@ -189,6 +189,8 @@ masked array. A function is provided to compute extension velocities.
 * 2021.1.20 January 20th 2021
    * Fix divide by zero bugs in travel_time and extension_velocities
    * Contributions from Murray Cutforth, f-fanni, and okonrad
+* 2021.1.21 January 22st 2021
+   * Minor C++ change (removed the auto keyword) to fix the compile on TravisCI.
 
 Copyright 2021 The scikit-fmm team.
 
