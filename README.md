@@ -191,6 +191,11 @@ masked array. A function is provided to compute extension velocities.
    * Contributions from Murray Cutforth, f-fanni, and okonrad
 * 2021.1.21 January 22st 2021
    * Minor C++ change (removed the auto keyword) to fix the compile on TravisCI.
+* 2021.2.2 January 22st 2021
+   * Add a pyproject.toml file to specify numpy as a build
+     requirement, this is needed to build with new version of pip
+     (David Parsson).
+
 
 Copyright 2021 The scikit-fmm team.
 
