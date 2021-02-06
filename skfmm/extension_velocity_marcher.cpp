@@ -118,8 +118,12 @@ void extensionVelocityMarcher::finalizePoint(int i, double phi_i)
         double d = distance_[i] - distance_[naddr];
         if (ldistance[dim]==0 || ldistance[dim]>d)
         {
-          ldistance[dim] = d;
-          lspeed[dim] = f_ext_[naddr];
+          // this condition avoids a rare div by zero case where d = 0
+          if (fabs(d) > std::numeric_limits<double>::epsilon())
+          {
+            ldistance[dim] = d;
+            lspeed[dim] = f_ext_[naddr];
+          }
         }
       }
     } // for each direction

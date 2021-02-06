@@ -1,5 +1,7 @@
 //travel_time_marcher.h
 #include "distance_marcher.h"
+#include <set>
+
 class heap;
 
 class travelTimeMarcher : public distanceMarcher
@@ -27,6 +29,7 @@ public:
 protected:
   virtual void             initalizeFrozen();
   virtual double           updatePointOrderTwo(int i);
+  virtual double           updatePointOrderTwo(int i, std::set<int> avoid_dim);
   virtual double           solveQuadratic(int i, const double &a,
                                           const double &b, double &c);
 private:

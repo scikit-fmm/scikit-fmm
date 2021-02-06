@@ -89,21 +89,18 @@ double distanceMarcher::solveQuadratic(int i, const double &a,
                                        double &c)
 {
   c-=1;
-  double r0=0;
-  double r1=0;
   double det = pow(b,2)-4*a*c;
-  if (det>0)
+  if (det > 0)
   {
-    r0 = (-b+sqrt(det))/2.0/a;
-    r1 = (-b-sqrt(det))/2.0/a;
+    if (phi_[i] > doubleEpsilon) { return (-b + sqrt(det)) / 2.0 / a; }
+    else                         { return (-b - sqrt(det)) / 2.0 / a; }
   }
   else
   {
     return 0;
   }
-  if (phi_[i] > doubleEpsilon) return r0;
-  else return r1;
 }
+
 
 void distanceMarcher::initalizeFrozen()
 {

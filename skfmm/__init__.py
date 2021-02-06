@@ -38,14 +38,14 @@ skfmm.extension_velocities(phi, speed, dx=1.0, self_test=False,
   extension velocity and d is the signed distance function.
 
 
-:Copyright: Copyright 2016 The scikit-fmm team.
+:Copyright: Copyright 2021 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the source directory.
 
 """
 
 from __future__ import print_function
 
-__version__ = "0.0.9"
+__version__ = "2021.2.2"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities
@@ -766,11 +766,9 @@ def testing():
 
     >>> phi = np.array([-1,-1,-1,1,1,1])
     >>> d = distance(phi, narrow=1.0)
-    >>> d
-    masked_array(data = [-- -- -0.5 0.5 -- --],
-                 mask = [ True  True False False  True  True],
-           fill_value = 1e+20)
-    <BLANKLINE>
+    >>> d.data[2:-2]
+    array([-0.5,  0.5])
+    >>> assert (d.mask == [ True,  True, False, False,  True,  True]).all()
     >>> N     = 50
     >>> X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
     >>> r     = 0.5
@@ -846,6 +844,34 @@ def testing():
     >>> np.allclose(extension_velocities(phi,speed,periodic=True)[1],(2.5,2.5,1.5,1.5,1.5,2.5))
     True
 
+
+    This is issue #18,
+
+    >>> phi = np.array([[ 1,  1, -1, -1, -1, -1,  1],
+    ...                 [ 3,  1, -1, -1, -1, -1,  1],
+    ...                 [ 3,  3,  1,  1,  1,  1,  3],
+    ...                 [ 3,  3,  3,  3,  3,  3,  3],
+    ...                 [ 3,  3,  3,  3,  3,  3,  3]])
+    >>> speed = np.array([[ 1.   ,  1.   ,  0.057,  0.128,  0.037,  0.039,  1.   ],
+    ...                   [ 1.   ,  1.   ,  0.199,  0.408,  0.997,  0.688,  1.   ],
+    ...                   [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ],
+    ...                   [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ],
+    ...                   [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ]])
+    >>> assert not travel_time(phi,speed)[0][3] == 0
+
+    >>> phi = np.array([[1, -1, -1],
+    ...                 [0,  0, -1],
+    ...                 [0,  0,  1]])
+    >>> value = 0.01
+    >>> speed = np.array([[ 1, value, 0.1],
+    ...                   [ 0, 0,     1. ],
+    ...                  [ 0, 0,     1. ]])
+    >>> phi = np.ma.MaskedArray(phi, phi==0)
+    >>> tt = travel_time(phi,speed)
+    >>> tt.fill_value=0
+    >>> np.testing.assert_allclose(tt.data, ((0.5, 50, 7.5),
+    ...                                      (0,    0, 0.5),
+    ...                                      (0,    0, 0.5)))
     """
 
 def test(verbose=None):

@@ -9,6 +9,8 @@
 #include "travel_time_marcher.h"
 #include "extension_velocity_marcher.h"
 
+#include <stdexcept>
+
 #define DISTANCE              0
 #define TRAVEL_TIME           1
 #define EXTENSION_VELOCITY    2
@@ -326,10 +328,20 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   default: error=1;
   }
 
-  marcher->march();
-  error = marcher->getError();
-  delete marcher;
-
+  try {
+      marcher->march();
+      error = marcher->getError();
+      delete marcher;
+    } catch (const std::exception& exn) {
+      // propagate error
+      PyErr_SetString(PyExc_RuntimeError, exn.what());
+      Py_XDECREF(phi);
+      Py_XDECREF(dx);
+      Py_XDECREF(flag);
+      Py_XDECREF(speed);
+      Py_XDECREF(ext_mask);
+      return NULL;
+    }
 
   Py_DECREF(phi);
   Py_DECREF(flag);
@@ -358,7 +370,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 
   if (mode == EXTENSION_VELOCITY)
   {
-    return Py_BuildValue("OO", distance, f_ext);
+    return Py_BuildValue("NN", distance, f_ext);
   }
   return (PyObject *)distance;
 }

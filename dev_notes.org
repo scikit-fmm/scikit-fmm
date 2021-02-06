@@ -1,23 +1,45 @@
 * To make a release:
 
-increment version number. Currently the version number is hard-coded in
-the following locations:
+** Increment version number
+Currently the version number is hard-coded in the following locations:
+
 ./doc/conf.py
 ./setup.py
 ./skfmm/__init__.py
 ./README.txt
 
+** Tag the release
+
 git tag v0.0.n
 git push --tags origin master
 
+** Build the documentation
+
+To build the documentation you need Sphinx and the numpydoc Sphinx
+extension
+
 make html
-python setup.py upload_docs --upload-dir build/html
 
-python setup.py sdist upload register
+check that everything looks ok by opening build/html/index.html
 
-on a windows machine:
-python setup.py bdist_wininst register upload
+the documentation should build automatically on RTD.
 
+Check https://scikit-fmm.readthedocs.io/en/latest/  trigger a build if needed.
+
+** Upload to PyPI
+
+make sure you have twine installed with `pip install twine`
+
+Copy the build artifacts from AppVeyor to dist/
+
+twine upload dist/*
+
+** Optionally build Windows Python2.7 wheeles
+
+
+python setup.py bdist_wininst
+python setup.py bdist_wheel
+twine upload dist/*
 
 * Cython Wrapper for heap class
 
