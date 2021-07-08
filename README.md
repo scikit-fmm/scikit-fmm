@@ -195,6 +195,10 @@ masked array. A function is provided to compute extension velocities.
    * Add a pyproject.toml file to specify numpy as a build
      requirement, this is needed to build with new version of pip
      (David Parsson).
+* 2021.7.8 July 8th 2021
+   * Add a pyproject.toml file to the MANIFEST.in file to fix the
+     numpy build dependency (David Parsson). Fix numpy deprecation
+     warnings and improve source code formatting (Robin Thibaut).
 
 
 Copyright 2021 The scikit-fmm team.
