@@ -107,7 +107,7 @@ double distanceMarcher::solveQuadratic(int i, const double &a,
   }
   else
   {
-    throw std::runtime_error("Negative discriminant in time marcher quadratic.");
+    throw std::runtime_error("Negative discriminant in distance marcher quadratic.");
   }
 }
 
