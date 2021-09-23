@@ -203,7 +203,11 @@ masked array. A function is provided to compute extension velocities.
    * Add a pyproject.toml file to the MANIFEST.in file to fix the
      numpy build dependency (David Parsson). Fix numpy deprecation
      warnings and improve source code formatting (Robin Thibaut).
-
+* 2021.9.23 September 23rd 2021
+   * Make the pyproject.toml file specify the oldest supported
+     numpy as a build requirement, to allow using wheels with any
+     numpy version.
+     (David Parsson).
 
 Copyright 2021 The scikit-fmm team.
 
