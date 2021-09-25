@@ -10,15 +10,15 @@ Currently the version number is hard-coded in the following locations:
 
 ** Tag the release
 
-git tag v0.0.n
-git push --tags origin master
+$ git tag v0.0.n
+$ git push --tags origin master
 
 ** Build the documentation
 
 To build the documentation you need Sphinx and the numpydoc Sphinx
 extension
 
-make html
+$ make html
 
 check that everything looks ok by opening build/html/index.html
 
@@ -28,18 +28,22 @@ Check https://scikit-fmm.readthedocs.io/en/latest/  trigger a build if needed.
 
 ** Upload to PyPI
 
-make sure you have twine installed with `pip install twine`
+make sure you have twine installed with:
+
+$ pip install twine
+
+One the final commit has been made, wait for the AppVeyor and TravisCI
+builds to finish. Make sure all the tests pass on all the platforms.
 
 Copy the build artifacts from AppVeyor to dist/
+Click the AppVeyor badge on the README, go to each build configuration
+and download the wheel files
 
-twine upload dist/*
+build the source distribution:
 
-** Optionally build Windows Python2.7 wheeles
+$ python setup.py sdist
 
-
-python setup.py bdist_wininst
-python setup.py bdist_wheel
-twine upload dist/*
+$ twine upload dist/*
 
 * Cython Wrapper for heap class
 
@@ -49,6 +53,6 @@ created by Cython are checked into the git repo. If changes are made
 to skfmm/heap.h or skfmm/heap.cpp the Cython c++ file pheap.cpp needs
 to be updated. This is done with the command:
 
-cython --cplus pheap.pyx
+$ cython --cplus pheap.pyx
 
 The updates pheap.cpp should also be checked into the git repo
