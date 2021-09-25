@@ -2,7 +2,7 @@ from sys import float_info
 import numpy as np
 
 from .cfmm import cFastMarcher
-from bi_cubic_init import BiCubicInit
+from .bi_cubic_init import BiCubicInit
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
@@ -115,7 +115,7 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
         # experimental 2d only bicubic initialization
         if len(phi.shape) != 2 or dx[0] != dx[1] or order != 2:
             raise ValueError("Second order narrow band initialization only works for 2d arrays where spacing is the same in each dimension.")
-        dinit = BiCubicInit(phi, 1)
+        dinit = BiCubicInit(phi, 1.0)
         mask = dinit.aborders == False
         distance_init = dinit.d
         distance_init[mask] = 0.0

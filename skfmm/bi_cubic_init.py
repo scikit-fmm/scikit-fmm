@@ -106,7 +106,7 @@ class BiCubicInit(object):
         aborders = np.zeros_like(phi,dtype=bool)
         aborders[phi==0.0] = True
         self.d[phi==0.0] = 0.0
-        border_cells = np.zeros_like(phi, dtype=bool)[:-1,:-1]
+        border_cells = np.zeros_like(phi, dtype=bool)#[:-1,:-1]
         nx, ny = phi.shape
         for i in range(nx):
             for j in range(ny):
@@ -218,8 +218,8 @@ class BiCubicInit(object):
                 # print
         else:
             #pass
-            print ier, mesg
-            print sx,sy, interp(sx,sy), eq2(sx,sy)
+            print (ier, mesg)
+            print (sx,sy, interp(sx,sy), eq2(sx,sy))
 
 
 if __name__ == '__main__':
