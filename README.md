@@ -136,9 +136,9 @@ masked array. A function is provided to compute extension velocities.
   Tracking." in Eurographics Symposium on Geometry Processing 2016
   Eds: M. Ovsjanikov and D. Panozzo. Volume 35 (2016), Number 5
 
-* Thibaut, R., Laloy, E., Hermans, T., 2021. A new framework for 
-  experimental design using Bayesian Evidential Learning: The 
-  case of wellhead protection area. J. Hydrol. 603, 126903. 
+* Thibaut, R., Laloy, E., Hermans, T., 2021. A new framework for
+  experimental design using Bayesian Evidential Learning: The
+  case of wellhead protection area. J. Hydrol. 603, 126903.
   https://doi.org/10.1016/j.jhydrol.2021.126903
 
 * Vargiu, Antioco, M. Marrocu, L. Massidda (2015) "Implementazione e
@@ -151,6 +151,12 @@ masked array. A function is provided to compute extension velocities.
 * Wronkiewicz, M. (2018) "Mapping buildings with help from machine
   learning" Medium article, June 29th 2018
   https://medium.com/devseed/mapping-buildings-with-help-from-machine-learning-f8d8d221214a
+
+* Makki, K., Ben Salem, D., Ben Amor, B. (2021) "Toward the Assessment
+  of Intrinsic Geometry of Implicit Brain MRI Manifolds" IEEE Access,
+  volume 9, pages  131054 - 131071 (September 2021)
+  DOI: 10.1109/ACCESS.2021.3113611
+  https://ieeexplore.ieee.org/abstract/document/9540688
 
 ### Version History:
 * 0.0.1: February 13 2012
