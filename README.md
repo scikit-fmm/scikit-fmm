@@ -214,6 +214,12 @@ masked array. A function is provided to compute extension velocities.
      numpy as a build requirement, to allow using wheels with any
      numpy version.
      (David Parsson).
+* 2021.10.29 October 29th 2021
+   * Fix for point update discriminant exactly equal to zero
+   * Fall back calculation for point update when discriminant becomes negative
+   * (Joshua Gehre)
+
+
 
 Copyright 2021 The scikit-fmm team.
 
