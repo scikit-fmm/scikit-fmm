@@ -53,6 +53,6 @@ created by Cython are checked into the git repo. If changes are made
 to skfmm/heap.h or skfmm/heap.cpp the Cython c++ file pheap.cpp needs
 to be updated. This is done with the command:
 
-$ cython --cplus pheap.pyx
+$ cython3 --cplus -3 pheap.pyx
 
 The updates pheap.cpp should also be checked into the git repo
