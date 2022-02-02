@@ -29,12 +29,6 @@ environment:
         PLAT_NAME: "win-amd64"
         PY_TAG: "cp38"
 
-      - PYTHON: "C:\\Python39-x64"
-        PYTHON_VERSION: "3.9.x"
-        ARCH: "64"
-        VS_VER: "2019"
-        PLAT_NAME: "win-amd64"
-        PY_TAG: "cp39"
 
 platform:
   - x64
