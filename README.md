@@ -218,9 +218,15 @@ masked array. A function is provided to compute extension velocities.
    * Fix for point update discriminant exactly equal to zero
    * Fall back calculation for point update when discriminant becomes negative
    * (Joshua Gehre)
+* 2022.02.02 February 2nd 2022
+   * Fixes for Python 3.10 compatibility
+   * (Amin Sadeghi, Xylar Asay-Davis, David Parsson)
 
 
 
-Copyright 2021 The scikit-fmm team.
+
+
+
+Copyright 2022 The scikit-fmm team.
 
 BSD-style license. See LICENSE.txt in the source directory.

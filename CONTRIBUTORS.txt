@@ -17,3 +17,5 @@ f-fanni
 David Parsson
 Robin Thibaut
 Joshua Gehre
+Xylar Asay-Davis
+Amin Sadeghi
