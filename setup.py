@@ -89,6 +89,7 @@ def setup_package():
         url              = URL,
         license          = LICENSE,
         keywords         = KEYWORDS,
+        py_modules       = [],
         long_description = long_description,
         configuration    = configuration,
         install_requires = ['numpy >= 1.0.2'],
