@@ -19,3 +19,4 @@ Robin Thibaut
 Joshua Gehre
 Xylar Asay-Davis
 Amin Sadeghi
+Daniel Ammar

@@ -221,8 +221,10 @@ masked array. A function is provided to compute extension velocities.
 * 2022.02.02 February 2nd 2022
    * Fixes for Python 3.10 compatibility
    * (Amin Sadeghi, Xylar Asay-Davis, David Parsson)
-
-
+* 2022.03.26 March 26th 2022
+   * Following the Breaking Changes in setuptools v61.0.0 it is
+     suggested to set py_modules to disable auto-discovery behavior.
+   * (Daniel Ammar)
 
 
 
