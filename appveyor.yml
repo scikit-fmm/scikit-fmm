@@ -68,11 +68,11 @@ install:
   # Download things we absolutely need
   - pip install numpy setuptools wheel
 
-  - IF "%ARCH%"=="32" AND "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2022" (call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat") ELSE (ECHO "probably a 64bit build or VS2015")
-  - IF "%ARCH%"=="64" AND "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2022" (call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat") ELSE (ECHO "probably a 32bit build or VS2015")
+  - IF "%ARCH%"=="32" IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2022" (call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat") ELSE (ECHO "probably a 64bit build or VS2015")
+  - IF "%ARCH%"=="64" IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2022" (call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat") ELSE (ECHO "probably a 32bit build or VS2015")
 
-  - IF "%ARCH%"=="32" AND "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86) ELSE (ECHO "probably a 64bit build or VS2022")
-  - IF "%ARCH%"=="64" AND "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64) ELSE (ECHO "probably a 32bit build or VS2022")
+  - IF "%ARCH%"=="32" IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86) ELSE (ECHO "probably a 64bit build or VS2022")
+  - IF "%ARCH%"=="64" IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64) ELSE (ECHO "probably a 32bit build or VS2022")
 
   - "%PYTHON%/python setup.py develop"
 
