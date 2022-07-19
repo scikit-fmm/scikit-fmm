@@ -2,41 +2,54 @@
 # retrieved feb 2 2019
 
 build: off
+image:
+  - Visual Studio 2017
+  - Visual Studio 2022
 
 environment:
   global:
       WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
 
   matrix:
-      - PYTHON: "C:\\Python36-x64"
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        PYTHON: "C:\\Python36-x64"
         PYTHON_VERSION: "3.6.x"
         ARCH: "64"
         WINDOWS_SDK_VERSION: "v7.1"
         PLAT_NAME: "win-amd64"
         PY_TAG: "cp36"
 
-      - PYTHON: "C:\\Python37-x64"
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        PYTHON: "C:\\Python37-x64"
         PYTHON_VERSION: "3.7.x"
         ARCH: "64"
         WINDOWS_SDK_VERSION: "v7.1"
         PLAT_NAME: "win-amd64"
         PY_TAG: "cp37"
 
-      - PYTHON: "C:\\Python38-x64"
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        PYTHON: "C:\\Python38-x64"
         PYTHON_VERSION: "3.8.x"
         ARCH: "64"
         WINDOWS_SDK_VERSION: "v7.1"
         PLAT_NAME: "win-amd64"
         PY_TAG: "cp38"
-        
-      - PYTHON: "C:\\Python39-x64"
+
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+        PYTHON: "C:\\Python39-x64"
         PYTHON_VERSION: "3.9.x"
         ARCH: "64"
         WINDOWS_SDK_VERSION: "v7.1"
         PLAT_NAME: "win-amd64"
         PY_TAG: "cp39"
-        
 
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+        PYTHON: "C:\\Python310-x64"
+        PYTHON_VERSION: "3.10.x"
+        ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        PLAT_NAME: "win-amd64"
+        PY_TAG: "cp310"
 
 platform:
   - x64
