@@ -40,14 +40,6 @@ environment:
         PLAT_NAME: "win-amd64"
         PY_TAG: "cp39"
 
-      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
-        PYTHON: "C:\\Python310-x64"
-        PYTHON_VERSION: "3.10.x"
-        ARCH: "64"
-        WINDOWS_SDK_VERSION: "v7.1"
-        PLAT_NAME: "win-amd64"
-        PY_TAG: "cp310"
-
 platform:
   - x64
 
