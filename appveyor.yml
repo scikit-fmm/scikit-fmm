@@ -2,9 +2,6 @@
 # retrieved feb 2 2019
 
 build: off
-image:
-  - Visual Studio 2017
-  - Visual Studio 2022
 
 environment:
   global:
