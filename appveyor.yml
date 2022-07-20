@@ -8,13 +8,6 @@ environment:
       WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
 
   matrix:
-      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-        PYTHON: "C:\\Python36-x64"
-        PYTHON_VERSION: "3.6.x"
-        ARCH: "64"
-        WINDOWS_SDK_VERSION: "v7.1"
-        PLAT_NAME: "win-amd64"
-        PY_TAG: "cp36"
 
       - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
         PYTHON: "C:\\Python37-x64"
@@ -78,7 +71,6 @@ after_test:
   - ECHO "DONE!"
   - ECHO "BUILDING WHEELS..."
   - "%PYTHON%/python setup.py sdist bdist_wheel --plat-name=%PLAT_NAME% --python-tag=%PY_TAG%"
-  - "%PYTHON%/python setup.py sdist bdist_wininst"
   - ps: "ls dist"
 
 branches:
