@@ -63,14 +63,14 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'scikit-fmm'
-copyright = u'2021, the scikit-fmm team'
+copyright = u'2022, the scikit-fmm team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '2022.03.26'
+version = '2022.08.15'
 # The full version, including alpha/beta/rc tags.
 release = version
 

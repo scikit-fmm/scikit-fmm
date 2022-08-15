@@ -222,11 +222,13 @@ masked array. A function is provided to compute extension velocities.
    * Fixes for Python 3.10 compatibility
    * (Amin Sadeghi, Xylar Asay-Davis, David Parsson)
 * 2022.03.26 March 26th 2022
-   * Following the Breaking Changes in setuptools v61.0.0 it is
+   * Following the breaking changes in setuptools v61.0.0 it is
      suggested to set py_modules to disable auto-discovery behavior.
    * (Daniel Ammar)
-
-
+* 2022.08.15 August 15th 2022
+   * Following the breaking changes in setuptools v65 pin setuptools
+     to v64
+   * (DorSSS)
 
 
 Copyright 2022 The scikit-fmm team.

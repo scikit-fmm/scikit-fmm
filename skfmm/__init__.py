@@ -45,7 +45,7 @@ skfmm.extension_velocities(phi, speed, dx=1.0, self_test=False,
 
 from __future__ import print_function
 
-__version__ = "2022.03.26"
+__version__ = "2022.08.15"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities
