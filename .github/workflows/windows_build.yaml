@@ -19,13 +19,20 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install numpy
+          pip install numpy wheel
       - name: Build extension
         run: |
           python --version
           python -c "import struct; print(struct.calcsize('P') * 8)"
           python setup.py develop
           python -c "import skfmm; print(skfmm.__version__)"
+      - name: Build wheel
+        run: |
+          python setup.py sdist bdist_wheel
       - name: Run skfmm tests
         run: |
           python -c "import skfmm, sys; sys.exit(skfmm.test())"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: dist/*
