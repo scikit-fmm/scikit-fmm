@@ -1,4 +1,4 @@
-[![TravisCI](https://travis-ci.org/scikit-fmm/scikit-fmm.svg?branch=master)](https://travis-ci.org/scikit-fmm/scikit-fmm)[![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)[![Build status](https://ci.appveyor.com/api/projects/status/qhdwo9ut8vjyqf96?svg=true)](https://ci.appveyor.com/project/jkfurtney/scikit-fmm)[![Documentation Status](https://readthedocs.org/projects/scikit-fmm/badge/?version=latest)](https://scikit-fmm.readthedocs.io/en/latest/?badge=latest)<a href="https://pepy.tech/project/scikit-fmm"><img alt="Downloads" src="https://pepy.tech/badge/scikit-fmm"></a>
+![Linux build](https://github.com/scikit-fmm/scikit-fmm/actions/workflows/build.yaml/badge.svg) ![Windows build](https://github.com/scikit-fmm/scikit-fmm/actions/workflows/windows_build.yaml/badge.svg) [![PyPI version](https://badge.fury.io/py/scikit-fmm.svg)](http://pypi.python.org/pypi/scikit-fmm)[![Documentation Status](https://readthedocs.org/projects/scikit-fmm/badge/?version=latest)](https://scikit-fmm.readthedocs.io/en/latest/?badge=latest)<a href="https://pepy.tech/project/scikit-fmm"><img alt="Downloads" src="https://pepy.tech/badge/scikit-fmm"></a>
 
 # scikit-fmm: the fast marching method for Python
 
@@ -67,18 +67,15 @@ masked array. A function is provided to compute extension velocities.
 ### Installing
 * Via pip: `pip install scikit-fmm`
 * From source:
-  * On Ubuntu 16.04 with Anaconda amd64 give the command `conda install libgcc`.
   * `python setup.py install`
 * 64-bit Windows binaries from Christoph Gohlke:
   * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
 * Anaconda linux-64 and linux-ppc64le packages:
   * `conda install scikit-fmm`
-* Experimental Windows wheels and exe installers:
-  * These installers are build from `master` after each commit.
-  * Choose your Python version and platform, then click the Artifacts tab.
-  * https://ci.appveyor.com/project/jkfurtney/scikit-fmm
 * Ubuntu PPA
   * https://launchpad.net/~nvidia-digits/+archive/ubuntu/dev
+* Debian
+  * https://tracker.debian.org/pkg/scikit-fmm
 
 ### Running Tests
 * `python -c "import skfmm; skfmm.test(True)"`
@@ -229,8 +226,11 @@ masked array. A function is provided to compute extension velocities.
    * Following the breaking changes in setuptools v65 pin setuptools
      to v64
    * (DorSSS)
+* 2022.04.02 April 2nd 2023
+   * Build fixes for Python 3.11 (update pheap cython wrapper)
+   * No solver changes
 
 
-Copyright 2022 The scikit-fmm team.
+Copyright 2023 The scikit-fmm team.
 
 BSD-style license. See LICENSE.txt in the source directory.

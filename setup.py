@@ -17,7 +17,7 @@ DISTNAME         = "scikit-fmm"
 DESCRIPTION      = "An extension module implementing the fast marching method"
 MAINTAINER       = "Jason Furtney"
 MAINTAINER_EMAIL = "jkfurtney@gmail.com"
-VERSION          = "2022.08.15"
+VERSION          = "2023.04.02"
 URL              = 'https://github.com/scikit-fmm/scikit-fmm'
 LICENSE          = 'BSD'
 KEYWORDS         = "fast marching method, Eikonal equation, interface, boundary"
@@ -99,7 +99,6 @@ def setup_package():
                             "Topic :: Scientific/Engineering",
                             "Intended Audience :: Science/Research",
                             "Programming Language :: C++",
-                            "Programming Language :: Python :: 2",
                             "Programming Language :: Python :: 3"]
     )
 

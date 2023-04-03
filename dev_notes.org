@@ -8,9 +8,11 @@ Currently the version number is hard-coded in the following locations:
 ./skfmm/__init__.py
 ./README.txt
 
+The version number format is YYYY.MM.DD with leading zeros
+
 ** Tag the release
 
-$ git tag v0.0.n
+$ git tag YYY.MM.DD
 $ git push --tags origin master
 
 ** Build the documentation
@@ -32,12 +34,10 @@ make sure you have twine installed with:
 
 $ pip install twine
 
-One the final commit has been made, wait for the AppVeyor and TravisCI
+One the final commit has been made, wait for the GitHub workflow
 builds to finish. Make sure all the tests pass on all the platforms.
 
-Copy the build artifacts from AppVeyor to dist/
-Click the AppVeyor badge on the README, go to each build configuration
-and download the wheel files
+Copy the build artifacts from the GitHub actions to dist/
 
 build the source distribution:
 

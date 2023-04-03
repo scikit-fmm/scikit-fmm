@@ -38,14 +38,14 @@ skfmm.extension_velocities(phi, speed, dx=1.0, self_test=False,
   extension velocity and d is the signed distance function.
 
 
-:Copyright: Copyright 2022 The scikit-fmm team.
+:Copyright: Copyright 2023 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the source directory.
 
 """
 
 from __future__ import print_function
 
-__version__ = "2022.08.15"
+__version__ = "2023.04.02"
 __docformat__ = 'restructuredtext'
 
 from .pfmm import distance, travel_time, extension_velocities

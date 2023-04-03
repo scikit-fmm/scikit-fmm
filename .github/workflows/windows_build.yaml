@@ -1,4 +1,4 @@
-name: Python package
+name: Windows Build
 
 on: [push]
 
@@ -26,13 +26,13 @@ jobs:
           python -c "import struct; print(struct.calcsize('P') * 8)"
           python setup.py develop
           python -c "import skfmm; print(skfmm.__version__)"
-      - name: Build wheel
-        run: |
-          python setup.py sdist bdist_wheel
       - name: Run skfmm tests
         run: |
           python -c "import skfmm, sys; sys.exit(skfmm.test())"
+      - name: Build wheel
+        run: |
+          python setup.py sdist bdist_wheel
       - uses: actions/upload-artifact@v3
         with:
-          name: my-artifact
+          name: windows-artifacts
           path: dist/*

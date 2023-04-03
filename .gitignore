@@ -11,3 +11,4 @@ scikit_fmm.egg-info/dependency_links.txt
 scikit_fmm.egg-info/requires.txt
 scikit_fmm.egg-info/top_level.txt
 install_log.txt
+skfmm/*.pyd
