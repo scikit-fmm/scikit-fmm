@@ -50,7 +50,7 @@ The input array can be of 1, 2, 3 or higher dimensions and can be a
 masked array. A function is provided to compute extension velocities.
 
 ### Documentation
-* http://scikit-fmm.readthedocs.org/en/latest/
+* http://scikit-fmm.readthedocs.org/en/master/
 
 ### PyPI
 * http://pypi.python.org/pypi/scikit-fmm
