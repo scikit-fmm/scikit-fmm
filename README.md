@@ -3,13 +3,33 @@
 # scikit-fmm: the fast marching method for Python
 
 `scikit-fmm` is a Python extension module which implements the fast marching method.
-The fast marching method is used to model the evolution of boundaries
-and interfaces in a variety of application areas. More specifically,
-the fast marching method is a numerical technique for finding
+
+### FMM in a nutshell
+The fast marching method is used to model the evolution of boundaries and interfaces in a variety of application areas.
+
+Given the speed of the evolution of the wavefront (black boundary), we want to compute the time(s) at which it reaches each point in a grid:
+
+![](doc/interface-fmm.png)
+
+[Image credits](https://scicomp.stackexchange.com/questions/11702/solving-the-quadratic-in-the-fast-marching-method)
+
+A good introduction is provided by Berkeley [here](https://math.berkeley.edu/~sethian/2006/Explanations/fast_marching_explain.html). Usual applications are:
+
+Some exemplary applications:
+
+- Image segmentation in medicine (see [here](https://essay.utwente.nl/75601/1/Alblas_BA_EWI.pdf))
+- Route planning (see [here](https://essay.utwente.nl/75601/1/Alblas_BA_EWI.pdf))
+- Motion planning in challenging terrain see [here](https://www.mdpi.com/2504-446X/7/2/84)
+
+### FMM in more detail
+
+More specifically, the fast marching method is a numerical technique for finding
 approximate solutions to boundary value problems of the Eikonal
 equation:
 
-F(x) | grad T(x) | = 1
+$$
+F(x) | \nabla T(x) | = 1
+$$
 
 Typically, such a problem describes the evolution of a closed curve as
 a function of time T with speed F(x)>0 in the normal direction at a
@@ -18,7 +38,7 @@ which the contour crosses a point x is obtained by solving the
 equation.
 
 scikit-fmm is a simple module which provides functions to calculate
-the signed distance and travel time to an interface described by the
+the **signed distance** and **travel time** to an interface described by the
 zero contour of the input array phi.
 
 ```python
