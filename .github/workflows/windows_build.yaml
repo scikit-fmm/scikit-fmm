@@ -24,7 +24,7 @@ jobs:
         run: |
           python --version
           python -c "import struct; print(struct.calcsize('P') * 8)"
-          pip install wheel
+          pip install build
           python -m build
           cd .. && python -c "import skfmm; print(skfmm.__version__)"
       - name: Run skfmm tests
