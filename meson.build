@@ -2,6 +2,27 @@ project('skfmm', 'cpp', version: '2024.03.18')
 
 py = import('python').find_installation()
 
+incdir_numpy = meson.get_external_property('numpy-include-dir', 'not-given')
+if incdir_numpy == 'not-given'
+  incdir_numpy = run_command(py,
+    [
+      '-c',
+      '''
+import os
+import numpy as np
+try:
+  incdir = os.path.relpath(np.get_include())
+except Exception:
+  incdir = np.get_include()
+print(incdir)
+'''
+    ],
+    check: true
+  ).stdout().strip()
+endif
+
+inc_np = include_directories(incdir_numpy)
+np_dep = declare_dependency(include_directories: inc_np)
 includes = include_directories('skfmm')
 
 srcs = [
@@ -14,7 +35,7 @@ srcs = [
 ]
 
 py.install_sources(
-  ['skfmm/__init__.py', 'skfmm/pfmm.py'],
+  ['skfmm/__init__.py', 'skfmm/pfmm.py', 'skfmm/heap.py'],
   subdir: 'skfmm',
   pure: false,
 )
@@ -24,7 +45,8 @@ py.extension_module(
     srcs,
     install: true,
     subdir: 'skfmm',
-    include_directories: includes,
+    include_directories: [includes, inc_np],
+    dependencies: [np_dep],
 )
 
 
