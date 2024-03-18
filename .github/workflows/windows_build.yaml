@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v3
@@ -24,11 +24,12 @@ jobs:
         run: |
           python --version
           python -c "import struct; print(struct.calcsize('P') * 8)"
-          python setup.py develop
-          python -c "import skfmm; print(skfmm.__version__)"
+          pip install wheel
+          python -m build
+          cd .. && python -c "import skfmm; print(skfmm.__version__)"
       - name: Run skfmm tests
         run: |
-          python -c "import skfmm, sys; sys.exit(skfmm.test())"
+          cd .. && python -c "import skfmm, sys; sys.exit(skfmm.test())"
       - name: Build wheel
         run: |
           python setup.py sdist bdist_wheel
