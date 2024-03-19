@@ -57,8 +57,8 @@ masked array. A function is provided to compute extension velocities.
 
 ### Requirements
 * Numpy >= 1.0.2
-* Building requires a C/C++ compiler (gcc, MinGW, MSVC)
-
+* Building requires the pypa/build module
+  (https://github.com/pypa/build) and a C/C++ compiler
 ### Bugs, questions, patches, feature requests, discussion & cetera
 * Open a GitHub pull request or a GitHub issue
 * Email list: http://groups.google.com/group/scikit-fmm
@@ -66,8 +66,6 @@ masked array. A function is provided to compute extension velocities.
 
 ### Installing
 * Via pip: `pip install scikit-fmm`
-* From source:
-  * `python setup.py install`
 * 64-bit Windows binaries from Christoph Gohlke:
   * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
 * Anaconda linux-64 and linux-ppc64le packages:
@@ -77,9 +75,14 @@ masked array. A function is provided to compute extension velocities.
 * Debian
   * https://tracker.debian.org/pkg/scikit-fmm
 
+### Building from Source
+* `pip install build`
+* `python -m build`
+* `pip install .`
+
+
 ### Running Tests
 * `python -c "import skfmm; skfmm.test(True)"`
-* When running the tests from the source directory use `python setup.py develop`
 * Tests are doctests in `skfmm/__init__.py`
 
 ### Building documentation
