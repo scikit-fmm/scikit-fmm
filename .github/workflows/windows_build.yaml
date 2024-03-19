@@ -25,13 +25,13 @@ jobs:
           python --version
           python -c "import struct; print(struct.calcsize('P') * 8)"
           pip install build
+          python -m build
           pip install .
           pip list
-          python -m build
-          cd .. && python -c 'import sys; sys.path.remove(""); import skfmm; print(skfmm.__version__)'
+          cd .. && python -c 'import skfmm; print(skfmm.__version__)'
       - name: Run skfmm tests
         run: |
-          cd .. && python -c "import sys; sys.path.remove(""); import skfmm, sys; sys.exit(skfmm.test())"
+          cd .. && python -c 'import skfmm, sys; sys.exit(skfmm.test())'
       - name: Build wheel
         run: |
           python setup.py sdist bdist_wheel
