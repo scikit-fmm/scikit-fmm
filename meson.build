@@ -35,7 +35,9 @@ srcs = [
 ]
 
 py.install_sources(
-  ['skfmm/__init__.py', 'skfmm/pfmm.py', 'skfmm/heap.py'],
+  ['skfmm/__init__.py',
+   'skfmm/pfmm.py',
+   'skfmm/heap.py'],
   subdir: 'skfmm',
   pure: false,
 )
@@ -52,7 +54,8 @@ py.extension_module(
 
 py.extension_module(
     'pheap',
-    ['skfmm/pheap.cpp', 'skfmm/heap.cpp'],
+    ['skfmm/pheap.cpp',
+     'skfmm/heap.cpp'],
     install: true,
     subdir: 'skfmm',
     include_directories: includes,
