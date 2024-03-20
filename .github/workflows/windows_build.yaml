@@ -30,8 +30,8 @@ jobs:
           pip list
       - name: Run skfmm tests
         run: |
-          cd .. && python -c 'import sys; sys.path.remove(""); import skfmm; print(skfmm.__version__)'
-          cd .. && python -c 'import skfmm, sys; sys.exit(skfmm.test())'
+           python -c 'import sys; sys.path.remove(str()); import skfmm; print(skfmm.__version__)'
+           python -c 'import sys; sys.path.remove(str()); import skfmm, sys; sys.exit(skfmm.test())'
       - uses: actions/upload-artifact@v3
         with:
           name: windows-artifacts
