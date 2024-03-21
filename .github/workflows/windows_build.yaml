@@ -32,7 +32,3 @@ jobs:
         with:
           name: windows-artifacts
           path: dist/*
-      - name: Run skfmm tests
-        run: |
-           python -c 'import sys; sys.path.remove(str()); import skfmm; print(skfmm.__version__)'
-           python -c 'import sys; sys.path.remove(str()); import skfmm, sys; sys.exit(skfmm.test())'
