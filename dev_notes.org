@@ -1,10 +1,12 @@
+
+
 * To make a release:
 
 ** Increment version number
 Currently the version number is hard-coded in the following locations:
 
 ./doc/conf.py
-./setup.py
+./pyproject.toml
 ./skfmm/__init__.py
 ./README.txt
 
@@ -12,7 +14,7 @@ The version number format is YYYY.MM.DD with leading zeros
 
 ** Tag the release
 
-$ git tag YYY.MM.DD
+$ git tag YYYY.MM.DD
 $ git push --tags origin master
 
 ** Build the documentation
