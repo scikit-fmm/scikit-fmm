@@ -232,7 +232,7 @@ masked array. A function is provided to compute extension velocities.
 * 2022.04.02 April 2nd 2023
    * Build fixes for Python 3.11 (update pheap cython wrapper)
    * No solver changes
-* 2024.05.28 May 28th 2024
+* 2024.05.29 May 29th 2024
    * Update build system to use meson
    * Python 3.12 support
    * No solver changes

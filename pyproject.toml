@@ -4,7 +4,7 @@ requires = ['meson-python', 'wheel', 'oldest-supported-numpy']
 
 [project]
 name = 'scikit-fmm'
-version = '2024.05.28'
+version = '2024.05.29'
 description = 'An extension module implementing the fast marching method'
 readme = 'README.md'
 requires-python = '>=3.8'

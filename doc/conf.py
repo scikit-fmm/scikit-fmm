@@ -70,7 +70,7 @@ copyright = u'2024, the scikit-fmm team'
 # built documents.
 #
 # The short X.Y version.
-version = '2024.05.28'
+version = '2024.05.29'
 # The full version, including alpha/beta/rc tags.
 release = version
 
