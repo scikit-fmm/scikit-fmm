@@ -7,6 +7,7 @@ Currently the version number is hard-coded in the following locations:
 
 ./doc/conf.py
 ./pyproject.toml
+./meson.build
 ./skfmm/__init__.py
 ./README.txt
 
@@ -40,10 +41,6 @@ One the final commit has been made, wait for the GitHub workflow
 builds to finish. Make sure all the tests pass on all the platforms.
 
 Copy the build artifacts from the GitHub actions to dist/
-
-build the source distribution:
-
-$ python setup.py sdist
 
 $ twine upload dist/*
 

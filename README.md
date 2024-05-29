@@ -75,14 +75,14 @@ masked array. A function is provided to compute extension velocities.
 * Debian
   * https://tracker.debian.org/pkg/scikit-fmm
 
-### Building from Source
+### Building and installing from Source
 * `pip install build`
 * `python -m build`
 * `pip install .`
 
 
 ### Running Tests
-* `python -c "import skfmm; skfmm.test(True)"`
+* `python -c "import skfmm; skfmm.test(True)"` (Do not run the tests from the source directory.)
 * Tests are doctests in `skfmm/__init__.py`
 
 ### Building documentation
