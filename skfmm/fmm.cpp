@@ -2,7 +2,8 @@
 // implementation of the fast marching method in fast_marching.cpp
 
 #include "Python.h"
-#include "numpy/noprefix.h"
+#include "numpy/ndarraytypes.h"
+#include "numpy/ufuncobject.h"
 
 #include "distance_marcher.h"
 #include "travel_time_marcher.h"
