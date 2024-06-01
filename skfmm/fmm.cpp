@@ -112,7 +112,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  phi = (PyArrayObject *)PyArray_FROMANY(pphi, PyArray_DOUBLE, 1,
+  phi = (PyArrayObject *)PyArray_FROMANY(pphi, NPY_DOUBLE, 1,
                                          10, NPY_IN_ARRAY);
   if (!phi)
   {
@@ -121,7 +121,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  dx = (PyArrayObject *)PyArray_FROMANY(pdx, PyArray_DOUBLE, 1,
+  dx = (PyArrayObject *)PyArray_FROMANY(pdx, NPY_DOUBLE, 1,
                                         1, NPY_IN_ARRAY);
   if (!dx)
   {
@@ -130,7 +130,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  flag = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_LONG, 1,
+  flag = (PyArrayObject *)PyArray_FROMANY(pflag, NPY_LONG, 1,
                                           10, NPY_IN_ARRAY);
   if (!flag)
   {
@@ -144,7 +144,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
   {
     {
-      speed = (PyArrayObject *)PyArray_FROMANY(pspeed, PyArray_DOUBLE, 1,
+      speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1,
                                                10, NPY_IN_ARRAY);
       if (!speed)
       {
@@ -213,16 +213,16 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 
   // make a new array for the return value
   distance = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
-                                            shape2, PyArray_DOUBLE, 0);
+                                            shape2, NPY_DOUBLE, 0);
   if (! distance) return NULL;
 
   if (mode == EXTENSION_VELOCITY)
   {
     f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
-                                           shape2, PyArray_DOUBLE, 0);
+                                           shape2, NPY_DOUBLE, 0);
     if (! f_ext) return NULL;
 
-    ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, PyArray_LONG, 1,
+    ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, NPY_LONG, 1,
                                                 10, NPY_IN_ARRAY);
     if (! ext_mask)
       {
