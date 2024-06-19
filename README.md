@@ -66,8 +66,6 @@ masked array. A function is provided to compute extension velocities.
 
 ### Installing
 * Via pip: `pip install scikit-fmm`
-* 64-bit Windows binaries from Christoph Gohlke:
-  * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-fmm
 * Anaconda linux-64 and linux-ppc64le packages:
   * `conda install scikit-fmm`
 * Ubuntu PPA
