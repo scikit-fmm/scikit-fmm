@@ -1,6 +1,6 @@
 [build-system]
 build-backend = 'mesonpy'
-requires = ['meson-python', 'wheel', 'oldest-supported-numpy']
+requires = ['meson-python', 'wheel', 'numpy']
 
 [project]
 name = 'scikit-fmm'
