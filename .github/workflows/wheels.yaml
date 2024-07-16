@@ -6,9 +6,6 @@ on:
   push:
     branches:
       - master
-  release:
-    types:
-      - published
 
 jobs:
   build_wheels:
@@ -27,7 +24,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.19.2
         env:
           CIBW_BUILD: ${{matrix.version}}-*
-          CIBW_ARCHS_WINDOWS: "auto64 auto"
+          CIBW_ARCHS_WINDOWS: "auto64"
 
       - uses: actions/upload-artifact@v4
         with:
