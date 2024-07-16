@@ -23,22 +23,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Python for Windows
-        if: matrix.os == 'windows-latest'
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-          architecture: x86_64
-
-      - name: Setup Python for non-Windows
-        if: matrix.os != 'windows-latest'
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.19.2
         env:
           CIBW_BUILD: ${{matrix.version}}-*
+          CIBW_ARCHS_WINDOWS: "auto64"
 
       - uses: actions/upload-artifact@v4
         with:
