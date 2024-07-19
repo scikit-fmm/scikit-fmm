@@ -16,6 +16,9 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -32,7 +35,7 @@ jobs:
         with:
           name: windows-artifacts
           path: dist/*
-      # - name: Run skfmm tests
-      #   run: |
-      #      python -c 'import os; os.chdir(".."); import skfmm; print(skfmm.__version__)'
-      #      python -c 'import os; os.chdir(".."); import skfmm, sys; sys.exit(skfmm.test())'
+      - name: Run skfmm tests
+        run: |
+          python -c 'import skfmm; print(skfmm.__version__)'
+          python -c 'import skfmm, sys; sys.exit(skfmm.test())'
