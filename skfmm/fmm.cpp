@@ -130,7 +130,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  flag = (PyArrayObject *)PyArray_FROMANY(pflag, NPY_LONG, 1,
+  flag = (PyArrayObject *)PyArray_FROMANY(pflag, NPY_LONGLONG, 1,
                                           10, NPY_IN_ARRAY);
   if (!flag)
   {
