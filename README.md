@@ -234,8 +234,12 @@ masked array. A function is provided to compute extension velocities.
    * Update build system to use meson
    * Python 3.12 support
    * No solver changes
+* 2024.09.16 September 16th 2024
+   * Update build to use NumPy 2.0
+   * Known issue: Windows tests failing with NumPy 2.0
+   * No solver changes
 
 
-Copyright 2023 The scikit-fmm team.
+Copyright 2024 The scikit-fmm team.
 
 BSD-style license. See LICENSE.txt in the source directory.

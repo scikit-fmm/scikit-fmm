@@ -4,10 +4,10 @@ requires = ['meson-python', 'wheel', 'numpy']
 
 [project]
 name = 'scikit-fmm'
-version = '2024.05.29'
+version = '2024.09.16'
 description = 'An extension module implementing the fast marching method'
 readme = 'README.md'
-requires-python = '>=3.8'
+requires-python = '>=3.9'
 license = {file = 'LICENSE.txt'}
 url = 'https://github.com/scikit-fmm/scikit-fmm'
 authors = [
