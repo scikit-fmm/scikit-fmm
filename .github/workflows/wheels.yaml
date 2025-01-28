@@ -1,0 +1,124 @@
+name: Build and publish wheels
+
+on:
+  push:
+    tags:
+      - '*'  # Triggers the workflow on version tags
+
+permissions:
+  contents: write
+  actions: read
+  
+jobs:
+  build_sdist:
+    name: Build SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build SDist
+        run: pipx run build --sdist
+
+      - name: Check metadata
+        run: pipx run twine check dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+ 
+  build_wheels:
+    name: Build ${{ matrix.arch }} wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            arch: auto64
+          - os: ubuntu-22.04
+            arch: x86_64
+          - os: ubuntu-22.04-arm
+            arch: aarch64
+          - os: macos-13
+            arch: x86_64
+            macos_deployment_target: "13.0"
+          - os: macos-14
+            arch: arm64
+            macos_deployment_target: "14.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+      
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22
+        env:
+          CIBW_SKIP: "*pp3* *cp38*"
+          CIBW_ARCHS: ${{ matrix.arch }}
+          CIBW_CONFIG_SETTINGS_WINDOWS: "setup-args=--vsenv"
+          CIBW_ENVIRONMENT_MACOS:
+            MACOSX_DEPLOYMENT_TARGET=${{ matrix.macos_deployment_target }}
+          CIBW_TEST_REQUIRES: numpy
+          CIBW_TEST_COMMAND: |
+           python -c "import skfmm, sys; sys.exit(skfmm.test())"
+           pip install numpy==1.26.4
+           python -c "import skfmm, sys; sys.exit(skfmm.test())"
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.arch }}
+          path: ./wheelhouse/*.whl
+          retention-days: 5
+  
+  publish:
+    name: Publish on PyPI
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    steps:
+     
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: dist
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-ubuntu-22.04-x86_64
+          path: dist
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-ubuntu-22.04-arm-aarch64
+          path: dist
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-13-x86_64
+          path: dist
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-14-arm64
+          path: dist
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-windows-latest-auto64
+          path: dist
+
+      - name: Upload wheels and sdist to PyPI
+        # release on every tag
+        if: ${{ github.ref_type == 'tag' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          skip_existing: true
+          #repository_url: https://test.pypi.org/legacy/  # To test
+         
+     

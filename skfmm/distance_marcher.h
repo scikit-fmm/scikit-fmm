@@ -5,7 +5,7 @@
 class distanceMarcher : public baseMarcher
 {
 public:
-  distanceMarcher(double *phi,      double *dx, long *flag,
+  distanceMarcher(double *phi,      double *dx, long long *flag,
                   double *distance, int ndim,   int *shape,
                   bool self_test,   int order,  double narrow,
                   int periodic):
