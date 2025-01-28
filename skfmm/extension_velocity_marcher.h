@@ -5,9 +5,9 @@
 class extensionVelocityMarcher : public distanceMarcher
 {
 public:
-  extensionVelocityMarcher(double *phi,      double *dx,    long *flag,
+  extensionVelocityMarcher(double *phi,      double *dx,    long long *flag,
                            double *distance, int     ndim,  int *shape,
-                           bool self_test,   int order,     long *ext_mask,
+                           bool self_test,   int order,     long long *ext_mask,
                            double *speed,
                            double *f_ext,    double narrow, int periodic) :
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test,
@@ -23,5 +23,5 @@ protected:
 private:
   double *speed_;
   double *f_ext_;
-  long *ext_mask_;
+  long long *ext_mask_;
 };

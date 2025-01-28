@@ -240,9 +240,9 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // create a level set object to do the calculation
   double * local_phi        = (double *) PyArray_DATA(phi);
   double * local_dx         = (double *) PyArray_DATA(dx);
-  long   * local_flag       = (long *)   PyArray_DATA(flag);
-  long    * local_ext_mask   = 0;
-  if (ext_mask) local_ext_mask = (long *) PyArray_DATA(ext_mask);
+  long long   * local_flag       = (long long *)   PyArray_DATA(flag);
+  long long   * local_ext_mask   = 0;
+  if (ext_mask) local_ext_mask = (long long *) PyArray_DATA(ext_mask);
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   double * local_distance   = (double *) PyArray_DATA(distance);

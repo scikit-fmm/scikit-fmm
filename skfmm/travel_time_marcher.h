@@ -7,7 +7,7 @@ class heap;
 class travelTimeMarcher : public distanceMarcher
 {
 public:
-  travelTimeMarcher(double *phi,      double *dx, long *flag,
+  travelTimeMarcher(double *phi,      double *dx, long long *flag,
                     double *distance, int ndim,   int *shape,
                     bool self_test,   int order,
                     double *speed,    double narrow,
