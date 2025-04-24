@@ -305,7 +305,9 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   }
 
   try {
+      Py_BEGIN_ALLOW_THREADS
       marcher->march();
+      Py_END_ALLOW_THREADS
       error = marcher->getError();
       delete marcher;
     } catch (const std::exception& exn) {
