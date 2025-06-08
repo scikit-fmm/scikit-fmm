@@ -2,8 +2,11 @@
 // implementation of the fast marching method in fast_marching.cpp
 
 #include "Python.h"
-#include "numpy/ndarraytypes.h"
-#include "numpy/ufuncobject.h"
+#include "numpy/ndarrayobject.h"
+
+#ifndef NPY_IN_ARRAY
+#define NPY_IN_ARRAY (NPY_ARRAY_ALIGNED | NPY_ARRAY_ENSUREARRAY | NPY_ARRAY_NOTSWAPPED | NPY_ARRAY_BEHAVED)
+#endif
 
 #include "distance_marcher.h"
 #include "travel_time_marcher.h"
