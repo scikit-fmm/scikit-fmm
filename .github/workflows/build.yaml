@@ -1,6 +1,12 @@
 name: Linux Build
 
-on: [push]
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   build:
@@ -11,9 +17,9 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -31,7 +37,26 @@ jobs:
       - name: Run skfmm tests
         run: |
           cd .. && python -c "import skfmm, sys; sys.exit(skfmm.test())"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: linux-artifacts
+          name: linux-artifacts-py-${{ matrix.python-version }}
           path: dist/*
+          retention-days: 5
+
+  merge:
+    name: Merge artifacts
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: linux-*
+          merge-multiple: true
+          path: dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-artifacts-merged
+          path: dist
