@@ -39,5 +39,5 @@ jobs:
           cd .. && python -c "import skfmm, sys; sys.exit(skfmm.test())"
       - uses: actions/upload-artifact@v4
         with:
-          name: linux-cp-${{ matrix.python-version }}-wheel
+          name: linux_x86_64-artifacts-py-${{ matrix.python-version }}
           path: dist/*
