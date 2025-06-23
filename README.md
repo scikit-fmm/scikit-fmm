@@ -56,7 +56,7 @@ masked array. A function is provided to compute extension velocities.
 * http://pypi.python.org/pypi/scikit-fmm
 
 ### Requirements
-* Numpy >= 1.0.2
+* NumPy
 * Building requires the pypa/build module
   (https://github.com/pypa/build) and a C/C++ compiler
 ### Bugs, questions, patches, feature requests, discussion & cetera
@@ -234,14 +234,17 @@ masked array. A function is provided to compute extension velocities.
    * Update build system to use meson
    * Python 3.12 support
    * No solver changes
-* 2025.01.29 January 29th 2024
+* 2025.01.29 January 29th 2025
    * NumPy 2.0 support on Linux and Windows
    * Update to Github workflows to use v4 api
    * Windows wheels
    * Support for Python 3.13
+* 2025.01.29 June 23rd 2025
+   * Fixes for deprecated NumPy API and Python 3.11
+   * Github Workflow fixes
 
 
 
-Copyright 2023 The scikit-fmm team.
+Copyright 2025 The scikit-fmm team.
 
 BSD-style license. See LICENSE.txt in the source directory.
