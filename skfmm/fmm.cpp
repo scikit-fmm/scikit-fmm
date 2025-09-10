@@ -78,19 +78,21 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // -- and the input error checking should be done
 
   PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask;
+  PyObject *pspeeds, *pdrivers;
   int       self_test, mode, order, periodic;
   PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
+  PyArrayObject *speeds, *drivers; // for genetics extension
   double narrow=0;
-  distance = 0;
-  f_ext    = 0;
-  speed    = 0;
-  ext_mask = 0;
-
-
+  speed    = NULL;
+  distance = NULL;
+  f_ext    = NULL;
+  ext_mask = NULL;
+  speeds   = NULL;
+  drivers  = NULL;
 
   if (!PyArg_ParseTuple(args, "OOOOOiiidi", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
-                        &order, &narrow, &periodic))
+                        &order, &narrow, &periodic, &pspeeds, &pdrivers))
   {
     return NULL;
   }
@@ -174,6 +176,13 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     }
   }
 
+  if (mode == TRAVEL_TIME_GENES) {
+      speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1,
+                                               10, NPY_IN_ARRAY);
+      drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_DOUBLE, 1,
+                                               10, NPY_IN_ARRAY);
+  }
+
   if (! (PyArray_NDIM(phi)==(npy_intp)PyArray_DIM(dx,0))) // ?!
   {
     PyErr_SetString(PyExc_ValueError, "dx must be of length len(phi.shape)");
@@ -251,11 +260,11 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   //speeds and drivers used for genetics extension
-  double * local_speeds      = 0;
-  if (speeds) local_speeds    = (double *) PyArray_DATA(speeds);
-  double * local_drivers      = 0;
-  if (drivers) local_drivers    = (double *) PyArray_DATA(drivers);
-  double * local_distance   = (double *) PyArray_DATA(distance);
+  double *local_speeds      = NULL;
+  if (speeds) local_speeds    = (double *)PyArray_DATA(speeds);
+  double *local_drivers      = NULL;
+  if (drivers) local_drivers    = (double *)PyArray_DATA(drivers);
+  double *local_distance   = (double *)PyArray_DATA(distance);
   int error;
 
   baseMarcher *marcher = 0;
