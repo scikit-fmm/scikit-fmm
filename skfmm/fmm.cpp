@@ -17,6 +17,7 @@
 #define DISTANCE              0
 #define TRAVEL_TIME           1
 #define EXTENSION_VELOCITY    2
+#define TRAVEL_TIME_GENES     3
 
 static PyObject *distance_method(PyObject *self, PyObject *args);
 
@@ -109,7 +110,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 
   if (! (mode==DISTANCE ||
          mode==TRAVEL_TIME ||
-         mode==EXTENSION_VELOCITY))
+         mode==EXTENSION_VELOCITY ||
+         mode==TRAVEL_TIME_GENES))
   {
     PyErr_SetString(PyExc_ValueError, "invalid mode flag");
     return NULL;
@@ -248,6 +250,11 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   if (ext_mask) local_ext_mask = (long long *) PyArray_DATA(ext_mask);
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
+  //speeds and drivers used for genetics extension
+  double * local_speeds      = 0;
+  if (speeds) local_speeds    = (double *) PyArray_DATA(speeds);
+  double * local_drivers      = 0;
+  if (drivers) local_drivers    = (double *) PyArray_DATA(drivers);
   double * local_distance   = (double *) PyArray_DATA(distance);
   int error;
 
@@ -300,6 +307,23 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         local_ext_mask,
         local_speed,
         local_fext,
+        narrow,
+        periodic);
+    }
+    break;
+    case TRAVEL_TIME_GENES:
+    {
+      marcher = new travelTimeMarcherGenes(
+        local_phi,
+        local_dx,
+        local_flag,
+        local_distance,
+        PyArray_NDIM(phi),
+        shape,
+        self_test,
+        order,
+        local_drivers,
+        local_speeds,
         narrow,
         periodic);
     }

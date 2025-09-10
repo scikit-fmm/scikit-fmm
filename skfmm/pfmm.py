@@ -4,7 +4,7 @@ import numpy as np
 from .cfmm import cFastMarcher
 
 FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
-DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY = 0, 1, 2
+DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY, TRAVEL_TIME_GENES = 0, 1, 2, 3
 
 
 def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
@@ -174,6 +174,14 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
     t = post_process_result(t)
     return t
 
+def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
+                narrow=0.0, periodic=False):
+    phi, dx, flag, ext_mask, periodic \
+        = pre_process_args(phi, dx, narrow, periodic)
+    t = cFastMarcher(phi, dx, flag, drivers, speeds, ext_mask,
+                     int(self_test), TRAVEL_TIME_GENES, order, narrow, periodic)
+    t = post_process_result(t)
+    return t
 
 def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
                          ext_mask=None, narrow=0.0, periodic=False):
