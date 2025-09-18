@@ -10,6 +10,7 @@
 
 #include "distance_marcher.h"
 #include "travel_time_marcher.h"
+#include "travel_time_marcher_genes.h"
 #include "extension_velocity_marcher.h"
 
 #include <stdexcept>
