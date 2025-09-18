@@ -108,8 +108,7 @@ def distance(phi, dx=1.0, self_test=False, order=2,
     phi, dx, flag, ext_mask, periodic = \
         pre_process_args(phi, dx, narrow, periodic)
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
-                     int(self_test), DISTANCE, order, narrow, periodic, 
-                     None, None)
+                     int(self_test), DISTANCE, order, narrow, periodic)
     d = post_process_result(d)
     return d
 
@@ -171,8 +170,7 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
     phi, dx, flag, ext_mask, periodic \
         = pre_process_args(phi, dx, narrow, periodic)
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
-                     int(self_test), TRAVEL_TIME, order, narrow, periodic,
-                     None, None)
+                     int(self_test), TRAVEL_TIME, order, narrow, periodic)
     t = post_process_result(t)
     return t
 
@@ -249,8 +247,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,
-                                   order, narrow, periodic,
-                                   None, None)
+                                   order, narrow, periodic)
     distance = post_process_result(distance)
     f_ext = post_process_result(f_ext)
 
