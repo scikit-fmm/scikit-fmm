@@ -47,14 +47,14 @@ private:
     return ret;
   }
 
-  double            narrow_;
-  int               order_;
-  int             * heapptr_;        // heap back pointers
-  heap            * heap_;
-  int               shape_[MaximumDimension];    // size of each dimension
-  int               shift_[MaximumDimension];
-  int               periodic_;
-  bool              self_test_;
+  double narrow_;
+  int order_;
+  int* heapptr_;        // heap back pointers
+  heap* heap_;
+  int shape_[MaximumDimension];    // size of each dimension
+  int shift_[MaximumDimension];
+  int periodic_;
+  bool self_test_;
 
 protected:
   // derived classes must implement these functions
@@ -74,7 +74,7 @@ protected:
     // Return -1 if neighbor point has flag_ value equal to the flag input
     int coord[MaximumDimension];
     _setIndex(current, coord);
-    int newc = coord[dim]+dir;
+    int newc = coord[dim] + dir;
 
     if (periodic_ & 1<<dim) {
       if (newc==-1)                  newc = shape_[dim]-1;
