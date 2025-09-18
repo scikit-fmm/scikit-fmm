@@ -79,25 +79,25 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   // -- and the input error checking should be done
 
   PyObject* pphi;
-	PyObject* pdx;
-	PyObject* pflag;
-	PyObject* pspeed;
-	PyObject* pext_mask;
+  PyObject* pdx;
+  PyObject* pflag;
+  PyObject* pspeed;
+  PyObject* pext_mask;
   PyObject* pspeeds;
-	PyObject* pdrivers;
+  PyObject* pdrivers;
 
   int       self_test, mode, order, periodic;
 
   PyArrayObject* phi;
-	PyObject* dx;
-	PyObject* flag;
+  PyArrayObject* dx;
+  PyArrayObject* flag;
 
-	PyObject* speed = nullptr;
-	PyObject* distance = nullptr;
-	PyObject* f_ext = nullptr;
-	PyObject* ext_mask = nullptr;
+  PyArrayObject* speed = nullptr;
+  PyArrayObject* distance = nullptr;
+  PyArrayObject* f_ext = nullptr;
+  PyArrayObject* ext_mask = nullptr;
   PyArrayObject* speeds = nullptr;
-	PyArrayObject* drivers = nullptr; // for genetics extension
+  PyArrayObject* drivers = nullptr; // for genetics extension
 
   double narrow = 0;
 
