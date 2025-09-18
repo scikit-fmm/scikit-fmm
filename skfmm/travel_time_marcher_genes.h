@@ -13,7 +13,7 @@ public:
                          unsigned int* drivers, double* speeds, double narrow,
                          int periodic) :
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test,
-                    order, narrow, periodic),
+                    order, narrow, periodic)
     // TODO implement passing the speeds array (it has one more dimension than
     // the speed array in travel_time_marcher).
   {
