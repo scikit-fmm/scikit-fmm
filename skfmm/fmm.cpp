@@ -19,7 +19,7 @@
 #define EXTENSION_VELOCITY    2
 #define TRAVEL_TIME_GENES     3
 
-static PyObject (*distance_method)(PyObject *self, PyObject *args);
+static PyObject* distance_method(PyObject* self, PyObject* args);
 
 static PyMethodDef fmm_methods[] =
 {
@@ -41,6 +41,7 @@ static struct PyModuleDef moduledef = {
     NULL,                                 /* m_traverse */
     NULL,                                 /* m_clear */
     NULL,                                 /* m_free */
+	  // TODO are these NULL members pointers or not?
 };
 #endif
 
@@ -56,58 +57,68 @@ initcfmm(void)
 #if PY_MAJOR_VERSION >= 3
     m = PyModule_Create(&moduledef);
 
-    if (m == NULL)
-        return NULL;
+    if (m == nullptr)
+        return nullptr;
 
     import_array();
     return m;
 #else
     m = Py_InitModule3("cfmm", fmm_methods,
         "c extension module for scikit-fmm");
-    if (m == NULL)
+    if (m == nullptr)
         return;
 
     import_array();
 #endif
 }
 
-static PyObject *distance_method(PyObject *self, PyObject *args)
+static PyObject* distance_method(PyObject* self, PyObject* args)
 {
   // when we get here we should have:
   // -- phi, dx, flag, and speed
   // -- and the input error checking should be done
 
-  PyObject *pphi, *pdx, *pflag, *pspeed, *pext_mask;
-  PyObject *pspeeds, *pdrivers;
+  PyObject* pphi;
+	PyObject* pdx;
+	PyObject* pflag;
+	PyObject* pspeed;
+	PyObject* pext_mask;
+  PyObject* pspeeds;
+	PyObject* pdrivers;
+
   int       self_test, mode, order, periodic;
-  PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
-  PyArrayObject *speeds, *drivers; // for genetics extension
+
+  PyArrayObject* phi;
+	PyObject* dx;
+	PyObject* flag;
+
+	PyObject* speed = nullptr;
+	PyObject* distance = nullptr;
+	PyObject* f_ext = nullptr;
+	PyObject* ext_mask = nullptr;
+  PyArrayObject* speeds = nullptr;
+	PyArrayObject* drivers = nullptr; // for genetics extension
+
   double narrow = 0;
-  speed    = NULL;
-  distance = NULL;
-  f_ext    = NULL;
-  ext_mask = NULL;
-  speeds   = NULL;
-  drivers  = NULL;
 
   if (!PyArg_ParseTuple(args, "OOOOOiiidi", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
                         &order, &narrow, &periodic, &pspeeds, &pdrivers))
   {
-    return NULL;
+    return nullptr;
   }
 
   if (! (self_test==0 || self_test==1))
   {
     PyErr_SetString(PyExc_ValueError, "self_test must be 0 or 1");
-    return NULL;
+    return nullptr;
   }
 
 
   if (! (order==1 || order==2))
   {
     PyErr_SetString(PyExc_ValueError, "order must be 1 or 2");
-    return NULL;
+    return nullptr;
   }
 
   if (! (mode==DISTANCE ||
@@ -116,7 +127,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
          mode==TRAVEL_TIME_GENES))
   {
     PyErr_SetString(PyExc_ValueError, "invalid mode flag");
-    return NULL;
+    return nullptr;
   }
 
   phi = (PyArrayObject *)PyArray_FROMANY(pphi, NPY_DOUBLE, 1,
@@ -125,7 +136,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   {
     PyErr_SetString(PyExc_ValueError,
                     "phi must be a 1 to 12-D array of doubles");
-    return NULL;
+    return nullptr;
   }
 
   dx = (PyArrayObject *)PyArray_FROMANY(pdx, NPY_DOUBLE, 1,
@@ -134,7 +145,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   {
     PyErr_SetString(PyExc_ValueError, "dx must be a 1D array of doubles");
     Py_XDECREF(phi);
-    return NULL;
+    return nullptr;
   }
 
   flag = (PyArrayObject *)PyArray_FROMANY(pflag, NPY_LONGLONG, 1,
@@ -145,7 +156,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                     "flag must be a 1D to 12-D array of integers");
     Py_XDECREF(phi);
     Py_XDECREF(dx);
-    return NULL;
+    return nullptr;
   }
 
   if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
@@ -159,7 +170,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 			Py_XDECREF(phi);
 			Py_XDECREF(dx);
 			Py_XDECREF(flag);
-			return NULL;
+			return nullptr;
 		}
 
 		if (! PyArray_SAMESHAPE(phi,speed))
@@ -170,7 +181,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 			Py_XDECREF(dx);
 			Py_XDECREF(flag);
 			Py_XDECREF(speed);
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -188,7 +199,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     Py_XDECREF(dx);
     Py_XDECREF(flag);
     Py_XDECREF(speed);
-    return NULL;
+    return nullptr;
   }
 
   for (int i=0; i<PyArray_DIM(dx,0); i++)
@@ -201,7 +212,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
       Py_XDECREF(dx);
       Py_XDECREF(flag);
       Py_XDECREF(speed);
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -212,7 +223,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     Py_XDECREF(dx);
     Py_XDECREF(flag);
     Py_XDECREF(speed);
-    return NULL;
+    return nullptr;
   }
 
   int shape[MaximumDimension];
@@ -226,13 +237,13 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // make a new array for the return value
   distance = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
                                             shape2, NPY_DOUBLE, 0);
-  if (!distance) return NULL;
+  if (!distance) return nullptr;
 
   if (mode == EXTENSION_VELOCITY)
   {
     f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
                                            shape2, NPY_DOUBLE, 0);
-    if (!f_ext) return NULL;
+    if (!f_ext) return nullptr;
 
     ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, NPY_LONGLONG, 1,
                                                 10, NPY_IN_ARRAY);
@@ -244,27 +255,27 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
       Py_XDECREF(dx);
       Py_XDECREF(flag);
       Py_XDECREF(speed);
-      return NULL;
+      return nullptr;
     }
   }
 
   // create a level set object to do the calculation
-  double *local_phi        = (double *) PyArray_DATA(phi);
-  double *local_dx         = (double *) PyArray_DATA(dx);
+  double* local_phi        = (double *) PyArray_DATA(phi);
+  double* local_dx         = (double *) PyArray_DATA(dx);
   long long   *local_flag       = (long long *)   PyArray_DATA(flag);
-  long long   *local_ext_mask   = NULL;
+  long long   *local_ext_mask   = nullptr;
   if (ext_mask) local_ext_mask = (long long *) PyArray_DATA(ext_mask);
-  double *local_speed      = NULL;
-  if (speed) local_speed    = (double *) PyArray_DATA(speed);
+  double* local_speed      = nullptr;
+  if (speed) local_speed    = (double* ) PyArray_DATA(speed);
   //speeds and drivers used for genetics extension
-  double *local_speeds      = NULL;
+  double* local_speeds      = nullptr;
   if (speeds) local_speeds    = (double *)PyArray_DATA(speeds);
-  double *local_drivers      = NULL;
+  double* local_drivers      = nullptr;
   if (drivers) local_drivers    = (double *)PyArray_DATA(drivers);
-  double *local_distance   = (double *)PyArray_DATA(distance);
+  double* local_distance   = (double *)PyArray_DATA(distance);
   int error;
 
-  baseMarcher *marcher = NULL;
+  baseMarcher* marcher = nullptr;
   switch (mode)
   {
     case DISTANCE:
@@ -300,7 +311,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     break;
     case EXTENSION_VELOCITY:
     {
-      double * local_fext = (double *) PyArray_DATA(f_ext);
+      double*  local_fext = (double *) PyArray_DATA(f_ext);
       marcher = new extensionVelocityMarcher(
         local_phi,
         local_dx,
@@ -349,7 +360,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
       Py_XDECREF(flag);
       Py_XDECREF(speed);
       Py_XDECREF(ext_mask);
-      return NULL;
+      return nullptr;
     }
 
   Py_DECREF(phi);
@@ -368,12 +379,12 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
                     "an unknown error has occurred in the scikit-fmm c "
                     "extension module");
     Py_XDECREF(distance);
-    return NULL;
+    return nullptr;
   case 2:
     PyErr_SetString(PyExc_ValueError,
                     "the array phi contains no zero contour (no zero level set)");
     Py_XDECREF(distance);
-    return NULL;
+    return nullptr;
   }
 
   if (mode == EXTENSION_VELOCITY)
