@@ -19,7 +19,7 @@
 #define EXTENSION_VELOCITY    2
 #define TRAVEL_TIME_GENES     3
 
-static PyObject *distance_method(PyObject *self, PyObject *args);
+static PyObject (*distance_method)(PyObject *self, PyObject *args);
 
 static PyMethodDef fmm_methods[] =
 {
@@ -82,7 +82,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   int       self_test, mode, order, periodic;
   PyArrayObject *phi, *dx, *flag, *speed, *distance, *f_ext, *ext_mask;
   PyArrayObject *speeds, *drivers; // for genetics extension
-  double narrow=0;
+  double narrow = 0;
   speed    = NULL;
   distance = NULL;
   f_ext    = NULL;
@@ -149,32 +149,30 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   }
 
   if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
-  {
-    {
-      speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1,
-                                               10, NPY_IN_ARRAY);
-      if (!speed)
-      {
-        PyErr_SetString(PyExc_ValueError,
-                        "speed must be a 1D to 12-D array of doubles");
-        Py_XDECREF(phi);
-        Py_XDECREF(dx);
-        Py_XDECREF(flag);
-        return NULL;
-      }
+	{
+		speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1,
+																						 10, NPY_IN_ARRAY);
+		if (!speed)
+		{
+			PyErr_SetString(PyExc_ValueError,
+											"speed must be a 1D to 12-D array of doubles");
+			Py_XDECREF(phi);
+			Py_XDECREF(dx);
+			Py_XDECREF(flag);
+			return NULL;
+		}
 
-      if (! PyArray_SAMESHAPE(phi,speed))
-      {
-        PyErr_SetString(PyExc_ValueError,
-                        "phi and speed must have the same shape");
-        Py_XDECREF(phi);
-        Py_XDECREF(dx);
-        Py_XDECREF(flag);
-        Py_XDECREF(speed);
-        return NULL;
-      }
-    }
-  }
+		if (! PyArray_SAMESHAPE(phi,speed))
+		{
+			PyErr_SetString(PyExc_ValueError,
+											"phi and speed must have the same shape");
+			Py_XDECREF(phi);
+			Py_XDECREF(dx);
+			Py_XDECREF(flag);
+			Py_XDECREF(speed);
+			return NULL;
+		}
+	}
 
   if (mode == TRAVEL_TIME_GENES) {
       speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1,
@@ -228,36 +226,35 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // make a new array for the return value
   distance = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
                                             shape2, NPY_DOUBLE, 0);
-  if (! distance) return NULL;
+  if (!distance) return NULL;
 
   if (mode == EXTENSION_VELOCITY)
   {
     f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
                                            shape2, NPY_DOUBLE, 0);
-    if (! f_ext) return NULL;
+    if (!f_ext) return NULL;
 
     ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, NPY_LONGLONG, 1,
                                                 10, NPY_IN_ARRAY);
-    if (! ext_mask)
-      {
-        PyErr_SetString(PyExc_ValueError,
-                        "ext_mask must be a 1D, 12-D array of integers");
-        Py_XDECREF(phi);
-        Py_XDECREF(dx);
-        Py_XDECREF(flag);
-        Py_XDECREF(speed);
-        return NULL;
-      }
-
+    if (!ext_mask)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "ext_mask must be a 1D, 12-D array of integers");
+      Py_XDECREF(phi);
+      Py_XDECREF(dx);
+      Py_XDECREF(flag);
+      Py_XDECREF(speed);
+      return NULL;
+    }
   }
 
   // create a level set object to do the calculation
-  double * local_phi        = (double *) PyArray_DATA(phi);
-  double * local_dx         = (double *) PyArray_DATA(dx);
-  long long   * local_flag       = (long long *)   PyArray_DATA(flag);
-  long long   * local_ext_mask   = 0;
+  double *local_phi        = (double *) PyArray_DATA(phi);
+  double *local_dx         = (double *) PyArray_DATA(dx);
+  long long   *local_flag       = (long long *)   PyArray_DATA(flag);
+  long long   *local_ext_mask   = NULL;
   if (ext_mask) local_ext_mask = (long long *) PyArray_DATA(ext_mask);
-  double * local_speed      = 0;
+  double *local_speed      = NULL;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   //speeds and drivers used for genetics extension
   double *local_speeds      = NULL;
@@ -267,7 +264,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   double *local_distance   = (double *)PyArray_DATA(distance);
   int error;
 
-  baseMarcher *marcher = 0;
+  baseMarcher *marcher = NULL;
   switch (mode)
   {
     case DISTANCE:
