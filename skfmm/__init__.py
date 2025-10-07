@@ -48,7 +48,7 @@ from __future__ import print_function
 __version__ = "2025.06.23"
 __docformat__ = 'restructuredtext'
 
-from .pfmm import distance, travel_time, extension_velocities
+from .pfmm import distance, travel_time, travel_time_genes, extension_velocities
 from .heap import heap
 
 def testing():
@@ -532,6 +532,13 @@ def testing():
     >>> np.testing.assert_allclose(travel_time([0, 1, 1, 1, 1], [2, 2, 2, 2, 2]),
     ...                                        [0, 0.5, 1.0, 1.5, 2.0])
     >>> np.testing.assert_array_equal(travel_time([1, 0, -1], [2, 2, 2]),
+    ...                                           [0.5, 0, 0.5])
+
+    Travel time genes tests 1
+
+    >>> np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1], [[2, 2, 2, 2, 2]]),
+    ...                                        [0, 0.5, 1.0, 1.5, 2.0])
+    >>> np.testing.assert_array_equal(travel_time_genes([1, 0, -1], [[2, 2, 2]]),
     ...                                           [0.5, 0, 0.5])
 
     Travel time tests 2
