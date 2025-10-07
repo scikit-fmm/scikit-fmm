@@ -84,8 +84,10 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     return res;
   } catch(std::runtime_error& err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
-    //end of the recursion, use inf so that it is discarded selecting the minimum:
-    if(avoid_dim.size() == dim_) return std::numeric_limits<double>::infinity();
+    if (avoid_dim.size() == (size_t)dim_) {
+      //end of the recursion, use inf so that it is discarded selecting the minimum
+      return std::numeric_limits<double>::infinity(); 
+    }
     std::vector<double> sols;
     for (int ind=0; ind<dim_; ind++){
       //remove one dimension more than what we are already doing
