@@ -536,9 +536,11 @@ def testing():
 
     Travel time genes tests 1
 
-    >>> np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1], speeds=[[2, 2, 2, 2, 2]]),
+    >>> np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+    ...                                 drivers=[0,0,0,0,0], speeds=[[2, 2, 2, 2, 2]]),
     ...                                        [0, 0.5, 1.0, 1.5, 2.0])
-    >>> np.testing.assert_array_equal(travel_time_genes([1, 0, -1], speeds=[[2, 2, 2]]),
+    >>> np.testing.assert_array_equal(travel_time_genes([1, 0, -1],
+    ...                                 drivers=[0,0,0], speeds=[[2, 2, 2]]),
     ...                                           [0.5, 0, 0.5])
 
     Travel time tests 2
