@@ -31,6 +31,7 @@ srcs = [
   'skfmm/base_marcher.cpp',
   'skfmm/distance_marcher.cpp',
   'skfmm/travel_time_marcher.cpp',
+  'skfmm/travel_time_marcher_genes.cpp',
   'skfmm/extension_velocity_marcher.cpp',
 ]
 
