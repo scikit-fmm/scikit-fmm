@@ -1,5 +1,11 @@
 Wed 10 Sep 17:00:06 BST 2025
-next: create travelTimeMarcherGenes in travel_time_marcher_genes.*
-copy contents of old files
-edit to pass speeds and drivers instead of just speed.
-also include branch functions in this version
+DONE next: create travelTimeMarcherGenes in travel_time_marcher_genes.*
+DONE copy contents of old files
+DONE edit to pass speeds and drivers instead of just speed.
+also include branch functions in this version <-- not done
+
+
+Tue  7 Oct 14:28:22 BST 2025
+* run some tests
+* add branch function 
+* run some more tests
