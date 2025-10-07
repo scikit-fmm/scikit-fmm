@@ -97,7 +97,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   PyArrayObject* distance = nullptr;
   PyArrayObject* f_ext = nullptr;
   PyArrayObject* ext_mask = nullptr;
-  PyArrayObject* speeds = nullptr;
+  PyArrayObject* speeds = nullptr; // for genetics extension
   PyArrayObject* drivers = nullptr; // for genetics extension
 
   double narrow = 0;
