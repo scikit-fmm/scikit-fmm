@@ -269,8 +269,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   double* local_speed      = nullptr;
   if (speed) local_speed    = (double* ) PyArray_DATA(speed);
   //speeds and drivers used for genetics extension
-  double* local_speeds      = nullptr;
-  if (speeds) local_speeds    = (double *)PyArray_DATA(speeds);
+  double* local_speeds[]    = nullptr;
+  if (speeds) local_speeds    = (double **)PyArray_DATA(speeds);
   double* local_drivers      = nullptr;
   if (drivers) local_drivers    = (double *)PyArray_DATA(drivers);
   double* local_distance   = (double *)PyArray_DATA(distance);
