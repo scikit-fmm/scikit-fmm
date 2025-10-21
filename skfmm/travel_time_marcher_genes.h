@@ -10,13 +10,15 @@ public:
   travelTimeMarcherGenes(double* phi,      double* dx, long long int* flag,
                          double* distance, int ndim,   int* shape,
                          bool self_test,   int order,
-                         double* drivers, double* speeds, double narrow,
+                         double* drivers, double* speeds[], double narrow,
                          int periodic) :
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test,
-                    order, narrow, periodic)
+                    order, narrow, periodic),
+    speeds_(speeds)
+  {
     // TODO implement passing the speeds array (it has one more dimension than
     // the speed array in travel_time_marcher).
-  {
+    branch_ = new unsigned[size_];
   }
 
   virtual ~travelTimeMarcherGenes() { }
@@ -28,5 +30,6 @@ protected:
   virtual double solveQuadratic(int i, const double &a,
                                 const double &b, double &c);
 private:
-  double* speed_;
+  double* speeds_[];
+  unsigned* branch_;
 };

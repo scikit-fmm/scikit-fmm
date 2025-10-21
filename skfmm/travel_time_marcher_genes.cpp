@@ -15,7 +15,7 @@ void travelTimeMarcherGenes::initalizeFrozen()
     if (flag_[i]==Frozen)
     {
       // convert distance to time
-      distance_[i]=fabs(distance_[i]/speed_[i]);
+      distance_[i]=fabs(distance_[i]/speeds_[0][i]);
     }
   }
 }
@@ -39,8 +39,9 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   double a,b,c;
   a=b=c=0;
   int naddr=0;
-  for (int dim=0; dim<dim_; dim++)
-  {
+  unsigned naddr_smallest_nbr;
+  // Choose a "good" pair of neighbours on different axes:
+  for (int dim=0; dim<dim_; dim++) {
     if(avoid_dim.find(dim) != avoid_dim.end()) continue; //we should avoid this dimension
     double value1 = maxDouble;
     double value2 = maxDouble;
@@ -78,9 +79,19 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       b-=idx2_[dim]*2*value1;
       c+=idx2_[dim]*pow(value1,2);
     }
+    // note the neighbour with the smallest phi/distance value:
+    naddr_smallest_nbr = naddr;
+    if (value1 > value2) naddr_smallest_nbr = naddr2;
   }
+  // set an initial value for branch function at node i:
+  branch[i] = branch[naddr_smallest_nbr];
   try {
     double res = solveQuadratic(i,a,b,c);
+    // update branch function if a mutation is present at naddr
+    // AND the mutation is not already accounted for
+    if ((drivers[i] > 0) && (branch[i] & drivers[i] == 0)) {
+        branch[i] += drivers[i];
+    }
     return res;
   } catch(std::runtime_error& err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
@@ -98,6 +109,10 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       sols.push_back(updatePointOrderTwo(i,tempset));
     }
     if(sols.size()==0) return std::numeric_limits<double>::infinity();//All the derivates with different dimensionalities are 0
+    // TODO update branch function if a mutation is present at naddr
+    if ((drivers[i] > 0) && (branch[i] & drivers[i] == 0)) {
+        branch[i] += drivers[i];
+    }
     return *std::min_element(sols.begin(), sols.end());
   }
 }
@@ -107,7 +122,8 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          const double &b,
                                          double &c)
 {
-  c -= 1/pow(speed_[i],2);
+  unsigned bvalue = branch[i];
+  c -= 1/pow(speeds_[bvalue][i],2);
   double r0 = 0;
   double det = pow(b, 2) - 4 * a * c;
   if (det >= 0)

@@ -40,7 +40,7 @@ baseMarcher::baseMarcher(
   for (int i=0; i<dim_; i++)
   {
     int prod=1;
-    for (int j=i+1; j<dim_; j++) prod*=shape_[j];
+    for (int j=i+1; j<dim_; j++) prod *= shape_[j];
     shift_[i]=prod;
   }
 }
