@@ -115,7 +115,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       //All the derivates with different dimensionalities are 0
     }
     // update branch function if a mutation is present at naddr
-    if ((drivers_[i] > 0) && (branch_[i] & drivers_[i] == 0)) {
+    if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
     }
     return *std::min_element(sols.begin(), sols.end());
