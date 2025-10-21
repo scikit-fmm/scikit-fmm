@@ -91,8 +91,8 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     double res = solveQuadratic(i,a,b,c);
     // update branch function if a mutation is present at naddr
     // AND the mutation is not already accounted for
-    if ((drivers[i] > 0) && (branch_[i] & drivers[i] == 0)) {
-        branch_[i] += drivers[i];
+    if ((drivers_[i] > 0) && (branch_[i] & drivers_[i] == 0)) {
+        branch_[i] += drivers_[i];
     }
     return res;
   } catch(std::runtime_error& err) {
@@ -110,10 +110,13 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       if(!ret.second) continue;
       sols.push_back(updatePointOrderTwo(i,tempset));
     }
-    if(sols.size()==0) return std::numeric_limits<double>::infinity();//All the derivates with different dimensionalities are 0
-    // TODO update branch function if a mutation is present at naddr
-    if ((drivers[i] > 0) && (branch_[i] & drivers[i] == 0)) {
-        branch_[i] += drivers[i];
+    if (sols.size()==0) {
+      return std::numeric_limits<double>::infinity();
+      //All the derivates with different dimensionalities are 0
+    }
+    // update branch function if a mutation is present at naddr
+    if ((drivers_[i] > 0) && (branch_[i] & drivers_[i] == 0)) {
+        branch_[i] += drivers_[i];
     }
     return *std::min_element(sols.begin(), sols.end());
   }

@@ -189,7 +189,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   if (mode == TRAVEL_TIME_GENES) {
       speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1,
                                                10, NPY_IN_ARRAY);
-      drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_DOUBLE, 1,
+      drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
                                                10, NPY_IN_ARRAY);
   }
 
@@ -271,8 +271,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   //speeds and drivers used for genetics extension
   double* local_speeds[]    = nullptr;
   if (speeds) local_speeds    = (double **)PyArray_DATA(speeds);
-  double* local_drivers      = nullptr;
-  if (drivers) local_drivers    = (double *)PyArray_DATA(drivers);
+  unsigned* local_drivers      = nullptr;
+  if (drivers) local_drivers    = (unsigned *)PyArray_DATA(drivers);
   double* local_distance   = (double *)PyArray_DATA(distance);
   int error;
 
