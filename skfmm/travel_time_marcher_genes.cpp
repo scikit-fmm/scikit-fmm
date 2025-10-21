@@ -38,11 +38,13 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
 {
   double a,b,c;
   a=b=c=0;
-  int naddr=0;
+  int naddr, naddr2; // addresses of neighbours
   unsigned naddr_smallest_nbr;
   // Choose a "good" pair of neighbours on different axes:
   for (int dim=0; dim<dim_; dim++) {
-    if(avoid_dim.find(dim) != avoid_dim.end()) continue; //we should avoid this dimension
+    if (avoid_dim.find(dim) != avoid_dim.end()) {
+      continue; //we should avoid this dimension
+    }
     double value1 = maxDouble;
     double value2 = maxDouble;
     for (int j=-1; j<2; j+=2) // each direction
@@ -53,7 +55,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
         if (fabs(distance_[naddr])<fabs(value1))
         {
           value1 = distance_[naddr];
-          int naddr2 = _getN(i,dim,j*2,Mask);
+          naddr2 = _getN(i,dim,j*2,Mask);
           if (naddr2!=-1 &&
               flag_[naddr2]==Frozen &&
               ((distance_[naddr2]<=value1 && value1 >=0) ||
@@ -84,13 +86,13 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     if (value1 > value2) naddr_smallest_nbr = naddr2;
   }
   // set an initial value for branch function at node i:
-  branch[i] = branch[naddr_smallest_nbr];
+  branch_[i] = branch_[naddr_smallest_nbr];
   try {
     double res = solveQuadratic(i,a,b,c);
     // update branch function if a mutation is present at naddr
     // AND the mutation is not already accounted for
-    if ((drivers[i] > 0) && (branch[i] & drivers[i] == 0)) {
-        branch[i] += drivers[i];
+    if ((drivers[i] > 0) && (branch_[i] & drivers[i] == 0)) {
+        branch_[i] += drivers[i];
     }
     return res;
   } catch(std::runtime_error& err) {
@@ -110,8 +112,8 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     }
     if(sols.size()==0) return std::numeric_limits<double>::infinity();//All the derivates with different dimensionalities are 0
     // TODO update branch function if a mutation is present at naddr
-    if ((drivers[i] > 0) && (branch[i] & drivers[i] == 0)) {
-        branch[i] += drivers[i];
+    if ((drivers[i] > 0) && (branch_[i] & drivers[i] == 0)) {
+        branch_[i] += drivers[i];
     }
     return *std::min_element(sols.begin(), sols.end());
   }
@@ -122,7 +124,7 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          const double &b,
                                          double &c)
 {
-  unsigned bvalue = branch[i];
+  unsigned bvalue = branch_[i];
   c -= 1/pow(speeds_[bvalue][i],2);
   double r0 = 0;
   double det = pow(b, 2) - 4 * a * c;
