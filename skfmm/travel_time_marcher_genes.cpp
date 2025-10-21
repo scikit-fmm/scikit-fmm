@@ -91,7 +91,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     double res = solveQuadratic(i,a,b,c);
     // update branch function if a mutation is present at naddr
     // AND the mutation is not already accounted for
-    if ((drivers_[i] > 0) && (branch_[i] & drivers_[i] == 0)) {
+    if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
     }
     return res;
