@@ -102,7 +102,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   double narrow = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOOiiidi", &pphi, &pdx, &pflag,
+  if (!PyArg_ParseTuple(args, "OOOOOiiidiOO", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
                         &order, &narrow, &periodic, &pspeeds, &pdrivers))
   {
