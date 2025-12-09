@@ -132,7 +132,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   }
 
   phi = (PyArrayObject *)PyArray_FROMANY(pphi, NPY_DOUBLE, 1,
-                                         10, NPY_IN_ARRAY);
+                                         12, NPY_IN_ARRAY);
   if (!phi)
   {
     PyErr_SetString(PyExc_ValueError,
@@ -150,7 +150,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   }
 
   flag = (PyArrayObject *)PyArray_FROMANY(pflag, NPY_LONGLONG, 1,
-                                          10, NPY_IN_ARRAY);
+                                          12, NPY_IN_ARRAY);
   if (!flag)
   {
     PyErr_SetString(PyExc_ValueError,
@@ -163,7 +163,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
 	{
 		speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1,
-																						 10, NPY_IN_ARRAY);
+																						 12, NPY_IN_ARRAY);
 		if (!speed)
 		{
 			PyErr_SetString(PyExc_ValueError,
@@ -188,9 +188,9 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   if (mode == TRAVEL_TIME_GENES) {
       speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1,
-                                               10, NPY_IN_ARRAY);
+                                               12, NPY_IN_ARRAY);
       drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
-                                               10, NPY_IN_ARRAY);
+                                               12, NPY_IN_ARRAY);
   }
 
   if (! (PyArray_NDIM(phi)==(npy_intp)PyArray_DIM(dx,0))) // ?!
@@ -247,7 +247,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     if (!f_ext) return nullptr;
 
     ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, NPY_LONGLONG, 1,
-                                                10, NPY_IN_ARRAY);
+                                                12, NPY_IN_ARRAY);
     if (!ext_mask)
     {
       PyErr_SetString(PyExc_ValueError,
