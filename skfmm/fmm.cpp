@@ -187,10 +187,32 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 	}
 
   if (mode == TRAVEL_TIME_GENES) {
-      speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1,
-                                               12, NPY_IN_ARRAY);
-      drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
-                                               12, NPY_IN_ARRAY);
+    int speeds_dim = PyArray_NDIM(phi) + 1;
+    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, speeds_dim,
+                                              speeds_dim, NPY_IN_ARRAY);
+    if (!speeds)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "speeds must be an array of arrays, each of which is the shape of phi");
+      Py_XDECREF(phi);
+      Py_XDECREF(dx);
+      Py_XDECREF(flag);
+      return nullptr;
+    }
+
+    
+    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
+                                              12, NPY_IN_ARRAY);
+    if (! PyArray_SAMESHAPE(phi,drivers))
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "phi and drivers must have the same shape");
+      Py_XDECREF(phi);
+      Py_XDECREF(dx);
+      Py_XDECREF(flag);
+      Py_XDECREF(speed);
+      return nullptr;
+    }
   }
 
   if (! (PyArray_NDIM(phi)==(npy_intp)PyArray_DIM(dx,0))) // ?!
