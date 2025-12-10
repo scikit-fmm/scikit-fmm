@@ -188,7 +188,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   if (mode == TRAVEL_TIME_GENES) {
     int speeds_dim = PyArray_NDIM(phi) + 1;
-    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, speeds_dim,
+    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, 1, 13,
                                               speeds_dim, NPY_IN_ARRAY);
     if (!speeds)
     {
