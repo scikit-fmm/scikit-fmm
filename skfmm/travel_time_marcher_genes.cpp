@@ -10,14 +10,15 @@
 void travelTimeMarcherGenes::initalizeFrozen()
 {
   distanceMarcher::initalizeFrozen();
-  // for (int i=0; i<size_; i++)
-  // {
-  //   if (flag_[i]==Frozen)
-  //   {
-  //     // convert distance to time
-  //     distance_[i]=fabs(distance_[i]/speeds_[0][i]);
-  //   }
-  // }
+  for (int i=0; i<size_; i++)
+  {
+    if (flag_[i]==Frozen)
+    {
+      // convert distance to time
+      pass
+      //distance_[i]=fabs(distance_[i]/speeds_[0][i]); //seg fault happening here i think
+    }
+  }
 }
 
 double travelTimeMarcherGenes::updatePointOrderTwo(int i)
