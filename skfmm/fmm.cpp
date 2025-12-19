@@ -102,7 +102,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   double narrow = 0;
 
-  if (!PyArg_ParseTuple(args, "OOOOOiiidi", &pphi, &pdx, &pflag,
+  if (!PyArg_ParseTuple(args, "OOOOOiiidi|OO", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
                         &order, &narrow, &periodic, &pspeeds, &pdrivers))
   {
@@ -132,7 +132,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   }
 
   phi = (PyArrayObject *)PyArray_FROMANY(pphi, NPY_DOUBLE, 1,
-                                         10, NPY_IN_ARRAY);
+                                         12, NPY_IN_ARRAY);
   if (!phi)
   {
     PyErr_SetString(PyExc_ValueError,
@@ -150,7 +150,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   }
 
   flag = (PyArrayObject *)PyArray_FROMANY(pflag, NPY_LONGLONG, 1,
-                                          10, NPY_IN_ARRAY);
+                                          12, NPY_IN_ARRAY);
   if (!flag)
   {
     PyErr_SetString(PyExc_ValueError,
@@ -163,7 +163,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
 	{
 		speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1,
-																						 10, NPY_IN_ARRAY);
+																						 12, NPY_IN_ARRAY);
 		if (!speed)
 		{
 			PyErr_SetString(PyExc_ValueError,
@@ -187,10 +187,32 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 	}
 
   if (mode == TRAVEL_TIME_GENES) {
-      speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1,
-                                               10, NPY_IN_ARRAY);
-      drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
-                                               10, NPY_IN_ARRAY);
+    int speeds_dim = PyArray_NDIM(phi) + 1;
+    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, 1, 13,
+                                              speeds_dim, NPY_IN_ARRAY);
+    if (!speeds)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "speeds must be an array of arrays, each of which is the shape of phi");
+      Py_XDECREF(phi);
+      Py_XDECREF(dx);
+      Py_XDECREF(flag);
+      return nullptr;
+    }
+
+    
+    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
+                                              12, NPY_IN_ARRAY);
+    if (! PyArray_SAMESHAPE(phi,drivers))
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "phi and drivers must have the same shape");
+      Py_XDECREF(phi);
+      Py_XDECREF(dx);
+      Py_XDECREF(flag);
+      Py_XDECREF(speed);
+      return nullptr;
+    }
   }
 
   if (! (PyArray_NDIM(phi)==(npy_intp)PyArray_DIM(dx,0))) // ?!
@@ -247,7 +269,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     if (!f_ext) return nullptr;
 
     ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, NPY_LONGLONG, 1,
-                                                10, NPY_IN_ARRAY);
+                                                12, NPY_IN_ARRAY);
     if (!ext_mask)
     {
       PyErr_SetString(PyExc_ValueError,

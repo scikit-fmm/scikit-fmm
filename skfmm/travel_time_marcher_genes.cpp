@@ -15,7 +15,7 @@ void travelTimeMarcherGenes::initalizeFrozen()
     if (flag_[i]==Frozen)
     {
       // convert distance to time
-      distance_[i]=fabs(distance_[i]/speeds_[0][i]);
+      distance_[i]=fabs(distance_[i]/speeds_[0][i]); //seg fault happening here
     }
   }
 }

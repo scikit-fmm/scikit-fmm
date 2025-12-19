@@ -9,3 +9,8 @@ Tue  7 Oct 14:28:22 BST 2025
 * run some tests
 * add branch function 
 * run some more tests
+
+
+Weds 10 Dec 
+* first test - seg faults (invalid read of size 8) - around the for loop line 13 (in initialize_frozen) in travel_time_marcher_genes.cpp - think from accessing speed
+* first test - when previous for loop commented out - fails in solve_quadratic
