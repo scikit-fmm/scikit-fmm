@@ -216,6 +216,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     {
       // print shapes of phi and drivers
       std::printf("drivers size %d\n", drivers->nd);
+      std::printf("drivers array ndim %d\n", PyArray_NDIM(drivers));
+      std::printf("phi array ndim %d\n", PyArray_NDIM(phi));
       PyErr_SetString(PyExc_ValueError,
                       "phi and drivers must have the same shape");
       Py_XDECREF(phi);
