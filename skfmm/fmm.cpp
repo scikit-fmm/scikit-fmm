@@ -14,6 +14,7 @@
 #include "extension_velocity_marcher.h"
 
 #include <stdexcept>
+#include <stdio>
 
 #define DISTANCE              0
 #define TRAVEL_TIME           1
@@ -200,7 +201,6 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       return nullptr;
     }
 
-    
     drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
                                               12, NPY_IN_ARRAY);
     if (!drivers) {
@@ -214,6 +214,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
     if (! PyArray_SAMESHAPE(phi,drivers))
     {
+      // print shapes of phi and drivers
+      std::printf("drivers size %d\n", drivers->nd);
       PyErr_SetString(PyExc_ValueError,
                       "phi and drivers must have the same shape");
       Py_XDECREF(phi);
