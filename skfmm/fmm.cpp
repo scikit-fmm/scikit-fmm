@@ -193,7 +193,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     if (!speeds)
     {
       PyErr_SetString(PyExc_ValueError,
-                      "speeds must be an array of arrays, each of which is the shape of phi");
+                      "speeds not initialised");
       Py_XDECREF(phi);
       Py_XDECREF(dx);
       Py_XDECREF(flag);
@@ -203,6 +203,15 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     
     drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
                                               12, NPY_IN_ARRAY);
+    if (!drivers) {
+      PyErr_SetString(PyExc_ValueError,
+                      "drivers not initialised");
+      Py_XDECREF(phi);
+      Py_XDECREF(dx);
+      Py_XDECREF(flag);
+      return nullptr;
+    }
+
     if (! PyArray_SAMESHAPE(phi,drivers))
     {
       PyErr_SetString(PyExc_ValueError,
