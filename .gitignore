@@ -14,3 +14,4 @@ install_log.txt
 skfmm/*.pyd
 *.swp
 Pipfile
+Session.vim

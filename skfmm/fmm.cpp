@@ -201,6 +201,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     }
 
     drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1, 12, NPY_IN_ARRAY);
+
     if (!drivers) {
       PyErr_SetString(PyExc_ValueError,
                       "drivers not initialised");
