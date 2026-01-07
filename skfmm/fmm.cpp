@@ -163,8 +163,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
 	{
-		speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1,
-																						 12, NPY_IN_ARRAY);
+		speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1, 12, NPY_IN_ARRAY);
 		if (!speed)
 		{
 			PyErr_SetString(PyExc_ValueError,
@@ -201,8 +200,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       return nullptr;
     }
 
-    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1,
-                                              12, NPY_IN_ARRAY);
+    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1, 12, NPY_IN_ARRAY);
     if (!drivers) {
       PyErr_SetString(PyExc_ValueError,
                       "drivers not initialised");
@@ -218,6 +216,9 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       std::printf("drivers size %d\n", drivers->nd);
       std::printf("drivers array ndim %d\n", PyArray_NDIM(drivers));
       std::printf("phi array ndim %d\n", PyArray_NDIM(phi));
+      std::printf(Py_TYPE(pdrivers));
+      std::printf(Py_TYPE(drivers));
+      std::printf(Py_TYPE(phi));
       PyErr_SetString(PyExc_ValueError,
                       "phi and drivers must have the same shape");
       Py_XDECREF(phi);
