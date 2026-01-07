@@ -14,7 +14,7 @@
 #include "extension_velocity_marcher.h"
 
 #include <stdexcept>
-#include <stdio>
+#include <cstdio>
 
 #define DISTANCE              0
 #define TRAVEL_TIME           1
