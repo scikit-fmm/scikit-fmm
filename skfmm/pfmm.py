@@ -7,13 +7,16 @@ FAR, NARROW, FROZEN, MASK = 0, 1, 2, 3
 DISTANCE, TRAVEL_TIME, EXTENSION_VELOCITY, TRAVEL_TIME_GENES = 0, 1, 2, 3
 
 
-def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
+def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None):
     """
     get input data into the correct form for calling the c extension module
     This wrapper allows for a little bit of flexibility in the input types
     """
     if not isinstance(phi, np.ndarray):
         phi = np.array(phi)
+    
+    if drivers and not isinstance(drivers, np.ndarray):
+        drivers = np.array(drivers)
 
     if type(dx) is float or type(dx) is int:
         dx = [dx for _ in range(phi.ndim)]
@@ -44,7 +47,7 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
     if narrow < 0:
         raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
 
-    return phi, dx, flag, ext_mask, periodic_data
+    return phi, dx, flag, ext_mask, periodic_data, drivers
 
 
 def post_process_result(result):
@@ -105,7 +108,7 @@ def distance(phi, dx=1.0, self_test=False, order=2,
         of phi at the given point.
 
     """
-    phi, dx, flag, ext_mask, periodic = \
+    phi, dx, flag, ext_mask, periodic, _ = \
         pre_process_args(phi, dx, narrow, periodic)
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), DISTANCE, order, narrow, periodic)
@@ -167,7 +170,7 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
         than or equal to zero the return value will be a masked array.
 
     """
-    phi, dx, flag, ext_mask, periodic \
+    phi, dx, flag, ext_mask, periodic, _ \
         = pre_process_args(phi, dx, narrow, periodic)
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
                      int(self_test), TRAVEL_TIME, order, narrow, periodic)
@@ -176,8 +179,8 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 
 def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
                 narrow=0.0, periodic=False):
-    phi, dx, flag, ext_mask, periodic \
-        = pre_process_args(phi, dx, narrow, periodic)
+    phi, dx, flag, ext_mask, periodic, drivers \
+        = pre_process_args(phi, dx, narrow, periodic, drivers)
     t = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), TRAVEL_TIME_GENES, order, narrow, periodic,
                      drivers, speeds)
@@ -242,7 +245,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
         extension velocities f_ext.
 
     """
-    phi, dx, flag, ext_mask, periodic = \
+    phi, dx, flag, ext_mask, periodic, _ = \
         pre_process_args(phi, dx, narrow, periodic, ext_mask)
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
