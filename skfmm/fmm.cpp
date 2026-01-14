@@ -190,6 +190,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     int speeds_dim = PyArray_NDIM(phi) + 1;
     speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1, 20,
                                               NPY_IN_ARRAY);
+    std::printf("hello\n");                                          
     if (!speeds)
     {
       PyErr_SetString(PyExc_ValueError,
