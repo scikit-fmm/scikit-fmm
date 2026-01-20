@@ -198,7 +198,6 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       Py_XDECREF(phi);
       Py_XDECREF(dx);
       Py_XDECREF(flag);
-      Py_XDECREF(speeds);
       return nullptr;
     }
 
@@ -211,7 +210,6 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       Py_XDECREF(dx);
       Py_XDECREF(flag);
       Py_XDECREF(speeds);
-      Py_XDECREF(drivers);
       return nullptr;
     }
 
