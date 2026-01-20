@@ -17,15 +17,14 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
     
     if drivers and not isinstance(drivers, np.ndarray):
         drivers = np.array(drivers)
-
+    
     if speeds and not isinstance(speeds, np.ndarray):
         speeds = np.array(speeds)
-
-
+    
     if type(dx) is float or type(dx) is int:
         dx = [dx for _ in range(phi.ndim)]
     dx = np.array(dx)
-
+    
     if isinstance(phi, np.ma.MaskedArray):
         flag = np.zeros(phi.shape, dtype=np.dtype("longlong"))
         flag[phi.mask] = MASK

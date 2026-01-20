@@ -188,8 +188,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   if (mode == TRAVEL_TIME_GENES) {
     int speeds_dim = PyArray_NDIM(phi) + 1;
-    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 1, 20,
-                                              NPY_IN_ARRAY);
+    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, PyArray_DescrFromType(NPY_DOUBLE), 0, 0);
     std::printf("pspeeds = %x\n", pspeeds);                                          
     std::printf("speeds = %x\n", speeds);                                          
     if (!speeds)
