@@ -216,8 +216,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     {
       // print shapes of phi and drivers
       std::printf("drivers size %d\n", drivers->nd);
-      std::printf("drivers array ndim %d\n", PyArray_NDIM(drivers));
-      std::printf("phi array ndim %d\n", PyArray_NDIM(phi));
+      std::printf("drivers array ndim %d\n", PyArray_SHAPE(drivers));
+      std::printf("phi array ndim %d\n", PyArray_SHAPE(phi));
       std::printf("%d\n", Py_TYPE(pdrivers));
       std::printf("%d\n", Py_TYPE(drivers));
       std::printf("%d\n", Py_TYPE(phi));
