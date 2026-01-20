@@ -188,8 +188,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   if (mode == TRAVEL_TIME_GENES) {
     int speeds_dim = PyArray_NDIM(phi) + 1;
-    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds,
-        PyArray_DescrFromType(NPY_DOUBLE), 0, 0, NPY_IN_ARRAY);
+    speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 0, 0, NPY_IN_ARRAY);
     std::printf("pspeeds = %x\n", pspeeds);                                          
     std::printf("speeds = %x\n", speeds);                                          
     if (!speeds)
@@ -199,6 +198,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       Py_XDECREF(phi);
       Py_XDECREF(dx);
       Py_XDECREF(flag);
+      Py_XDECREF(speeds);
       return nullptr;
     }
 
@@ -210,6 +210,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       Py_XDECREF(phi);
       Py_XDECREF(dx);
       Py_XDECREF(flag);
+      Py_XDECREF(speeds);
+      Py_XDECREF(drivers);
       return nullptr;
     }
 
@@ -227,7 +229,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       Py_XDECREF(phi);
       Py_XDECREF(dx);
       Py_XDECREF(flag);
-      Py_XDECREF(speed);
+      Py_XDECREF(speeds);
+      Py_XDECREF(drivers);
       return nullptr;
     }
   }
