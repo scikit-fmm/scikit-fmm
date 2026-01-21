@@ -202,7 +202,9 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       return nullptr;
     }
 
-    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1, 12, NPY_IN_ARRAY_IN_ARRAY | NPY_ARRAY_FORCECAST);
+    PyArrayObject *tmp = (PyArrayObject *)pdrivers;
+    printf("drivers dtype = %d\n", PyArray_TYPE(tmp));
+    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_DOUBLE, 1, 12, NPY_IN_ARRAY);
 
     std::printf("pdrivers = %x\n", pdrivers);                                          
     std::printf("drivers = %x\n", drivers);                                          
