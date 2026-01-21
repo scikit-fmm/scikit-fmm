@@ -85,8 +85,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   PyObject* pflag;
   PyObject* pspeed;
   PyObject* pext_mask;
-  PyObject* pspeeds;
-  PyObject* pdrivers;
+  PyObject* pspeeds = nullptr;
+  PyObject* pdrivers = nullptr;
 
   int       self_test, mode, order, periodic;
 
@@ -109,6 +109,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   {
     return nullptr;
   }
+  std::printf("pspeeds = %p, pdrivers = %p\n", pspeeds, pdrivers);
 
   if (! (self_test==0 || self_test==1))
   {
