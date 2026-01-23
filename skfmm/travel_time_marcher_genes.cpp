@@ -22,6 +22,7 @@ void travelTimeMarcherGenes::initalizeFrozen()
       printf("speeds_[%d] = %g\n", i, speeds_[i]);
       printf("distance_[%d] = %g\n", i, distance_[i]);
       distance_[i] = fabs(distance_[i]/speeds_[i]);
+      printf("hello\n");
     }
   }
 }
