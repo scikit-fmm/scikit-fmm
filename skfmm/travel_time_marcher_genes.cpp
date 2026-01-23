@@ -24,12 +24,10 @@ void travelTimeMarcherGenes::initalizeFrozen()
     }
     printf("distance_[%d] = %g\n", i, distance_[i]);
   }
-  printf("eeny\n");
 }
 
 double travelTimeMarcherGenes::updatePointOrderTwo(int i)
 {
-  printf("meeny\n");
     double res = updatePointOrderTwo(i, std::set<int>());
     if (res == std::numeric_limits<double>::infinity()) {
         throw std::runtime_error("Unreachable voxel");
@@ -45,7 +43,6 @@ const double aa         =  9.0/4.0;
 const double oneThird   =  1.0/3.0;
 double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim)
 {
-  printf("miny\n");
   double a,b,c;
   a=b=c=0;
   int naddr, naddr2; // addresses of neighbours
@@ -97,7 +94,9 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   }
   printf("moe\n");
   // set an initial value for branch function at node i:
+  printf("branch_[%d] = %d\n", i, branch_[i]);
   branch_[i] = branch_[naddr_smallest_nbr];
+  printf("catch a\n");
   try {
     double res = solveQuadratic(i,a,b,c);
     // update branch function if a mutation is present at naddr
@@ -105,7 +104,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
     }
-    printf("catch a\n");
+    printf("tiger\n");
     return res;
   } catch (std::runtime_error & err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
@@ -130,7 +129,6 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
     }
-    printf("catch a\n");
     return *std::min_element(sols.begin(), sols.end());
   }
 }
