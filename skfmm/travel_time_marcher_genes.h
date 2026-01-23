@@ -32,5 +32,5 @@ protected:
 private:
   unsigned* drivers_;
   unsigned* branch_;
-  double** speeds_;
+  double* speeds_;
 };

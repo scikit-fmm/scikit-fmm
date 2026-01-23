@@ -103,6 +103,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 
   double narrow = 0;
 
+  // Read the arguments given to the Python interpreter into the PyObject
+  // pointers above:
   if (!PyArg_ParseTuple(args, "OOOOOiiidi|OO", &pphi, &pdx, &pflag,
                         &pspeed, &pext_mask, &self_test, &mode,
                         &order, &narrow, &periodic, &pspeeds, &pdrivers))
@@ -317,8 +319,8 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   //speeds and drivers used for genetics extension
   unsigned* local_drivers      = nullptr;
   if (drivers) local_drivers    = (unsigned *)PyArray_DATA(drivers);
-  double** local_speeds    = nullptr;
-  if (speeds) local_speeds    = (double **)PyArray_DATA(speeds);
+  double* local_speeds    = nullptr;
+  if (speeds) local_speeds    = (double *)PyArray_DATA(speeds);
   double* local_distance   = (double *)PyArray_DATA(distance);
   int error;
 
