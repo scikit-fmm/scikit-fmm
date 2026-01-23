@@ -17,8 +17,8 @@ void travelTimeMarcherGenes::initalizeFrozen()
     if (flag_[i]==Frozen)
     {
       // convert distance to time
-      printf("speeds_ = %x\n", speeds_); 
-      printf("speeds_[0] = %x\n", speeds_[0]); 
+      printf("speeds_ = %x\n", speeds_);
+      printf("speeds_[0] = %x\n", speeds_[0]);
       printf("speeds_[%d] = %g\n", i, speeds_[i]);
       printf("distance_[%d] = %g\n", i, distance_[i]);
       distance_[i] = fabs(distance_[i]/speeds_[i]);
@@ -135,7 +135,7 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          double &c)
 {
   unsigned bvalue = branch_[i];
-  c -= 1/pow(speeds_[bvalue][i],2);
+  c -= 1/pow(speeds_[i],2); // previously speeds_[bvalue][i]
   double r0 = 0;
   double det = pow(b, 2) - 4 * a * c;
   if (det >= 0)
