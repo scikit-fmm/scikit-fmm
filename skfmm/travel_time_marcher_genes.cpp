@@ -46,7 +46,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   double a,b,c;
   a=b=c=0;
   int naddr, naddr2; // addresses of neighbours
-  unsigned naddr_smallest_nbr;
+  unsigned naddr_smallest_nbr = i; // set a reasonable default value
   // Choose a "good" pair of neighbours on different axes:
   for (int dim=0; dim<dim_; dim++) {
     if (avoid_dim.find(dim) != avoid_dim.end()) {
@@ -89,14 +89,16 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       c+=idx2_[dim]*pow(value1,2);
     }
     // note the neighbour with the smallest phi/distance value:
-    naddr_smallest_nbr = naddr;
-    if (value1 > value2) naddr_smallest_nbr = naddr2;
+    if (naddr != -1) {
+      naddr_smallest_nbr = naddr;
+        if ((naddr2 != -1) && (value1 > value2)) naddr_smallest_nbr = naddr2;
+    }
   }
   printf("moe\n");
   // set an initial value for branch function at node i:
   printf("branch_[%d] = %d\n", i, branch_[i]);
   printf("naddr_smallest_nbr = %d\n", naddr_smallest_nbr);
-  branch_[i] = branch_[naddr_smallest_nbr];
+  if (naddr_smallest_nbr != -1) branch_[i] = branch_[naddr_smallest_nbr];
   printf("catch a\n");
   try {
     double res = solveQuadratic(i,a,b,c);
