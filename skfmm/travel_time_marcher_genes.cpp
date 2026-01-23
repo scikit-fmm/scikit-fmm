@@ -95,6 +95,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   printf("moe\n");
   // set an initial value for branch function at node i:
   printf("branch_[%d] = %d\n", i, branch_[i]);
+  printf("naddr_smallest_nbr = %d\n", naddr_smallest_nbr);
   branch_[i] = branch_[naddr_smallest_nbr];
   printf("catch a\n");
   try {
