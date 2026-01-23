@@ -105,6 +105,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
     }
+    printf("catch a\n");
     return res;
   } catch (std::runtime_error & err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
@@ -129,6 +130,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
     }
+    printf("catch a\n");
     return *std::min_element(sols.begin(), sols.end());
   }
 }
