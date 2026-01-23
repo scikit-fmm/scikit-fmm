@@ -14,16 +14,15 @@ void travelTimeMarcherGenes::initalizeFrozen()
   distanceMarcher::initalizeFrozen();
   for (int i=0; i<size_; i++)
   {
+    printf("speeds_ = %x\n", speeds_);
+    printf("speeds_[%d] = %g\n", i, speeds_[i]);
+    printf("distance_[%d] = %g\n", i, distance_[i]);
     if (flag_[i]==Frozen)
     {
       // convert distance to time
-      printf("speeds_ = %x\n", speeds_);
-      printf("speeds_[0] = %x\n", speeds_[0]);
-      printf("speeds_[%d] = %g\n", i, speeds_[i]);
-      printf("distance_[%d] = %g\n", i, distance_[i]);
       distance_[i] = fabs(distance_[i]/speeds_[i]);
-      printf("hello\n");
     }
+    printf("distance_[%d] = %g\n", i, distance_[i]);
   }
 }
 
