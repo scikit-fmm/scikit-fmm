@@ -95,6 +95,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     naddr_smallest_nbr = naddr;
     if (value1 > value2) naddr_smallest_nbr = naddr2;
   }
+  printf("moe\n");
   // set an initial value for branch function at node i:
   branch_[i] = branch_[naddr_smallest_nbr];
   try {
@@ -105,7 +106,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
         branch_[i] += drivers_[i];
     }
     return res;
-  } catch(std::runtime_error& err) {
+  } catch (std::runtime_error & err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
     if (avoid_dim.size() == (size_t)dim_) {
       //end of the recursion, use inf so that it is discarded selecting the minimum
@@ -137,7 +138,6 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          const double &b,
                                          double &c)
 {
-  printf("moe\n");
   unsigned bvalue = branch_[i];
   c -= 1/pow(speeds_[i],2); // previously speeds_[bvalue][i]
   double r0 = 0;
