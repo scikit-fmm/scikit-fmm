@@ -18,7 +18,7 @@ public:
   {
     // TODO implement passing the speeds array (it has one more dimension than
     // the speed array in travel_time_marcher).
-    branch_ = new unsigned[size_];
+    branch_ = new unsigned[size_](0);
   }
 
   virtual ~travelTimeMarcherGenes() { }

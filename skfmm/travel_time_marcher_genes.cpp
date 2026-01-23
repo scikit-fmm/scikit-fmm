@@ -139,7 +139,8 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          double &c)
 {
   unsigned bvalue = branch_[i];
-  c -= 1/pow(speeds_[i],2); // previously speeds_[bvalue][i]
+  c -= 1/pow(speeds_[i],2); // previously speeds_[bvalue][i]:
+  // change to something like speeds_[index(branch, i)]
   double r0 = 0;
   double det = pow(b, 2) - 4 * a * c;
   if (det >= 0)
