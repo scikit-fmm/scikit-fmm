@@ -7,6 +7,8 @@
 #include <vector>
 #include <algorithm>    // std::min_element, std::max_element
 
+using std::printf;
+
 void travelTimeMarcherGenes::initalizeFrozen()
 {
   distanceMarcher::initalizeFrozen();
@@ -15,8 +17,10 @@ void travelTimeMarcherGenes::initalizeFrozen()
     if (flag_[i]==Frozen)
     {
       // convert distance to time
-      std::printf("speeds_ = %x\n", speeds_); 
-      distance_[i]=fabs(distance_[i]/speeds_[i]);
+      printf("speeds_ = %x\n", speeds_); 
+      distance_[i] = fabs(distance_[i]/speeds_[0][i]);
+      printf("speeds_[0][%d] = %g\n", i, speeds_[0][i]);
+      printf("distance_[%d] = %g\n", i, distance_[i]);
     }
   }
 }
@@ -24,10 +28,11 @@ void travelTimeMarcherGenes::initalizeFrozen()
 double travelTimeMarcherGenes::updatePointOrderTwo(int i)
 {
     double res = updatePointOrderTwo(i, std::set<int>());
-    if(res == std::numeric_limits<double>::infinity())
+    if (res == std::numeric_limits<double>::infinity()) {
         throw std::runtime_error("Unreachable voxel");
-    else
+    } else {
         return res;
+    }
 }
 
 
