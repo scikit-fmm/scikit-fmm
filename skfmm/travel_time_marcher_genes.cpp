@@ -24,10 +24,12 @@ void travelTimeMarcherGenes::initalizeFrozen()
     }
     printf("distance_[%d] = %g\n", i, distance_[i]);
   }
+  printf("eeny\n");
 }
 
 double travelTimeMarcherGenes::updatePointOrderTwo(int i)
 {
+  printf("meeny\n");
     double res = updatePointOrderTwo(i, std::set<int>());
     if (res == std::numeric_limits<double>::infinity()) {
         throw std::runtime_error("Unreachable voxel");
@@ -43,6 +45,7 @@ const double aa         =  9.0/4.0;
 const double oneThird   =  1.0/3.0;
 double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim)
 {
+  printf("miny\n");
   double a,b,c;
   a=b=c=0;
   int naddr, naddr2; // addresses of neighbours
@@ -134,6 +137,7 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          const double &b,
                                          double &c)
 {
+  printf("moe\n");
   unsigned bvalue = branch_[i];
   c -= 1/pow(speeds_[i],2); // previously speeds_[bvalue][i]
   double r0 = 0;
