@@ -46,7 +46,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   double a,b,c;
   a=b=c=0;
   int naddr, naddr2; // addresses of neighbours
-  unsigned naddr_smallest_nbr = -1; // set a reasonable default value
+  unsigned naddr_smallest_nbr = -1; // set an invalid default value
   // Choose a "good" pair of neighbours on different axes:
   for (int dim=0; dim<dim_; dim++) {
     if (avoid_dim.find(dim) != avoid_dim.end()) {
@@ -72,6 +72,9 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
             if (phi_[naddr2] * phi_[naddr] < 0  || phi_[naddr2] * phi_[i] < 0)
               value2 *= -1;
           }
+          // note the neighbour with the smallest phi/distance value:
+          naddr_smallest_nbr = naddr;
+          if ((naddr2 != -1) && (value1 > value2)) naddr_smallest_nbr = naddr2;
         }
       }
     }
@@ -87,14 +90,6 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       a+=idx2_[dim];
       b-=idx2_[dim]*2*value1;
       c+=idx2_[dim]*pow(value1,2);
-    }
-    // note the neighbour with the smallest phi/distance value:
-    if (naddr != -1) {
-      naddr_smallest_nbr = naddr;
-        if ((naddr2 != -1) && (value1 > value2)) naddr_smallest_nbr = naddr2;
-    }
-    else if (naddr2 != -1) {
-      naddr_smallest_nbr = naddr2;
     }
   }
   printf("moe\n");
