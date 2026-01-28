@@ -99,10 +99,10 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   }
   printf("moe\n");
   // set an initial value for branch function at node i:
+  if (naddr_smallest_nbr != -1) branch_[i] = branch_[naddr_smallest_nbr];
   printf("branch_[%d] = %d\n", i, branch_[i]);
   printf("drivers_[%d] = %d\n", i, drivers_[i]);
   printf("naddr_smallest_nbr = %d\n", naddr_smallest_nbr);
-  if (naddr_smallest_nbr != -1) branch_[i] = branch_[naddr_smallest_nbr];
   printf("catch a\n");
   try {
     double res = solveQuadratic(i,a,b,c);
