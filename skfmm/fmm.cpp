@@ -111,7 +111,6 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
   {
     return nullptr;
   }
-  std::printf("pspeeds = %p, pdrivers = %p\n", pspeeds, pdrivers);
 
   if (! (self_test==0 || self_test==1))
   {
