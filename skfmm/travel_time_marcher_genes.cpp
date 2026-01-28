@@ -132,6 +132,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
     }
+    std::printf("branch = %p, drivers = %p\n", branch_, drivers_);
     return *std::min_element(sols.begin(), sols.end());
   }
 }
@@ -142,7 +143,7 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          double &c)
 {
   unsigned bvalue = branch_[i];
-  c -= 1/pow(speeds_[i],2); // previously speeds_[bvalue][i]:
+  c -= 1/pow(speeds_[bvalue*size_+i],2); // previously speeds_[bvalue][i]:
   // change to something like speeds_[index(branch, i)]
   double r0 = 0;
   double det = pow(b, 2) - 4 * a * c;
