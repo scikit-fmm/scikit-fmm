@@ -106,9 +106,11 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     // update branch function if a mutation is present at naddr
     // AND the mutation is not already accounted for
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
-        printf("driver %d added at position %d, branch is now %d\n", drivers_[i], i, branch_[i]);
         branch_[i] += drivers_[i];
+        printf("driver %d added at position %d, branch is now %d\n", drivers_[i], i, branch_[i]);
     }
+    //TODO 28-01-26 - we're updating the branch function just on at the point we're on and not further along
+    // need to do something with adding the branch to downstream unfrozen points
     printf("tiger\n");
     return res;
   } catch (std::runtime_error & err) {
