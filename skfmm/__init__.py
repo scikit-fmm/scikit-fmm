@@ -553,7 +553,7 @@ def testing():
     ...                                               0, 1, 1, 1, 1,
     ...                                               0, 6, 6, 6, 6]),
     ...                            [0, 0.5, 0.75, 1.0, 1.125])
-    >>> np.testing.assert_allclose(travel_time_genes([[0, 1], [2, 3]],
+    >>> np.testing.assert_allclose(travel_time_genes([[0, 1], [1, 1]],
     ...                                      drivers=[[0,0],[1,2]],
     ...                                       speeds=[2,2,2,2,4,4,4,4,5,5,5,5,6,6,6,6]),
     ...                            [[0, 0.5], [0.5, 0.75]])

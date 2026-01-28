@@ -46,7 +46,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   double a,b,c;
   a=b=c=0;
   int naddr, naddr2; // addresses of neighbours
-  unsigned naddr_smallest_nbr = i; // set a reasonable default value
+  unsigned naddr_smallest_nbr = -1; // set a reasonable default value
   // Choose a "good" pair of neighbours on different axes:
   for (int dim=0; dim<dim_; dim++) {
     if (avoid_dim.find(dim) != avoid_dim.end()) {
@@ -93,6 +93,9 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       naddr_smallest_nbr = naddr;
         if ((naddr2 != -1) && (value1 > value2)) naddr_smallest_nbr = naddr2;
     }
+    else if (naddr2 != -1) {
+      naddr_smallest_nbr = naddr2;
+    }
   }
   printf("moe\n");
   // set an initial value for branch function at node i:
@@ -109,8 +112,6 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
         branch_[i] += drivers_[i];
         printf("driver %d added at position %d, branch is now %d\n", drivers_[i], i, branch_[i]);
     }
-    //TODO 28-01-26 - we're updating the branch function just on at the point we're on and not further along
-    // need to do something with adding the branch to downstream unfrozen points
     printf("tiger\n");
     return res;
   } catch (std::runtime_error & err) {
