@@ -97,6 +97,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
   printf("moe\n");
   // set an initial value for branch function at node i:
   printf("branch_[%d] = %d\n", i, branch_[i]);
+  printf("drivers_[%d] = %d\n", i, drivers_[i]);
   printf("naddr_smallest_nbr = %d\n", naddr_smallest_nbr);
   if (naddr_smallest_nbr != -1) branch_[i] = branch_[naddr_smallest_nbr];
   printf("catch a\n");
@@ -108,7 +109,6 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
         branch_[i] += drivers_[i];
     }
     printf("tiger\n");
-    std::printf("branch = %p, drivers = %p\n", branch_, drivers_);
     return res;
   } catch (std::runtime_error & err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
