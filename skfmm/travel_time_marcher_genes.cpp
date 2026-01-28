@@ -103,11 +103,12 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     double res = solveQuadratic(i,a,b,c);
     // update branch function if a mutation is present at naddr
     // AND the mutation is not already accounted for
+    printf("tiger\n");
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
         printf("driver %d added at position %d, branch is now %d\n", drivers_[i], i, branch_[i]);
     }
-    printf("tiger\n");
+    printf("by the\n");
     return res;
   } catch (std::runtime_error & err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
