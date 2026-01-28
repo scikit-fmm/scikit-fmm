@@ -74,7 +74,7 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
           }
           // note the neighbour with the smallest phi/distance value:
           naddr_smallest_nbr = naddr;
-          if ((naddr2 != -1) && (value1 > value2)) naddr_smallest_nbr = naddr2;
+          //if ((naddr2 != -1) && (value1 > value2)) naddr_smallest_nbr = naddr2;
         }
       }
     }
