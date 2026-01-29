@@ -10,7 +10,7 @@ public:
   travelTimeMarcherGenes(double* phi,      double* dx, long long int* flag,
                          double* distance, int ndim,   int* shape,
                          bool self_test,   int order,
-                         unsigned* drivers, double speeds[], double narrow,
+                         unsigned drivers[], double speeds[], double narrow,
                          int periodic) :
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test,
                     order, narrow, periodic),
