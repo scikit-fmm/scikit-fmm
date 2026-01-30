@@ -180,10 +180,11 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
     t = post_process_result(t)
     return t
 
-def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
+def travel_time_genes(phi, py_drivers, py_speeds, dx=1.0, self_test=False, order=2,
                 narrow=0.0, periodic=False):
     phi, dx, flag, ext_mask, periodic, drivers, speeds  \
-        = pre_process_args(phi, dx, narrow, periodic, drivers=drivers, speeds=speeds)
+        = pre_process_args(phi, dx, narrow, periodic, 
+                           drivers=py_drivers, speeds=py_speeds)
     print("drivers: " + str(drivers))
     print("speeds: " + str(speeds))
     t = cFastMarcher(phi, dx, flag, None, ext_mask,
