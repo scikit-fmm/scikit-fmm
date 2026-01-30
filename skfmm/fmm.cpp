@@ -204,11 +204,14 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
     }
 
     PyArrayObject *tmp = (PyArrayObject *)pdrivers;
-    printf("drivers dtype = %d\n", PyArray_TYPE(tmp));
-    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_DOUBLE, 1, 12, NPY_IN_ARRAY);
+    printf("pdrivers array dtype = %d\n", PyArray_TYPE(tmp));
+    printf("NPY_UINT dtype = %d\n", NPY_UINT);
+    printf("NPY_LONG dtype = %d\n", NPY_LONG);
+    printf("NPY_DOUBLE dtype = %d\n", NPY_DOUBLE);
+    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1, 12, NPY_IN_ARRAY);
 
-    std::printf("pdrivers = %x\n", pdrivers);                                          
-    std::printf("drivers = %x\n", drivers);                                          
+    std::printf("pdrivers = %x\n", pdrivers);
+    std::printf("drivers = %x\n", drivers);
 
     if (!drivers) {
       PyErr_SetString(PyExc_ValueError,

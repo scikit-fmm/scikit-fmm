@@ -1,0 +1,2119 @@
+Trying:
+    import numpy as np
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(distance((-1., -1., -1., -1., 1., 1., 1., 1.), dx=.5),
+                      (-1.75, -1.25, -.75, -0.25, 0.25, 0.75, 1.25, 1.75)))
+Expecting:
+    True
+ok
+Trying:
+    dx = 1e-10
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(distance((-1., -1., -1., -1., 1., 1., 1., 1.), dx=dx),
+                      np.arange(8) * dx - 3.5 * dx))
+Expecting:
+    True
+ok
+Trying:
+    phi = np.ones((10, 10))
+Expecting nothing
+ok
+Trying:
+    i,j = np.indices(phi.shape)
+Expecting nothing
+ok
+Trying:
+    phi[i==j-3] = -1
+Expecting nothing
+ok
+Trying:
+    phi[i==j-2] = -1
+Expecting nothing
+ok
+Trying:
+    phi[i==j-1] = -1
+Expecting nothing
+ok
+Trying:
+    phi[i==j] = -1
+Expecting nothing
+ok
+Trying:
+    phi[i==j+1] = -1
+Expecting nothing
+ok
+Trying:
+    phi[i==j+2] = -1
+Expecting nothing
+ok
+Trying:
+    phi[i==j+3] = -1
+Expecting nothing
+ok
+Trying:
+    phi = distance(phi, order=1)
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(phi[1, 1], -2.70464, atol=1e-4))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(phi[2, 2], -2.50873, atol=1e-4))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(phi[3, 3], -2.47487, atol=1e-4))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(phi[6, 6], -2.47487, atol=1e-4))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(phi[7, 7], -2.50873, atol=1e-4))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(phi[8, 8], -2.70464, atol=1e-4))
+Expecting:
+    True
+ok
+Trying:
+    dx = 1.
+Expecting nothing
+ok
+Trying:
+    dy = 2.
+Expecting nothing
+ok
+Trying:
+    vbl = -dx * dy / np.sqrt(dx**2 + dy**2) / 2.
+Expecting nothing
+ok
+Trying:
+    vbr = dx / 2
+Expecting nothing
+ok
+Trying:
+    vml = dy / 2.
+Expecting nothing
+ok
+Trying:
+    crossProd = dx * dy
+Expecting nothing
+ok
+Trying:
+    dsq = dx**2 + dy**2
+Expecting nothing
+ok
+Trying:
+    top = vbr * dx**2 + vml * dy**2
+Expecting nothing
+ok
+Trying:
+    sqrt = crossProd**2 *(dsq - (vbr - vml)**2)
+Expecting nothing
+ok
+Trying:
+    sqrt = np.sqrt(max(sqrt, 0))
+Expecting nothing
+ok
+Trying:
+    vmr = (top + sqrt) / dsq
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(distance(((-1., 1., -1.), (1., 1., 1.)), dx=(dx, dy), order=1),
+                      ((vbl, vml, vbl), (vbr, vmr, vbr))))
+Expecting:
+    True
+ok
+Trying:
+    tmp = 1 / np.sqrt(2)
+Expecting nothing
+ok
+Trying:
+    phi = np.array([[-1., 1.], [1., 1.]])
+Expecting nothing
+ok
+Trying:
+    phi, ext =  extension_velocities(phi,
+                                       [[-1, .5], [2., -1.]],
+                                       ext_mask=phi < 0,
+                                       dx=1., order=1)
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(phi, ((-tmp / 2, 0.5), (0.5, 0.5 + tmp))))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(ext, [[1.25, .5], [2., 1.25]]))
+Expecting:
+    True
+ok
+Trying:
+    phi = np.array(((-1., 1., 1.), (1., 1., 1.), (1., 1., 1.)))
+Expecting nothing
+ok
+Trying:
+    phi, ext = extension_velocities(phi,
+                                      ((-1., 2., -1.),
+                                       (.5, -1., -1.),
+                                       (-1., -1., -1.)),
+                                      ext_mask=phi < 0,
+                                      order=1)
+Expecting nothing
+ok
+Trying:
+    v1 = 0.5 + tmp
+Expecting nothing
+ok
+Trying:
+    v2 = 1.5
+Expecting nothing
+ok
+Trying:
+    tmp1 = (v1 + v2) / 2 + np.sqrt(2. - (v1 - v2)**2) / 2
+Expecting nothing
+ok
+Trying:
+    tmp2 = tmp1 + 1 / np.sqrt(2)
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(phi, ((-tmp / 2, 0.5, 1.5),
+                            (0.5, 0.5 + tmp, tmp1),
+                            (1.5, tmp1, tmp2))))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(ext, ((1.25, 2., 2.),
+                            (.5, 1.25, 1.5456),
+                            (.5, 0.9544, 1.25)),
+                      rtol = 1e-4))
+Expecting:
+    True
+ok
+Trying:
+    print(np.allclose(distance((-1., 1., -1.)), (-0.5, 0.5, -0.5)))
+Expecting:
+    True
+ok
+Trying:
+    phi = ((-1., -1., 1., 1.),
+           (-1., -1., 1., 1.),
+           (1., 1., 1., 1.),
+           (1., 1., 1., 1.))
+Expecting nothing
+ok
+Trying:
+    answer = ((-1.30473785, -0.5, 0.5, 1.49923009),
+              (-0.5, -0.35355339, 0.5, 1.45118446),
+              (0.5, 0.5, 0.97140452, 1.76215286),
+              (1.49923009, 1.45118446, 1.76215286, 2.33721352))
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(distance(phi),
+                      answer,
+                      rtol=1e-9))
+Expecting:
+    True
+ok
+Trying:
+    phi = distance([[-1, -1, -1, -1],
+                                   [ 1,  1, -1, -1],
+                                   [ 1,  1, -1, -1],
+                                   [ 1,  1, -1, -1]], order=2)
+Expecting nothing
+ok
+Trying:
+    phi = distance(phi, order=2)
+Expecting nothing
+ok
+Trying:
+    answer = [[-0.5,        -0.58578644, -1.08578644, -1.85136395],
+              [ 0.5,         0.29289322, -0.58578644, -1.54389939],
+              [ 1.30473785,  0.5,        -0.5,        -1.5       ],
+              [ 1.49547948,  0.5,        -0.5,        -1.5       ]]
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(phi, answer, rtol=1e-9))
+Expecting:
+    True
+ok
+Trying:
+    phi = np.array([[-1,  1,  1,  1,  1, -1],
+                    [-1, -1, -1, -1, -1, -1],
+                    [-1, -1, -1, -1, -1, -1]])
+Expecting nothing
+ok
+Trying:
+    phi = distance(phi)
+Expecting nothing
+ok
+Trying:
+    print(phi[2, 2] == phi[2, 3])
+Expecting:
+    True
+ok
+Trying:
+    phi = distance(phi)
+Expecting nothing
+ok
+Trying:
+    print(phi[2, 2] == phi[2, 3])
+Expecting:
+    True
+ok
+Trying:
+    def mesh(nx=1, ny=1, dx=1., dy=1.):
+        y, x = np.mgrid[0:nx,0:ny]
+        x = x * dx + dx / 2
+        y = y * dy + dy / 2
+        return x, y
+Expecting nothing
+ok
+Trying:
+    dx = 1.
+Expecting nothing
+ok
+Trying:
+    N = 11
+Expecting nothing
+ok
+Trying:
+    L = N * dx
+Expecting nothing
+ok
+Trying:
+    x, y = mesh(nx=N, ny=N, dx=dx, dy=dx)
+Expecting nothing
+ok
+Trying:
+    phi = -np.ones(N * N, 'd')
+Expecting nothing
+ok
+Trying:
+    phi[(x.flatten() - L / 2.)**2 + (y.flatten() - L / 2.)**2 < (L / 4.)**2] = 1.
+Expecting nothing
+ok
+Trying:
+    phi = np.reshape(phi, (N, N))
+Expecting nothing
+ok
+Trying:
+    phi = distance(phi, dx=dx, order=1).flatten()
+Expecting nothing
+ok
+Trying:
+    dX = dx / 2.
+Expecting nothing
+ok
+Trying:
+    m1 = dX * dX / np.sqrt(dX**2 + dX**2)
+Expecting nothing
+ok
+Trying:
+    def evalCell(phix, phiy, dx):
+        aa = dx**2 + dx**2
+        bb = -2 * ( phix * dx**2 + phiy * dx**2)
+        cc = dx**2 * phix**2 + dx**2 * phiy**2 - dx**2 * dx**2
+        sqr = np.sqrt(bb**2 - 4. * aa * cc)
+        return ((-bb - sqr) / 2. / aa,  (-bb + sqr) / 2. / aa)
+Expecting nothing
+ok
+Trying:
+    v1 = evalCell(-dX, -m1, dx)[0]
+Expecting nothing
+ok
+Trying:
+    v2 = evalCell(-m1, -dX, dx)[0]
+Expecting nothing
+ok
+Trying:
+    v3 = evalCell(m1,  m1,  dx)[1]
+Expecting nothing
+ok
+Trying:
+    v4 = evalCell(v3, dX, dx)[1]
+Expecting nothing
+ok
+Trying:
+    v5 = evalCell(dX, v3, dx)[1]
+Expecting nothing
+ok
+Trying:
+    MASK = -1000.
+Expecting nothing
+ok
+Trying:
+    trialValues = np.array((
+        MASK,  MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK,
+        MASK,  MASK, MASK, MASK,-3*dX,-3*dX,-3*dX, MASK, MASK, MASK, MASK,
+        MASK,  MASK, MASK,   v1,  -dX,  -dX,  -dX,   v1, MASK, MASK, MASK,
+        MASK,  MASK,   v2,  -m1,   m1,   dX,   m1,  -m1,   v2, MASK, MASK,
+        MASK, -dX*3,  -dX,   m1,   v3,   v4,   v3,   m1,  -dX,-dX*3, MASK,
+        MASK, -dX*3,  -dX,   dX,   v5, MASK,   v5,   dX,  -dX,-dX*3, MASK,
+        MASK, -dX*3,  -dX,   m1,   v3,   v4,   v3,   m1,  -dX,-dX*3, MASK,
+        MASK,  MASK,   v2,  -m1,   m1,   dX,   m1,  -m1,   v2, MASK, MASK,
+        MASK,  MASK, MASK,   v1,  -dX,  -dX,  -dX,   v1, MASK, MASK, MASK,
+        MASK,  MASK, MASK, MASK,-3*dX,-3*dX,-3*dX, MASK, MASK, MASK, MASK,
+        MASK,  MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK, MASK), 'd')
+Expecting nothing
+ok
+Trying:
+    phi[trialValues == MASK] = MASK
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(phi, trialValues))
+Expecting:
+    True
+ok
+Trying:
+    dx = 0.5
+Expecting nothing
+ok
+Trying:
+    dy = 2.
+Expecting nothing
+ok
+Trying:
+    nx = 5
+Expecting nothing
+ok
+Trying:
+    ny = 5
+Expecting nothing
+ok
+Trying:
+    Lx = nx * dx
+Expecting nothing
+ok
+Trying:
+    Ly = ny * dy
+Expecting nothing
+ok
+Trying:
+    x, y = mesh(nx=nx, ny=ny, dx=dx, dy=dy)
+Expecting nothing
+ok
+Trying:
+    x = x.flatten()
+Expecting nothing
+ok
+Trying:
+    y = y.flatten()
+Expecting nothing
+ok
+Trying:
+    phi = -np.ones(nx * ny, 'd')
+Expecting nothing
+ok
+Trying:
+    phi[((Lx / 3. < x) & (x < 2. * Lx / 3.)) & ((Ly / 3. < y) & (y < 2. * Ly / 3))] = 1.
+Expecting nothing
+ok
+Trying:
+    phi = np.reshape(phi, (nx, ny))
+Expecting nothing
+ok
+Trying:
+    phi = distance(phi, dx=(dy, dx), order=1).flatten()
+Expecting nothing
+ok
+Trying:
+    def evalCell(phix, phiy, dx, dy):
+        aa = dy**2 + dx**2
+        bb = -2 * ( phix * dy**2 + phiy * dx**2)
+        cc = dy**2 * phix**2 + dx**2 * phiy**2 - dx**2 * dy**2
+        sqr = np.sqrt(bb**2 - 4. * aa * cc)
+        return ((-bb - sqr) / 2. / aa,  (-bb + sqr) / 2. / aa)
+Expecting nothing
+ok
+Trying:
+    val = evalCell(-dy / 2., -dx / 2., dx, dy)[0]
+Expecting nothing
+ok
+Trying:
+    v1 = evalCell(val, -3. * dx / 2., dx, dy)[0]
+Expecting nothing
+ok
+Trying:
+    v2 = evalCell(-3. * dy / 2., val, dx, dy)[0]
+Expecting nothing
+ok
+Trying:
+    v3 = evalCell(v2, v1, dx, dy)[0]
+Expecting nothing
+ok
+Trying:
+    v4 = dx * dy / np.sqrt(dx**2 + dy**2) / 2
+Expecting nothing
+ok
+Trying:
+    arr = np.array((
+        v3           , v2      , -3. * dy / 2.   , v2      , v3,
+        v1           , val     , -dy / 2.        , val     , v1           ,
+        -3. * dx / 2., -dx / 2., v4              , -dx / 2., -3. * dx / 2.,
+        v1           , val     , -dy / 2.        , val     , v1           ,
+        v3           , v2      , -3. * dy / 2.   , v2      , v3           ))
+Expecting nothing
+ok
+Trying:
+    print(np.allclose(arr, phi))
+Expecting:
+    True
+ok
+Trying:
+    distance([[-1, 1],[1, 1]], dx=(1, 2, 3))
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: dx must be of length len(phi.shape)
+ok
+Trying:
+    extension_velocities([[-1, 1],[1, 1]], speed=[1, 1])
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: phi and speed must have the same shape
+ok
+Trying:
+    phi = np.arange(-5, 5) + 0.499
+Expecting nothing
+ok
+Trying:
+    d = distance(phi)
+Expecting nothing
+ok
+Trying:
+    t = travel_time(phi, speed=np.ones_like(phi))
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(t, np.abs(d))
+Expecting nothing
+ok
+Trying:
+    phi = np.array(((-1, -1, 1, 1),
+                    (-1, -1, 1, 1),
+                    (1, 1, 1, 1),
+                    (1, 1, 1, 1)))
+Expecting nothing
+ok
+Trying:
+    o1 = distance(phi, order=1, self_test=True)
+Expecting nothing
+ok
+Trying:
+    dw_o1 =   [[-1.20710678, -0.5,         0.5,         1.5],
+               [-0.5,        -0.35355339,  0.5,         1.5],
+               [ 0.5,         0.5,         1.20710678,  2.04532893],
+               [ 1.5,         1.5,         2.04532893,  2.75243571]]
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(o1, dw_o1)
+Expecting nothing
+ok
+Trying:
+    phi = np.array(((-1, -1, 1, 1),
+                    (-1, -1, 1, 1),
+                    (1, 1, 1, 1),
+                    (1, 1, 1, 1)))
+Expecting nothing
+ok
+Trying:
+    o1 = travel_time(phi, np.ones_like(phi), order=1, self_test=True)
+Expecting nothing
+ok
+Trying:
+    dw_o1 =   [[-1.20710678, -0.5,         0.5,         1.5],
+               [-0.5,        -0.35355339,  0.5,         1.5],
+               [ 0.5,         0.5,         1.20710678,  2.04532893],
+               [ 1.5,         1.5,         2.04532893,  2.75243571]]
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(o1, np.abs(dw_o1))
+Expecting nothing
+ok
+Trying:
+    phi = np.array(((-1, -1, 1, 1),
+                   (-1, -1, 1, 1),
+                   (1, 1, 1, 1),
+                   (1, 1, 1, 1)))
+Expecting nothing
+ok
+Trying:
+    o2 = distance(phi, self_test=True)
+Expecting nothing
+ok
+Trying:
+    dw_o2 = [[-1.30473785,  -0.5,          0.5,         1.49923009],
+             [-0.5,        -0.35355339,    0.5,         1.45118446],
+             [ 0.5,         0.5,         0.97140452,  1.76215286],
+             [ 1.49923009,  1.45118446,  1.76215286,  2.33721352]]
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(o2, dw_o2)
+Expecting nothing
+ok
+Trying:
+    phi = np.array(((-1, -1, 1, 1),
+                   (-1, -1, 1, 1),
+                   (1, 1, 1, 1),
+                   (1, 1, 1, 1)))
+Expecting nothing
+ok
+Trying:
+    o2 = travel_time(phi, np.ones_like(phi), self_test=True)
+Expecting nothing
+ok
+Trying:
+    dw_o2 = [[-1.30473785,  -0.5,          0.5,         1.49923009],
+             [-0.5,        -0.35355339,    0.5,         1.45118446],
+             [ 0.5,         0.5,         0.97140452,  1.76215286],
+             [ 1.49923009,  1.45118446,  1.76215286,  2.33721352]]
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(o2, np.abs(dw_o2))
+Expecting nothing
+ok
+Trying:
+    distance([-1,1], order=0)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: order must be 1 or 2
+ok
+Trying:
+    distance([-1,1], order=3)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: order must be 1 or 2
+ok
+Trying:
+    phi =   [-1,-1,-1,1,1,1]
+Expecting nothing
+ok
+Trying:
+    speed = [1,1,1,1,1,1]
+Expecting nothing
+ok
+Trying:
+    d, f_ext  = extension_velocities(phi, speed, self_test=True)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(speed, f_ext)
+Expecting nothing
+ok
+Trying:
+    phi =   np.ones(10)
+Expecting nothing
+ok
+Trying:
+    phi[0] =- 1
+Expecting nothing
+ok
+Trying:
+    speed = np.ones(10)
+Expecting nothing
+ok
+Trying:
+    speed[0:3] = 5
+Expecting nothing
+ok
+Trying:
+    d, f_ext  = extension_velocities(phi, speed, self_test=True)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(f_ext, 5)
+Expecting nothing
+ok
+Trying:
+    N     = 50
+Expecting nothing
+ok
+Trying:
+    X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    r     = 0.25
+Expecting nothing
+ok
+Trying:
+    dx    = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(phi)
+Expecting nothing
+ok
+Trying:
+    d, f_ext = extension_velocities(phi, speed, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(f_ext, 1.0)
+Expecting nothing
+ok
+Trying:
+    speed[abs(Y)<0.3] = 10.0
+Expecting nothing
+ok
+Trying:
+    d, f_ext = extension_velocities(phi, speed, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(f_ext, 10.0)
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(phi)
+Expecting nothing
+ok
+Trying:
+    d, f_ext = extension_velocities(phi, speed, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    d2 = distance(phi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(d, d2)
+Expecting nothing
+ok
+Trying:
+    N     = 150
+Expecting nothing
+ok
+Trying:
+    X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    r     = 0.5
+Expecting nothing
+ok
+Trying:
+    dx    = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(phi)
+Expecting nothing
+ok
+Trying:
+    speed[X>0.25] = 3.0
+Expecting nothing
+ok
+Trying:
+    d2, f_ext = extension_velocities(phi, speed, dx)
+Expecting nothing
+ok
+Trying:
+    assert (f_ext <= 3.0000001).all()
+Expecting nothing
+ok
+Trying:
+    assert (f_ext >= 1).all()
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_almost_equal(f_ext[137, 95], 1, 3)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_almost_equal(f_ext[103, 78], 1, 2)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_almost_equal(f_ext[72, 100], 3, 3)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_almost_equal(f_ext[72, 86], 3, 3)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_almost_equal(f_ext[110, 121], 3, 3)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(distance([-1, 1]),
+                                           [-0.5, 0.5])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(distance([-1, -1, -1, 1, 1, 1]),
+                                        [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(distance([1, 1, 1, -1, -1, -1]),
+                                        [2.5, 1.5, 0.5, -0.5, -1.5, -2.5])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(distance([-1, 0, 1]),           [-1, 0, 1])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(distance([-1, 0, 1], dx=[2]),   [-2, 0, 2])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(distance([-1, 0, 1], dx=2),     [-2, 0, 2])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(distance([-1, 0, 1], dx=2.0),   [-2, 0, 2])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time([1, 0, -1], [1, 1, 1]),
+                                              [1, 0, 1])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time([-1, 0, 1], [1, 1, 1]),
+                                              [1, 0, 1])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time([1, 0, -1], [1, 1, 1], dx=2),
+                                              [2, 0, 2])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time([1, 0, -1], [1, 1, 1], dx=[2]),
+                                              [2, 0, 2])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time([1, 0, -1], [1, 1, 1], dx=2.0),
+                                              [2, 0, 2])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(travel_time([0, 1, 1, 1, 1], [2, 2, 2, 2, 2]),
+                                           [0, 0.5, 1.0, 1.5, 2.0])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time([1, 0, -1], [2, 2, 2]),
+                                              [0.5, 0, 0.5])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+                                    drivers=[0,0,0,0,0], speeds=[2, 2, 2, 2, 2]),
+                                           [0, 0.5, 1.0, 1.5, 2.0])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time_genes([1, 0, -1],
+                                    drivers=[0,0,0], speeds=[2, 2, 2]),
+                                              [0.5, 0, 0.5])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+                                         drivers=[0,0,0,1,0],
+                                          speeds=[2, 2, 2, 2, 2, 4, 4, 4, 4, 4]),
+                               [0, 0.5, 1.0, 1.5, 1.75])
+Expecting nothing
+**********************************************************************
+File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/skfmm/__init__.py", line 545, in skfmm.testing
+Failed example:
+    np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+                                         drivers=[0,0,0,1,0],
+                                          speeds=[2, 2, 2, 2, 2, 4, 4, 4, 4, 4]),
+                               [0, 0.5, 1.0, 1.5, 1.75])
+Exception raised:
+    Traceback (most recent call last):
+      File "/usr/lib/python3.13/doctest.py", line 1395, in __run
+        exec(compile(example.source, filename, "single",
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     compileflags, True), test.globs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "<doctest skfmm.testing[180]>", line 1, in <module>
+        np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                             drivers=[0,0,0,1,0],
+                                             ^^^^^^^^^^^^^^^^^^^^
+                                              speeds=[2, 2, 2, 2, 2, 4, 4, 4, 4, 4]),
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   [0, 0.5, 1.0, 1.5, 1.75])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 1768, in assert_allclose
+        assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+        ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             verbose=verbose, header=header, equal_nan=equal_nan,
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             strict=strict)
+                             ^^^^^^^^^^^^^^
+      File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 983, in assert_array_compare
+        raise AssertionError(msg)
+    AssertionError: 
+    Not equal to tolerance rtol=1e-07, atol=0
+
+    Mismatched elements: 1 / 5 (20%)
+    Mismatch at index:
+     [4]: 1.9999999999999991 (ACTUAL), 1.75 (DESIRED)
+    Max absolute difference among violations: 0.25
+    Max relative difference among violations: 0.14285714
+     ACTUAL: array([0. , 0.5, 1. , 1.5, 2. ])
+     DESIRED: array([0.  , 0.5 , 1.  , 1.5 , 1.75])
+Trying:
+    np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+                                         drivers=[0,1,0,2,0],
+                                          speeds=[2, 2, 2, 2, 2, 
+                                                  0, 4, 4, 4, 4,
+                                                  0, 1, 1, 1, 1,
+                                                  0, 6, 6, 6, 6]),
+                               [0, 0.5, 0.75, 1.0, 1.125])
+Expecting nothing
+**********************************************************************
+File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/skfmm/__init__.py", line 549, in skfmm.testing
+Failed example:
+    np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+                                         drivers=[0,1,0,2,0],
+                                          speeds=[2, 2, 2, 2, 2, 
+                                                  0, 4, 4, 4, 4,
+                                                  0, 1, 1, 1, 1,
+                                                  0, 6, 6, 6, 6]),
+                               [0, 0.5, 0.75, 1.0, 1.125])
+Exception raised:
+    Traceback (most recent call last):
+      File "/usr/lib/python3.13/doctest.py", line 1395, in __run
+        exec(compile(example.source, filename, "single",
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     compileflags, True), test.globs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "<doctest skfmm.testing[181]>", line 1, in <module>
+        np.testing.assert_allclose(travel_time_genes([0, 1, 1, 1, 1],
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                             drivers=[0,1,0,2,0],
+                                             ^^^^^^^^^^^^^^^^^^^^
+        ...<3 lines>...
+                                                      0, 6, 6, 6, 6]),
+                                                      ^^^^^^^^^^^^^^^^
+                                   [0, 0.5, 0.75, 1.0, 1.125])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 1768, in assert_allclose
+        assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+        ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             verbose=verbose, header=header, equal_nan=equal_nan,
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             strict=strict)
+                             ^^^^^^^^^^^^^^
+      File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 983, in assert_array_compare
+        raise AssertionError(msg)
+    AssertionError: 
+    Not equal to tolerance rtol=1e-07, atol=0
+
+    Mismatched elements: 3 / 5 (60%)
+    Mismatch at indices:
+     [2]: 1.0 (ACTUAL), 0.75 (DESIRED)
+     [3]: 1.4999999999999996 (ACTUAL), 1.0 (DESIRED)
+     [4]: 1.9999999999999991 (ACTUAL), 1.125 (DESIRED)
+    Max absolute difference among violations: 0.875
+    Max relative difference among violations: 0.77777778
+     ACTUAL: array([0. , 0.5, 1. , 1.5, 2. ])
+     DESIRED: array([0.   , 0.5  , 0.75 , 1.   , 1.125])
+Trying:
+    np.testing.assert_allclose(travel_time_genes([[0, 1], [1, 1]],
+                                         drivers=[[0,0],[1,2]],
+                                          speeds=[2,2,2,2,4,4,4,4,5,5,5,5,6,6,6,6]),
+                               [[0, 0.5], [0.5, 0.75]])
+Expecting nothing
+**********************************************************************
+File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/skfmm/__init__.py", line 556, in skfmm.testing
+Failed example:
+    np.testing.assert_allclose(travel_time_genes([[0, 1], [1, 1]],
+                                         drivers=[[0,0],[1,2]],
+                                          speeds=[2,2,2,2,4,4,4,4,5,5,5,5,6,6,6,6]),
+                               [[0, 0.5], [0.5, 0.75]])
+Exception raised:
+    Traceback (most recent call last):
+      File "/usr/lib/python3.13/doctest.py", line 1395, in __run
+        exec(compile(example.source, filename, "single",
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     compileflags, True), test.globs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "<doctest skfmm.testing[182]>", line 1, in <module>
+        np.testing.assert_allclose(travel_time_genes([[0, 1], [1, 1]],
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                             drivers=[[0,0],[1,2]],
+                                             ^^^^^^^^^^^^^^^^^^^^^^
+                                              speeds=[2,2,2,2,4,4,4,4,5,5,5,5,6,6,6,6]),
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   [[0, 0.5], [0.5, 0.75]])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 1768, in assert_allclose
+        assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+        ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             verbose=verbose, header=header, equal_nan=equal_nan,
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             strict=strict)
+                             ^^^^^^^^^^^^^^
+      File "/home/chay/.local/share/virtualenvs/scikit-fmm-variablespeed-t3cdaU-n/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 983, in assert_array_compare
+        raise AssertionError(msg)
+    AssertionError: 
+    Not equal to tolerance rtol=1e-07, atol=0
+
+    Mismatched elements: 1 / 4 (25%)
+    Mismatch at index:
+     [1, 1]: 0.8535533905932737 (ACTUAL), 0.75 (DESIRED)
+    Max absolute difference among violations: 0.10355339
+    Max relative difference among violations: 0.13807119
+     ACTUAL: array([[0.      , 0.5     ],
+           [0.5     , 0.853553]])
+     DESIRED: array([[0.  , 0.5 ],
+           [0.5 , 0.75]])
+Trying:
+    phi   = [1, 1, 1, -1, -1, -1]
+Expecting nothing
+ok
+Trying:
+    t     = travel_time(phi, np.ones_like(phi))
+Expecting nothing
+ok
+Trying:
+    exact = [2.5, 1.5, 0.5, 0.5, 1.5, 2.5]
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(t, exact)
+Expecting nothing
+ok
+Trying:
+    phi   = [-1, -1, -1, 1, 1, 1]
+Expecting nothing
+ok
+Trying:
+    t     = travel_time(phi, np.ones_like(phi))
+Expecting nothing
+ok
+Trying:
+    exact = [2.5, 1.5, 0.5, 0.5, 1.5, 2.5]
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(t, exact)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(distance([0, 0]), [0, 0])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(travel_time([0, 0], [1, 1]), [0, 0])
+Expecting nothing
+ok
+Trying:
+    distance([1, 0, 1, 1], 0)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: dx must be greater than zero
+ok
+Trying:
+    distance([0, 0, 1, 0, 0], [0, 0, 1, 0, 0])
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: dx must be of length len(phi.shape)
+ok
+Trying:
+    t = travel_time([-1, -1, 0, 1, 1], [1, 1, 1, 1, 0])
+Expecting nothing
+ok
+Trying:
+    assert isinstance(t, np.ma.MaskedArray)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(t.data[:-1], [2, 1, 0, 1])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(t.mask, [False, False, False, False, True])
+Expecting nothing
+ok
+Trying:
+    t2 = travel_time([-1, -1, 0, 1, 1], [1, 1, 1, 1, 1e-300])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(t, t2)
+Expecting nothing
+ok
+Trying:
+    ma    = np.ma.MaskedArray([1, 1, 1, 0], [False, True, False, False])
+Expecting nothing
+ok
+Trying:
+    d     = distance(ma)
+Expecting nothing
+ok
+Trying:
+    exact = np.ma.MaskedArray([0, 0, 1, 0], [True, True, False, False])
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(d.mask, exact.mask)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_array_equal(d, exact)
+Expecting nothing
+ok
+Trying:
+    N     = 50
+Expecting nothing
+ok
+Trying:
+    X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    r     = 0.5
+Expecting nothing
+ok
+Trying:
+    dx    = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+Expecting nothing
+ok
+Trying:
+    d     = distance(phi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    exact = np.sqrt(X ** 2 + Y ** 2) - r
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(d, exact, atol=dx)
+Expecting nothing
+ok
+Trying:
+    N         = 50
+Expecting nothing
+ok
+Trying:
+    X, Y      = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    dx        = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi       = np.ones_like(X)
+Expecting nothing
+ok
+Trying:
+    phi[0, :] = -1
+Expecting nothing
+ok
+Trying:
+    d         = distance(phi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    exact     = Y + 1 - dx / 2.0
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(d, exact)
+Expecting nothing
+ok
+Trying:
+    N         = 50
+Expecting nothing
+ok
+Trying:
+    X, Y      = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    dx        = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi       = np.ones_like(X)
+Expecting nothing
+ok
+Trying:
+    phi[0, 0] = -1
+Expecting nothing
+ok
+Trying:
+    mask      = np.logical_and(abs(X) < 0.25, abs(Y) < 0.25)
+Expecting nothing
+ok
+Trying:
+    mphi      = np.ma.MaskedArray(phi.copy(), mask)
+Expecting nothing
+ok
+Trying:
+    d0        = distance(phi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    d         = distance(mphi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    d0[mask]  = 0
+Expecting nothing
+ok
+Trying:
+    d[mask]   = 0
+Expecting nothing
+ok
+Trying:
+    shadow    = d0 - d
+Expecting nothing
+ok
+Trying:
+    bsh       = abs(shadow) > 0.001
+Expecting nothing
+ok
+Trying:
+    diff      = (bsh).sum()
+Expecting nothing
+ok
+Trying:
+    assert diff > 635 and diff < 645
+Expecting nothing
+ok
+Trying:
+    N     = 50
+Expecting nothing
+ok
+Trying:
+    X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    r     = 0.5
+Expecting nothing
+ok
+Trying:
+    dx    = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(phi) * 2
+Expecting nothing
+ok
+Trying:
+    t     = travel_time(phi, speed, dx)
+Expecting nothing
+ok
+Trying:
+    exact = 0.5 * np.abs(np.sqrt(X ** 2 + Y ** 2) - 0.5)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(t, exact, atol=dx)
+Expecting nothing
+ok
+Trying:
+    N          = 100
+Expecting nothing
+ok
+Trying:
+    X          = np.linspace(-1.0, 1.0, N)
+Expecting nothing
+ok
+Trying:
+    dx         = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi        = np.zeros_like(X)
+Expecting nothing
+ok
+Trying:
+    phi[X < 0] = -1
+Expecting nothing
+ok
+Trying:
+    phi[X > 0] = 1
+Expecting nothing
+ok
+Trying:
+    d          = distance(phi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(d, X)
+Expecting nothing
+ok
+Trying:
+    N            = 15
+Expecting nothing
+ok
+Trying:
+    X            = np.linspace(-1, 1, N)
+Expecting nothing
+ok
+Trying:
+    Y            = np.linspace(-1, 1, N)
+Expecting nothing
+ok
+Trying:
+    Z            = np.linspace(-1, 1, N)
+Expecting nothing
+ok
+Trying:
+    phi          = np.ones((N, N, N))
+Expecting nothing
+ok
+Trying:
+    phi[0, 0, 0] = -1.0
+Expecting nothing
+ok
+Trying:
+    dx           = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    d            = distance(phi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    exact        = np.sqrt((X + 1) ** 2 +
+                           (Y + 1)[:, np.newaxis] ** 2 +
+                           (Z + 1)[:, np.newaxis, np.newaxis] ** 2)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(d, exact, atol=dx)
+Expecting nothing
+ok
+Trying:
+    N     = 50
+Expecting nothing
+ok
+Trying:
+    X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    r     = 0.5
+Expecting nothing
+ok
+Trying:
+    phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(phi) * 2
+Expecting nothing
+ok
+Trying:
+    out = travel_time(phi, speed, self_test=True)
+Expecting nothing
+ok
+Trying:
+    N      = 50
+Expecting nothing
+ok
+Trying:
+    NX, NY = N, 5 * N
+Expecting nothing
+ok
+Trying:
+    X, Y   = np.meshgrid(np.linspace(-1, 1, NY), np.linspace(-1, 1, NX))
+Expecting nothing
+ok
+Trying:
+    r      = 0.5
+Expecting nothing
+ok
+Trying:
+    phi    = X ** 2 + Y ** 2 - r ** 2
+Expecting nothing
+ok
+Trying:
+    dx     = [2.0 / (NX - 1), 2.0 / (NY - 1)]
+Expecting nothing
+ok
+Trying:
+    d      = distance(phi, dx, self_test=True)
+Expecting nothing
+ok
+Trying:
+    exact  = np.sqrt(X ** 2 + Y ** 2) - r
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(d, exact, atol=1.3*max(dx))
+Expecting nothing
+ok
+Trying:
+    distance([1, 1], self_test=False)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: the array phi contains no zero contour (no zero level set)
+ok
+Trying:
+    travel_time([-1, 1], [2])
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: phi and speed must have the same shape
+ok
+Trying:
+    travel_time([0, 0, 1, 1], 2)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: speed must be a 1D to 12-D array of doubles
+ok
+Trying:
+    travel_time([-1, 1], [2, 2], [2, 2, 2, 2])
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: dx must be of length len(phi.shape)
+ok
+Trying:
+    distance([-1, 1], self_test=44)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: self_test must be 0 or 1
+ok
+Trying:
+    distance(np.array(["a", "b"]))
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: phi must be a 1 to 12-D array of doubles
+ok
+Trying:
+    from skfmm import heap
+Expecting nothing
+ok
+Trying:
+    h = heap(10,True)
+Expecting nothing
+ok
+Trying:
+    h.push(0,0.2)
+Expecting:
+    0
+ok
+Trying:
+    h.push(1,0.3)
+Expecting:
+    1
+ok
+Trying:
+    h.push(2,0.1)
+Expecting:
+    2
+ok
+Trying:
+    h.update(1, 0.01)
+Expecting nothing
+ok
+Trying:
+    h.pop()
+Expecting:
+    (1, 0.01)
+ok
+Trying:
+    h.pop()
+Expecting:
+    (2, 0.1)
+ok
+Trying:
+    h.pop()
+Expecting:
+    (0, 0.2)
+ok
+Trying:
+    h.empty()
+Expecting:
+    True
+ok
+Trying:
+    h.pop()
+Expecting:
+    Traceback (most recent call last):
+      ...
+    RuntimeError: heap pop error: empty heap
+    <BLANKLINE>
+ok
+Trying:
+    phi = np.array([-1,-1,-1,1,1,1])
+Expecting nothing
+ok
+Trying:
+    d = distance(phi, narrow=1.0)
+Expecting nothing
+ok
+Trying:
+    d.data[2:-2]
+Expecting:
+    array([-0.5,  0.5])
+ok
+Trying:
+    assert (d.mask == [ True,  True, False, False,  True,  True]).all()
+Expecting nothing
+ok
+Trying:
+    N     = 50
+Expecting nothing
+ok
+Trying:
+    X, Y  = np.meshgrid(np.linspace(-1, 1, N), np.linspace(-1, 1, N))
+Expecting nothing
+ok
+Trying:
+    r     = 0.5
+Expecting nothing
+ok
+Trying:
+    dx    = 2.0 / (N - 1)
+Expecting nothing
+ok
+Trying:
+    phi   = (X) ** 2 + (Y) ** 2 - r ** 2
+Expecting nothing
+ok
+Trying:
+    exact = np.sqrt(X ** 2 + Y ** 2) - r
+Expecting nothing
+ok
+Trying:
+    d = distance(phi, dx)
+Expecting nothing
+ok
+Trying:
+    bandwidth=5*dx
+Expecting nothing
+ok
+Trying:
+    d2 = distance(phi, dx, narrow=bandwidth)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(d, exact, atol=dx)
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(distance(phi, dx, narrow=1000*dx), exact, atol=dx)
+Expecting nothing
+ok
+Trying:
+    assert  (d2<bandwidth).all()
+Expecting nothing
+ok
+Trying:
+    assert type(d2) is np.ma.masked_array
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(phi)
+Expecting nothing
+ok
+Trying:
+    speed[X>0] = 1.8
+Expecting nothing
+ok
+Trying:
+    t = travel_time(phi, speed, dx)
+Expecting nothing
+ok
+Trying:
+    t2 = travel_time(phi, speed, dx, narrow=bandwidth)
+Expecting nothing
+ok
+Trying:
+    assert type(t2) is np.ma.masked_array
+Expecting nothing
+ok
+Trying:
+    assert (t2<bandwidth).all()
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(phi)
+Expecting nothing
+ok
+Trying:
+    speed = X + Y
+Expecting nothing
+ok
+Trying:
+    ed, ev = extension_velocities(phi, speed, dx)
+Expecting nothing
+ok
+Trying:
+    ed2, ev2 = extension_velocities(phi, speed, dx, narrow=bandwidth)
+Expecting nothing
+ok
+Trying:
+    assert type(ed2) is np.ma.masked_array
+Expecting nothing
+ok
+Trying:
+    assert type(ev2) is np.ma.masked_array
+Expecting nothing
+ok
+Trying:
+    assert (ed2<bandwidth).all()
+Expecting nothing
+ok
+Trying:
+    assert ed2.shape == ed.shape == ev.shape == ev2.shape
+Expecting nothing
+ok
+Trying:
+    distance(phi, dx, narrow=-1)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    ValueError: parameter "narrow" must be greater than or equal to zero.
+ok
+Trying:
+    mask = abs(X)<0.25
+Expecting nothing
+ok
+Trying:
+    d3 = distance(np.ma.masked_array(phi, mask), dx, narrow=bandwidth)
+Expecting nothing
+ok
+Trying:
+    assert (d3.mask[mask]==True).all()
+Expecting nothing
+ok
+Trying:
+    assert d3.mask.sum() > mask.sum()
+Expecting nothing
+ok
+Trying:
+    X, Y = np.meshgrid(np.linspace(-2,2,200), np.linspace(-2,2,200))
+Expecting nothing
+ok
+Trying:
+    phi = -1*np.ones_like(X); phi[X**2+(Y-0.9)**2<0.5] = 1.0
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(X); speed[(X-0.9)**2+Y**2<1.0] = 2.0
+Expecting nothing
+ok
+Trying:
+    np.allclose(distance(phi),distance(phi,periodic=False)) and np.allclose(distance(phi),distance(phi,periodic=(0,0)))
+Expecting:
+    True
+ok
+Trying:
+    np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=False)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=(0,0)))
+Expecting:
+    True
+ok
+Trying:
+    phi = -1*np.ones_like(X); phi[X**2+Y**2<0.5] = 1.0
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(X); speed[X**2+Y**2<1.0] = 2.0
+Expecting nothing
+ok
+Trying:
+    np.allclose(distance(phi),distance(phi,periodic=True)) and np.allclose(distance(phi),distance(phi,periodic=(1,1)))
+Expecting:
+    True
+ok
+Trying:
+    np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=(1,1)))
+Expecting:
+    True
+ok
+Trying:
+    np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=[1,1]))
+Expecting:
+    True
+ok
+Trying:
+    np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=True)) and np.allclose(travel_time(phi,speed),travel_time(phi,speed,periodic=[True,True]))
+Expecting:
+    True
+ok
+Trying:
+    phi = -1*np.ones_like(X); phi[X**2+(Y-0.9)**2<0.5] = 1.0
+Expecting nothing
+ok
+Trying:
+    speed = np.ones_like(X); speed[(X-0.9)**2+Y**2<1.0] = 2.0
+Expecting nothing
+ok
+Trying:
+    np.allclose(distance(np.roll(phi,137,axis=0),periodic=True),np.roll(distance(phi,periodic=True),137,axis=0))
+Expecting:
+    True
+ok
+Trying:
+    np.allclose(travel_time(np.roll(phi,-77,axis=1),np.roll(speed,-77,axis=1),periodic=True),np.roll(travel_time(phi,speed,periodic=True),-77,axis=1))
+Expecting:
+    True
+ok
+Trying:
+    phi=[1,-1,1,1,1,1]
+Expecting nothing
+ok
+Trying:
+    speed=[4,1,2,2,2,2]
+Expecting nothing
+ok
+Trying:
+    np.allclose(extension_velocities(phi,speed)[1],(2.5,2.5,1.5,1.5,1.5,1.5))
+Expecting:
+    True
+ok
+Trying:
+    np.allclose(extension_velocities(phi,speed,periodic=True)[1],(2.5,2.5,1.5,1.5,1.5,2.5))
+Expecting:
+    True
+ok
+Trying:
+    phi = np.array([[ 1,  1, -1, -1, -1, -1,  1],
+                    [ 3,  1, -1, -1, -1, -1,  1],
+                    [ 3,  3,  1,  1,  1,  1,  3],
+                    [ 3,  3,  3,  3,  3,  3,  3],
+                    [ 3,  3,  3,  3,  3,  3,  3]])
+Expecting nothing
+ok
+Trying:
+    speed = np.array([[ 1.   ,  1.   ,  0.057,  0.128,  0.037,  0.039,  1.   ],
+                      [ 1.   ,  1.   ,  0.199,  0.408,  0.997,  0.688,  1.   ],
+                      [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ],
+                      [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ],
+                      [ 1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ,  1.   ]])
+Expecting nothing
+ok
+Trying:
+    assert not travel_time(phi,speed)[0][3] == 0
+Expecting nothing
+ok
+Trying:
+    phi = np.array([[1, -1, -1],
+                    [0,  0, -1],
+                    [0,  0,  1]])
+Expecting nothing
+ok
+Trying:
+    value = 0.01
+Expecting nothing
+ok
+Trying:
+    speed = np.array([[ 1, value, 0.1],
+                      [ 0, 0,     1. ],
+                     [ 0, 0,     1. ]])
+Expecting nothing
+ok
+Trying:
+    phi = np.ma.MaskedArray(phi, phi==0)
+Expecting nothing
+ok
+Trying:
+    tt = travel_time(phi,speed)
+Expecting nothing
+ok
+Trying:
+    tt.fill_value=0
+Expecting nothing
+ok
+Trying:
+    np.testing.assert_allclose(tt.data, ((0.5, 50, 7.5),
+                                         (0,    0, 0.5),
+                                         (0,    0, 0.5)))
+Expecting nothing
+ok
+Trying:
+    a = np.array([[[600,  399,  641], [607,  605,  796], [602,  641,  797], [602,  658,  814]], [[272,   -1,  398], [208,  282,  539], [209,  285,  513], [208,  298,  519]], [[-19,   51,  307], [-191,   2,  403], [-171,   5,  325], [-172,   3,  318]]])
+Expecting nothing
+ok
+Trying:
+    d = distance(a)
+Expecting nothing
+ok
+Trying:
+    assert not (d==0).any()
+Expecting nothing
+ok
+Trying:
+    a = np.array([[399,  -1, 51,   10.0], [605, 282,  2,   -3], [641, 285,  5, -100], [658, 298,  3,   -3]])
+Expecting nothing
+ok
+Trying:
+    d = distance(a)
+Expecting nothing
+ok
+Trying:
+    assert not (d==0).any()
+Expecting nothing
+ok
+2 items had no tests:
+    skfmm
+    skfmm.test
+**********************************************************************
+1 item had failures:
+   3 of 367 in skfmm.testing
+367 tests in 3 items.
+364 passed and 3 failed.
+***Test Failed*** 3 failures.
+Trying:
+    from skfmm import heap
+Expecting nothing
+ok
+Trying:
+    h = heap(10)
+Expecting nothing
+ok
+Trying:
+    h.push(10,0.2)
+Expecting:
+    0
+ok
+Trying:
+    h.push(11,0.3)
+Expecting:
+    1
+ok
+Trying:
+    h.push(12,0.1)
+Expecting:
+    2
+ok
+Trying:
+    h.peek()
+Expecting:
+    0.1
+ok
+Trying:
+    h.update(1, 0.01)
+Expecting nothing
+ok
+Trying:
+    h.peek()
+Expecting:
+    0.01
+ok
+Trying:
+    h.pop()
+Expecting:
+    (11, 0.01)
+ok
+Trying:
+    h.pop()
+Expecting:
+    (12, 0.1)
+ok
+Trying:
+    h.pop()
+Expecting:
+    (10, 0.2)
+ok
+Trying:
+    assert h.empty()
+Expecting nothing
+ok
+1 item passed all tests:
+  12 tests in heap.py
+12 tests in 1 item.
+12 passed.
+Test passed.
+Summary: 379 tests run 3 failures
+pspeeds = 371df630
+speeds = 37130db0
+drivers dtype = 7
+pdrivers = 59f1bed0
+drivers = 37130c30
+speeds_ = 2ef7d880
+speeds_[0] = 2
+distance_[0] = 0
+distance_[0] = 0
+speeds_ = 2ef7d880
+speeds_[1] = 2
+distance_[1] = 0
+distance_[1] = 0
+speeds_ = 2ef7d880
+speeds_[2] = 2
+distance_[2] = 0
+distance_[2] = 0
+speeds_ = 2ef7d880
+speeds_[3] = 2
+distance_[3] = 0
+distance_[3] = 0
+speeds_ = 2ef7d880
+speeds_[4] = 2
+distance_[4] = 0
+distance_[4] = 0
+moe
+branch_[1] = 0
+drivers_[1] = 0
+naddr_smallest_nbr = 0
+catch a
+tiger
+by the
+moe
+branch_[2] = 0
+drivers_[2] = 0
+naddr_smallest_nbr = 1
+catch a
+tiger
+by the
+moe
+branch_[3] = 0
+drivers_[3] = 0
+naddr_smallest_nbr = 2
+catch a
+tiger
+by the
+moe
+branch_[4] = 0
+drivers_[4] = 0
+naddr_smallest_nbr = 3
+catch a
+tiger
+by the
+pspeeds = 393e73f0
+speeds = 371304b0
+drivers dtype = 7
+pdrivers = 371df630
+drivers = 36f3b2d0
+speeds_ = 2efca790
+speeds_[0] = 2
+distance_[0] = 0
+distance_[0] = 0
+speeds_ = 2efca790
+speeds_[1] = 2
+distance_[1] = 0
+distance_[1] = 0
+speeds_ = 2efca790
+speeds_[2] = 2
+distance_[2] = 0
+distance_[2] = 0
+moe
+branch_[0] = 0
+drivers_[0] = 0
+naddr_smallest_nbr = 1
+catch a
+tiger
+by the
+moe
+branch_[2] = 0
+drivers_[2] = 0
+naddr_smallest_nbr = 1
+catch a
+tiger
+by the
+pspeeds = 393e73f0
+speeds = 36f3b510
+drivers dtype = 7
+pdrivers = 371df630
+drivers = 36f3b5d0
+speeds_ = 2eef6ad0
+speeds_[0] = 2
+distance_[0] = 0
+distance_[0] = 0
+speeds_ = 2eef6ad0
+speeds_[1] = 2
+distance_[1] = 0
+distance_[1] = 0
+speeds_ = 2eef6ad0
+speeds_[2] = 2
+distance_[2] = 0
+distance_[2] = 0
+speeds_ = 2eef6ad0
+speeds_[3] = 2
+distance_[3] = 0
+distance_[3] = 0
+speeds_ = 2eef6ad0
+speeds_[4] = 2
+distance_[4] = 0
+distance_[4] = 0
+moe
+branch_[1] = 0
+drivers_[1] = 0
+naddr_smallest_nbr = 0
+catch a
+tiger
+by the
+moe
+branch_[2] = 0
+drivers_[2] = 0
+naddr_smallest_nbr = 1
+catch a
+tiger
+by the
+moe
+branch_[3] = 0
+drivers_[3] = 0
+naddr_smallest_nbr = 2
+catch a
+tiger
+by the
+moe
+branch_[4] = 0
+drivers_[4] = 0
+naddr_smallest_nbr = 3
+catch a
+tiger
+by the
+pspeeds = 36fd5290
+speeds = 36fd5350
+drivers dtype = 7
+pdrivers = 36fd5110
+drivers = 36fd5410
+speeds_ = 2ec51020
+speeds_[0] = 2
+distance_[0] = 0
+distance_[0] = 0
+speeds_ = 2ec51020
+speeds_[1] = 2
+distance_[1] = 0
+distance_[1] = 0
+speeds_ = 2ec51020
+speeds_[2] = 2
+distance_[2] = 0
+distance_[2] = 0
+speeds_ = 2ec51020
+speeds_[3] = 2
+distance_[3] = 0
+distance_[3] = 0
+speeds_ = 2ec51020
+speeds_[4] = 2
+distance_[4] = 0
+distance_[4] = 0
+moe
+branch_[1] = 0
+drivers_[1] = 0
+naddr_smallest_nbr = 0
+catch a
+tiger
+by the
+moe
+branch_[2] = 0
+drivers_[2] = 0
+naddr_smallest_nbr = 1
+catch a
+tiger
+by the
+moe
+branch_[3] = 0
+drivers_[3] = 1072693248
+naddr_smallest_nbr = 2
+catch a
+tiger
+driver 1072693248 added at position 3, branch is now 1072693248
+by the
+moe
+branch_[4] = 1072693248
+drivers_[4] = 0
+naddr_smallest_nbr = 3
+catch a
+tiger
+by the
+pspeeds = 59f1bed0
+speeds = 36f3b270
+drivers dtype = 7
+pdrivers = 393e73f0
+drivers = 36f3bb70
+speeds_ = 2eb88260
+speeds_[0] = 2
+distance_[0] = 0
+distance_[0] = 0
+speeds_ = 2eb88260
+speeds_[1] = 2
+distance_[1] = 0
+distance_[1] = 0
+speeds_ = 2eb88260
+speeds_[2] = 2
+distance_[2] = 0
+distance_[2] = 0
+speeds_ = 2eb88260
+speeds_[3] = 2
+distance_[3] = 0
+distance_[3] = 0
+moe
+branch_[1] = 0
+drivers_[1] = 0
+naddr_smallest_nbr = 0
+catch a
+tiger
+by the
+moe
+branch_[2] = 0
+drivers_[2] = 0
+naddr_smallest_nbr = 0
+catch a
+tiger
+by the
+moe
+branch_[3] = 0
+drivers_[3] = 0
+naddr_smallest_nbr = 2
+catch a
+tiger
+by the
+moe
+branch_[3] = 0
+drivers_[3] = 0
+naddr_smallest_nbr = 2
+catch a
+tiger
+by the
