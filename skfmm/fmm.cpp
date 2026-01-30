@@ -188,7 +188,6 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
 	}
 
   if (mode == TRAVEL_TIME_GENES) {
-    int speeds_dim = PyArray_NDIM(phi) + 1;
     speeds = (PyArrayObject *)PyArray_FROMANY(pspeeds, NPY_DOUBLE, 0, 0, NPY_IN_ARRAY);
     if (!speeds)
     {
@@ -200,9 +199,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       return nullptr;
     }
 
-    PyArrayObject *tmp = (PyArrayObject *)pdrivers;
     drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1, 12, NPY_IN_ARRAY);
-
 
     if (!drivers) {
       PyErr_SetString(PyExc_ValueError,
