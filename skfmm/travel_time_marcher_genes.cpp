@@ -7,22 +7,17 @@
 #include <vector>
 #include <algorithm>    // std::min_element, std::max_element
 
-using std::printf;
 
 void travelTimeMarcherGenes::initalizeFrozen()
 {
   distanceMarcher::initalizeFrozen();
   for (int i=0; i<size_; i++)
   {
-    printf("speeds_ = %x\n", speeds_);
-    printf("speeds_[%d] = %g\n", i, speeds_[i]);
-    printf("distance_[%d] = %g\n", i, distance_[i]);
     if (flag_[i]==Frozen)
     {
       // convert distance to time
       distance_[i] = fabs(distance_[i]/speeds_[i]);
     }
-    printf("distance_[%d] = %g\n", i, distance_[i]);
   }
 }
 
@@ -92,23 +87,15 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       c+=idx2_[dim]*pow(value1,2);
     }
   }
-  printf("moe\n");
   // set an initial value for branch function at node i:
   if (naddr_smallest_nbr != -1) branch_[i] = branch_[naddr_smallest_nbr];
-  printf("branch_[%d] = %d\n", i, branch_[i]);
-  printf("drivers_[%d] = %d\n", i, drivers_[i]);
-  printf("naddr_smallest_nbr = %d\n", naddr_smallest_nbr);
-  printf("catch a\n");
   try {
     double res = solveQuadratic(i,a,b,c);
     // update branch function if a mutation is present at naddr
     // AND the mutation is not already accounted for
-    printf("tiger\n");
     if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
         branch_[i] += drivers_[i];
-        printf("driver %d added at position %d, branch is now %d\n", drivers_[i], i, branch_[i]);
     }
-    printf("by the\n");
     return res;
   } catch (std::runtime_error & err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
