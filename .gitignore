@@ -15,3 +15,4 @@ skfmm/*.pyd
 *.swp
 Pipfile
 Session.vim
+test/*

@@ -184,6 +184,8 @@ def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
                 narrow=0.0, periodic=False):
     phi, dx, flag, ext_mask, periodic, drivers, speeds  \
         = pre_process_args(phi, dx, narrow, periodic, drivers=drivers, speeds=speeds)
+    print("drivers: " + str(drivers))
+    print("speeds: " + str(speeds))
     t = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), TRAVEL_TIME_GENES, order, narrow, periodic,
                      speeds, drivers)
