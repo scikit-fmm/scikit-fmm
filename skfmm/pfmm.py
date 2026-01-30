@@ -16,7 +16,7 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
         phi = np.array(phi)
     
     if drivers and not isinstance(drivers, np.ndarray):
-        drivers = np.array(drivers)
+        drivers = np.array(drivers, dtype=np.uint32)
     
     if speeds and not isinstance(speeds, np.ndarray):
         speeds = np.array(speeds)
@@ -180,16 +180,14 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
     t = post_process_result(t)
     return t
 
-def travel_time_genes(phi, py_drivers, py_speeds, dx=1.0, self_test=False, order=2,
+def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
                 narrow=0.0, periodic=False):
-    phi, dx, flag, ext_mask, periodic, drivers, speeds  \
+    phi, dx, flag, ext_mask, periodic, c_drivers, c_speeds  \
         = pre_process_args(phi, dx, narrow, periodic, 
-                           drivers=py_drivers, speeds=py_speeds)
-    print("drivers: " + str(drivers))
-    print("speeds: " + str(speeds))
+                           drivers=drivers, speeds=speeds)
     t = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), TRAVEL_TIME_GENES, order, narrow, periodic,
-                     speeds, drivers)
+                     c_speeds, c_drivers)
     t = post_process_result(t)
     return t
 
