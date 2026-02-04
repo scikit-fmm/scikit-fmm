@@ -199,7 +199,7 @@ static PyObject* distance_method(PyObject* self, PyObject* args)
       return nullptr;
     }
 
-    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 1, 12, NPY_IN_ARRAY);
+    drivers = (PyArrayObject *)PyArray_FROMANY(pdrivers, NPY_UINT, 0, 0, NPY_IN_ARRAY);
 
     if (!drivers) {
       PyErr_SetString(PyExc_ValueError,

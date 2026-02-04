@@ -15,10 +15,11 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
     if not isinstance(phi, np.ndarray):
         phi = np.array(phi)
     
-    if drivers and not isinstance(drivers, np.ndarray):
+    # TODO convert speeds from list of speeds to flattened numpy array
+    if drivers is not None and not isinstance(drivers, np.ndarray):
         drivers = np.array(drivers, dtype=np.uint32)
     
-    if speeds and not isinstance(speeds, np.ndarray):
+    if speeds is not None and not isinstance(speeds, np.ndarray):
         speeds = np.array(speeds)
     
     if type(dx) is float or type(dx) is int:
@@ -182,9 +183,11 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 
 def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
                 narrow=0.0, periodic=False):
+    # TODO convert speeds from list of speeds to flattened numpy array
     phi, dx, flag, ext_mask, periodic, c_drivers, c_speeds  \
         = pre_process_args(phi, dx, narrow, periodic, 
                            drivers=drivers, speeds=speeds)
+    print(c_drivers) # DEBUG
     t = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), TRAVEL_TIME_GENES, order, narrow, periodic,
                      c_speeds, c_drivers)
