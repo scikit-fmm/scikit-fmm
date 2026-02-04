@@ -14,13 +14,48 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
     """
     if not isinstance(phi, np.ndarray):
         phi = np.array(phi)
+
+    # get information about resolution from phi:
+    taps = phi.shape[0] - 1
+    # TODO currently assumes same x and y resolutions (see below)
+
+    # check the type of drivers and speeds are correct:
+    if not isinstance(drivers, dict):
+        raise ValueError("drivers should be a dictionary of the form: {weight_i: [x_i, y_i], ...}")
+    if not isinstance(speeds[0], np.ndarray):
+        raise ValueError("speeds should be a list of NumPy arrays with at least one entry")
+
+    # check that all driver weights are powers of 2
+    max_branch_value = 0
+    for weight in drivers:
+        if (weight & (weight - 1)) != 0:
+            raise ValueError("each weight in drivers should be a power of 2")
+        max_branch_value += weight
+    # check that speeds has 2^n entries when drivers has n (non-WT) entries
+    if (len(speeds) != max_branch_value + 1):
+        raise ValueError("list of speeds should have 2^n entries, if n = num.  drivers")
     
-    # TODO convert speeds from list of speeds to flattened numpy array
-    if drivers is not None and not isinstance(drivers, np.ndarray):
-        drivers = np.array(drivers, dtype=np.uint32)
+    # preprocess drivers: build the array from the drivers dict:
+    c_drivers = phi * 0
+    # iterate over driver dict:
+    for weight, posn in drivers.items():
+        # place the driver weights on their positions:
+        # TODO currently assumes same x and y resolutions
+        col = int(taps / 2) + int(posn[0] / dx)
+        row = int(taps / 2) + int(posn[1] / dx)
+        c_drivers[row][col] = weight
+        # check drivers have been added correctly:
+        print(weight, posn, row, col, c_drivers[row][col]) # DEBUG
+    c_drivers = c_drivers.tolist() # convert numpy array to list
+
+    if c_drivers is not None and not isinstance(c_drivers, np.ndarray):
+        c_drivers = np.array(c_drivers, dtype=np.uint32)
     
-    if speeds is not None and not isinstance(speeds, np.ndarray):
-        speeds = np.array(speeds)
+    # convert speeds from list of speeds to flattened numpy array
+    c_speeds = np.array(speeds).flatten()
+
+    if c_speeds is not None and not isinstance(c_speeds, np.ndarray):
+        c_speeds = np.array(c_speeds)
     
     if type(dx) is float or type(dx) is int:
         dx = [dx for _ in range(phi.ndim)]
@@ -51,7 +86,7 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
     if narrow < 0:
         raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
 
-    return phi, dx, flag, ext_mask, periodic_data, drivers, speeds
+    return phi, dx, flag, ext_mask, periodic_data, c_drivers, c_speeds
 
 
 def post_process_result(result):
@@ -183,11 +218,9 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 
 def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
                 narrow=0.0, periodic=False):
-    # TODO convert speeds from list of speeds to flattened numpy array
     phi, dx, flag, ext_mask, periodic, c_drivers, c_speeds  \
         = pre_process_args(phi, dx, narrow, periodic, 
                            drivers=drivers, speeds=speeds)
-    print(c_drivers) # DEBUG
     t = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), TRAVEL_TIME_GENES, order, narrow, periodic,
                      c_speeds, c_drivers)

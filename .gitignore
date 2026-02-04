@@ -16,3 +16,4 @@ skfmm/*.pyd
 Pipfile
 Session.vim
 test/*
+*.png
