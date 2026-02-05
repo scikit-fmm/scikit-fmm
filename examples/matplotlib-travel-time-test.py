@@ -1,6 +1,5 @@
 import skfmm
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 # resolution of grid for plots:
