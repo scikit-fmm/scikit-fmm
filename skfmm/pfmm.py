@@ -15,15 +15,11 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
     if not isinstance(phi, np.ndarray):
         phi = np.array(phi)
 
-    # get information about resolution from phi:
-    taps = phi.shape[0] - 1
-    # TODO currently assumes same x and y resolutions (see below)
-
     # check the type of drivers and speeds are correct:
     if not isinstance(drivers, dict):
-        raise ValueError("drivers should be a dictionary of the form: {weight_i: [x_i, y_i], ...}")
+        raise TypeError("drivers should be a dictionary of the form: {weight_i: [x_i, y_i], ...}")
     if not isinstance(speeds[0], np.ndarray):
-        raise ValueError("speeds should be a list of NumPy arrays with at least one entry")
+        raise TypeError("speeds should be a list of NumPy arrays with at least one entry")
 
     # check that all driver weights are powers of 2
     max_branch_value = 0
@@ -35,19 +31,41 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
     if (len(speeds) != max_branch_value + 1):
         raise ValueError("list of speeds should have 2^n entries, if n = num.  drivers")
     
+    # get information about resolution from phi:
+    taps = phi.shape[0] - 1
+    # TODO currently assumes same x and y resolutions (see below)
+
     # preprocess drivers: build the array from the drivers dict:
     c_drivers = phi * 0
     # iterate over driver dict:
-    for weight, posn in drivers.items():
-        # place the driver weights on their positions:
-        # TODO currently assumes same x and y resolutions
-        col = int(taps / 2) + int(posn[0] / dx)
-        row = int(taps / 2) + int(posn[1] / dx)
-        c_drivers[row][col] = weight
-        # check drivers have been added correctly:
-        print(weight, posn, row, col, c_drivers[row][col]) # DEBUG
-    c_drivers = c_drivers.tolist() # convert numpy array to list
+    if phi.ndim == 1:
+        for weight, posn in drivers.items():
+            # place the driver weights on their positions:
+            row = int(taps / 2) + int(posn[0] / dx)
+            c_drivers[row] = weight
+            # check drivers have been added correctly:
+            print(weight, posn, row, c_drivers[row]) # DEBUG
+    if phi.ndim == 2:
+        for weight, posn in drivers.items():
+            # place the driver weights on their positions:
+            # TODO currently assumes same x and y resolutions
+            col = int(taps / 2) + int(posn[0] / dx)
+            row = int(taps / 2) + int(posn[1] / dx)
+            c_drivers[row][col] = weight
+            # check drivers have been added correctly:
+            print(weight, posn, row, col, c_drivers[row][col]) # DEBUG
+    if phi.ndim == 3:
+        for weight, posn in drivers.items():
+            # place the driver weights on their positions:
+            # TODO currently assumes same x and y resolutions
+            lyr = int(taps / 2) + int(posn[0] / dx)
+            col = int(taps / 2) + int(posn[1] / dx)
+            row = int(taps / 2) + int(posn[2] / dx)
+            c_drivers[row][col][lyr] = weight
+            # check drivers have been added correctly:
+            print(weight, posn, row, col, lyr, c_drivers[row][col][lyr]) # DEBUG
 
+    c_drivers = c_drivers.tolist() # convert numpy array to list
     if c_drivers is not None and not isinstance(c_drivers, np.ndarray):
         c_drivers = np.array(c_drivers, dtype=np.uint32)
     
@@ -81,7 +99,7 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None, drivers=None, spe
                 if value:
                     periodic_data |= 1 << i
         else:
-            raise ValueError("parameter \"periodic\" must be of type bool or sequence of type bool of length phi.ndim.")
+            raise TypeError("parameter \"periodic\" must be of type bool or sequence of type bool of length phi.ndim.")
 
     if narrow < 0:
         raise ValueError("parameter \"narrow\" must be greater than or equal to zero.")
@@ -218,6 +236,9 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 
 def travel_time_genes(phi, drivers, speeds, dx=1.0, self_test=False, order=2,
                 narrow=0.0, periodic=False):
+    # raise an exception if the problem has more than 3D:
+    assert (phi.ndim <= 3), "ndim > 3 not currently supported for genetic generalisation"
+
     phi, dx, flag, ext_mask, periodic, c_drivers, c_speeds  \
         = pre_process_args(phi, dx, narrow, periodic, 
                            drivers=drivers, speeds=speeds)

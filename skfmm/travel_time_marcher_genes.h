@@ -16,8 +16,6 @@ public:
                     order, narrow, periodic),
     speeds_(speeds), drivers_(drivers)
   {
-    // TODO implement passing the speeds array (it has one more dimension than
-    // the speed array in travel_time_marcher).
     branch_ = new unsigned[size_]{0};
   }
 
@@ -32,5 +30,5 @@ protected:
 private:
   unsigned* drivers_;
   unsigned* branch_;
-  double* speeds_;
+  double* speeds_; // TODO move up 2 lines?
 };
