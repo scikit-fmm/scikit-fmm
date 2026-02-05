@@ -72,7 +72,7 @@ protected:
     // direction.
     // Return -1 if neighbor point is invalid (out of bounds)
     // Return -1 if neighbor point has flag_ value equal to the flag input
-    int coord[MaximumDimension];
+    int coord[MaximumDimension]{0};
     _setIndex(current, coord);
     int newc = coord[dim] + dir;
 
