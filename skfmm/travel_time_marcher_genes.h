@@ -28,7 +28,7 @@ protected:
   virtual double solveQuadratic(int i, const double &a,
                                 const double &b, double &c);
 private:
+  double* speeds_;
   unsigned* drivers_;
   unsigned* branch_;
-  double* speeds_; // TODO move up 2 lines?
 };
