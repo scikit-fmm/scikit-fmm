@@ -16,7 +16,8 @@ void travelTimeMarcherGenes::initalizeFrozen()
     if (flag_[i]==Frozen)
     {
       // convert distance to time
-      distance_[i] = fabs(distance_[i]/speeds_[i]);
+      distance_[i] = fabs(distance_[i]/speeds_[branch_[i] * size_ + i]);
+      // note: branch_[i] should be zero-initialised for frozen nodes!
     }
   }
 }
@@ -49,15 +50,15 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     }
     double value1 = maxDouble;
     double value2 = maxDouble;
-    for (int j=-1; j<2; j+=2) // each direction
+    for (int j=-1; j<2; j+=2) // each direction (e.g. left and right)
     {
-      naddr = _getN(i,dim,j,Mask);
+      naddr = _getN(i, dim, j, Mask); // get the neighbour of i along dim
       if (naddr!=-1 && flag_[naddr]==Frozen)
       {
         if (fabs(distance_[naddr])<fabs(value1))
         {
           value1 = distance_[naddr];
-          naddr2 = _getN(i,dim,j * 2,Mask);
+          naddr2 = _getN(i, dim, j * 2, Mask);
           if (naddr2 != -1 &&
               flag_[naddr2]==Frozen &&
               ((distance_[naddr2]<=value1 && value1 >=0) ||
@@ -86,15 +87,21 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
       c+=idx2_[dim]*pow(value1,2);
     }
   }
+
   // set an initial value for branch function at node i:
   if (naddr_smallest_nbr != -1) branch_[i] = branch_[naddr_smallest_nbr];
+  // ^ TODO this update rule introduces spurious unsmoothness, like seen in
+  // Dijkstra's algorithm! Think hard about a replacement!
+  // update branch function if a driver mutation is present at site i
+  // AND the mutation is not already accounted for
+  if (drivers_[i] > 0) { // TODO technically this test is unnecessary as
+      // drivers_ is zero except at specific locations: this test results in
+      // accessing drivers_ twice for no reason
+      branch_[i] |= drivers_[i];
+  }
+
   try {
     double res = solveQuadratic(i,a,b,c);
-    // update branch function if a mutation is present at naddr
-    // AND the mutation is not already accounted for
-    if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
-        branch_[i] += drivers_[i];
-    }
     return res;
   } catch (std::runtime_error & err) {
     //if the determinant is negative, we try to reach the voxel with one dimension less and take the minimum
@@ -114,10 +121,6 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     if (sols.size()==0) {
       return std::numeric_limits<double>::infinity();
       //All the derivates with different dimensionalities are 0
-    }
-    // update branch function if a mutation is present at naddr
-    if ((drivers_[i] > 0) && ((branch_[i] & drivers_[i]) == 0)) {
-        branch_[i] += drivers_[i];
     }
     return *std::min_element(sols.begin(), sols.end());
   }
