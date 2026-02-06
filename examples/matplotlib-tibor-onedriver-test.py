@@ -14,7 +14,7 @@ X, Y = np.meshgrid(np.linspace(-0.5 * x_width, +0.5 * x_width, taps + 1),
                    np.linspace(-0.5 * y_width, +0.5 * y_width, taps + 1))
 phi = (X)**2+(Y)**2
 drivers = {1: [1.0, 0]} # a dictionary with n entries
-v_spd = 2.555 # TODO speeds smaller than 3ish appear to create weird artifacts
+v_spd = 1.555 # TODO speeds smaller than 3ish appear to create weird artifacts
 # for low speeds, fewer steps (and bigger dx values) appear to be better?
 # TODO: output b-fields, i suspect these are not updated properly when speeds
 # are "too low" or too close to one another.
@@ -38,4 +38,5 @@ ax.plot(x_spiral, y_spiral, 'r--')
 ax.plot(x_spiral, -y_spiral, 'r--')
 ax.set_xlim(-0.5 * x_width, +0.5 * x_width)
 ax.set_ylim(-0.5 * y_width, +0.5 * y_width)
-plt.show()
+#fig.show()
+plt.savefig("testgraph2.png")

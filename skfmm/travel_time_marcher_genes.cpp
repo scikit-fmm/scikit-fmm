@@ -88,17 +88,15 @@ double travelTimeMarcherGenes::updatePointOrderTwo(int i, std::set<int>avoid_dim
     }
   }
 
-  // set an initial value for branch function at node i:
+  // inherit a value for the branch function at node i:
   if (naddr_smallest_nbr != -1) branch_[i] = branch_[naddr_smallest_nbr];
   // ^ TODO this update rule introduces spurious unsmoothness, like seen in
   // Dijkstra's algorithm! Think hard about a replacement!
+  // TODO add a little bit of randomness into parent choice to break/restore the
+  // symmetry
   // update branch function if a driver mutation is present at site i
   // AND the mutation is not already accounted for
-  if (drivers_[i] > 0) { // TODO technically this test is unnecessary as
-      // drivers_ is zero except at specific locations: this test results in
-      // accessing drivers_ twice for no reason
-      branch_[i] |= drivers_[i];
-  }
+  branch_[i] |= drivers_[i];
 
   try {
     double res = solveQuadratic(i,a,b,c);
@@ -132,7 +130,7 @@ double travelTimeMarcherGenes::solveQuadratic(int i, const double &a,
                                          double &c)
 {
   unsigned bvalue = branch_[i];
-  c -= 1/pow(speeds_[bvalue * size_ + i],2); // previously speeds_[bvalue][i]
+  c -= 1/pow(speeds_[bvalue * size_ + i], 2);
   // TODO change to something like speeds_[index(branch, i)]?
   double r0 = 0;
   double det = pow(b, 2) - 4 * a * c;
