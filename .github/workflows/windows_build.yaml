@@ -2,6 +2,9 @@ name: Windows x64 Build
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
   pull_request:
     types:
       - opened
