@@ -9,7 +9,6 @@ description = 'An extension module implementing the fast marching method'
 readme = 'README.md'
 requires-python = '>=3.10'
 license = {file = 'LICENSE.txt'}
-url = 'https://github.com/scikit-fmm/scikit-fmm'
 authors = [
   {name = 'Jason Furtney', email = 'jkfurtney@gmail.com'},
 ]
@@ -21,3 +20,8 @@ classifiers      = ["Development Status :: 5 - Production/Stable",
                     "Intended Audience :: Science/Research",
                     "Programming Language :: C++",
                     "Programming Language :: Python :: 3"]
+
+[project.urls]
+Homepage = 'https://github.com/scikit-fmm/scikit-fmm'
+Repository = 'https://github.com/scikit-fmm/scikit-fmm'
+"Bug Tracker" = 'https://github.com/scikit-fmm/scikit-fmm/issues'
