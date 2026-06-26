@@ -1,4 +1,16 @@
 
+## Development set up
+
+To do a normal build from source see the README.md, if you are
+developing and want to make changes and test them in this folder use
+this approach:
+
+- `pip install meson-python ninja numpy`
+Then build with
+- `python -m pip install --no-build-isolation -e .`
+This builds the module in place and sets up import hooks that rebuilds
+the module on demand if you change the c++ files.
+
 ## To make a release:
 
 ### Increment version number

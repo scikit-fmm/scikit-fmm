@@ -82,6 +82,6 @@
    * Update to Github workflows to use v4 api
    * Windows wheels
    * Support for Python 3.13
-* 2025.01.29 June 23rd 2025
+* 2025.6.23 June 23rd 2025
    * Fixes for deprecated NumPy API and Python 3.11
    * Github Workflow fixes
