@@ -7,9 +7,8 @@ const char Frozen = 2;
 const char Mask   = 3;
 
 #include <limits>
-using namespace std;
-#define doubleEpsilon            numeric_limits<double>::epsilon()
-#define maxDouble                numeric_limits<double>::max()
+#define doubleEpsilon            std::numeric_limits<double>::epsilon()
+#define maxDouble                std::numeric_limits<double>::max()
 
 class heap;
 
