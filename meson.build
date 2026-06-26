@@ -36,8 +36,10 @@ srcs = [
 
 py.install_sources(
   ['skfmm/__init__.py',
+   'skfmm/__init__.pyi',
    'skfmm/pfmm.py',
-   'skfmm/heap.py'],
+   'skfmm/heap.py',
+   'skfmm/py.typed'],
   subdir: 'skfmm',
   pure: false,
 )
