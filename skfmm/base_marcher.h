@@ -7,6 +7,8 @@ const char Frozen = 2;
 const char Mask   = 3;
 
 #include <limits>
+#include <memory>
+#include <vector>
 #define doubleEpsilon            std::numeric_limits<double>::epsilon()
 #define maxDouble                std::numeric_limits<double>::max()
 
@@ -48,8 +50,8 @@ private:
 
   double            narrow_;
   int               order_;
-  int             * heapptr_;        // heap back pointers
-  heap            * heap_;
+  std::vector<int>       heapptr_;
+  std::unique_ptr<heap>  heap_;
   int               shape_[MaximumDimension];    // size of each dimension
   int               shift_[MaximumDimension];
   int               periodic_;

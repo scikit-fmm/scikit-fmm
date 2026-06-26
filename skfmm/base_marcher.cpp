@@ -27,8 +27,6 @@ baseMarcher::baseMarcher(
   dim_        =   ndim;
   size_       =   1;
   self_test_  =   self_test;
-  heapptr_    =   0;
-  heap_       =   0;
   periodic_   =   periodic;
 
   for (int i=0; i<dim_; i++)
@@ -52,8 +50,8 @@ void baseMarcher::march()
   int maxHeap=0;
   for (int i=0; i<size_; i++)
     if (flag_[i] == Far) maxHeap++;
-  heap_ = new heap(maxHeap, self_test_);
-  heapptr_ = new int[size_];
+  heap_ = std::make_unique<heap>(maxHeap, self_test_);
+  heapptr_.resize(size_);
   initalizeNarrow();
   solve();
   cleanUp();
@@ -61,8 +59,6 @@ void baseMarcher::march()
 
 baseMarcher::~baseMarcher()
 {
-  delete   heap_;
-  delete[] heapptr_;
 }
 
 void baseMarcher::initalizeNarrow()
