@@ -20,7 +20,7 @@ def test0():
     t0=time.time()
     d = distance(phi,dx)
     t1=time.time()
-    print "benchmark time", t1-t0
+    print("benchmark time", t1-t0)
     return d
 
 import cProfile
@@ -29,5 +29,3 @@ cProfile.run('test0()', 'data')
 import pstats
 p=pstats.Stats('data')
 p.strip_dirs().sort_stats('cumulative').print_stats(10)
-
-

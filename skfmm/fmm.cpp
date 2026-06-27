@@ -2,7 +2,11 @@
 // implementation of the fast marching method in fast_marching.cpp
 
 #include "Python.h"
-#include "numpy/noprefix.h"
+#include "numpy/ndarrayobject.h"
+
+#ifndef NPY_IN_ARRAY
+#define NPY_IN_ARRAY (NPY_ARRAY_ALIGNED | NPY_ARRAY_ENSUREARRAY | NPY_ARRAY_NOTSWAPPED | NPY_ARRAY_BEHAVED)
+#endif
 
 #include "distance_marcher.h"
 #include "distance_marcher_dinit.h"
@@ -112,7 +116,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  phi = (PyArrayObject *)PyArray_FROMANY(pphi, PyArray_DOUBLE, 1,
+  phi = (PyArrayObject *)PyArray_FROMANY(pphi, NPY_DOUBLE, 1,
                                          10, NPY_IN_ARRAY);
   if (!phi)
   {
@@ -121,7 +125,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  dx = (PyArrayObject *)PyArray_FROMANY(pdx, PyArray_DOUBLE, 1,
+  dx = (PyArrayObject *)PyArray_FROMANY(pdx, NPY_DOUBLE, 1,
                                         1, NPY_IN_ARRAY);
   if (!dx)
   {
@@ -130,7 +134,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  flag = (PyArrayObject *)PyArray_FROMANY(pflag, PyArray_LONG, 1,
+  flag = (PyArrayObject *)PyArray_FROMANY(pflag, NPY_LONGLONG, 1,
                                           10, NPY_IN_ARRAY);
   if (!flag)
   {
@@ -144,7 +148,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   if (mode == TRAVEL_TIME || mode == EXTENSION_VELOCITY)
   {
     {
-      speed = (PyArrayObject *)PyArray_FROMANY(pspeed, PyArray_DOUBLE, 1,
+      speed = (PyArrayObject *)PyArray_FROMANY(pspeed, NPY_DOUBLE, 1,
                                                10, NPY_IN_ARRAY);
       if (!speed)
       {
@@ -213,16 +217,16 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
 
   // make a new array for the return value
   distance = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
-                                            shape2, PyArray_DOUBLE, 0);
+                                            shape2, NPY_DOUBLE, 0);
   if (! distance) return NULL;
 
   if (mode == EXTENSION_VELOCITY)
   {
     f_ext = (PyArrayObject *)PyArray_ZEROS(PyArray_NDIM(phi),
-                                           shape2, PyArray_DOUBLE, 0);
+                                           shape2, NPY_DOUBLE, 0);
     if (! f_ext) return NULL;
 
-    ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, PyArray_LONG, 1,
+    ext_mask = (PyArrayObject *)PyArray_FROMANY(pext_mask, NPY_LONGLONG, 1,
                                                 10, NPY_IN_ARRAY);
     if (! ext_mask)
       {
@@ -240,9 +244,9 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
   // create a level set object to do the calculation
   double * local_phi        = (double *) PyArray_DATA(phi);
   double * local_dx         = (double *) PyArray_DATA(dx);
-  long   * local_flag       = (long *)   PyArray_DATA(flag);
-  long    * local_ext_mask   = 0;
-  if (ext_mask) local_ext_mask = (long *) PyArray_DATA(ext_mask);
+  long long   * local_flag       = (long long *)   PyArray_DATA(flag);
+  long long   * local_ext_mask   = 0;
+  if (ext_mask) local_ext_mask = (long long *) PyArray_DATA(ext_mask);
   double * local_speed      = 0;
   if (speed) local_speed    = (double *) PyArray_DATA(speed);
   double * local_distance   = (double *) PyArray_DATA(distance);

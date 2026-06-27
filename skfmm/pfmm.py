@@ -17,28 +17,28 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
         phi = np.array(phi)
 
     if type(dx) is float or type(dx) is int:
-        dx = [dx for x in range(phi.ndim)]
+        dx = [dx for _ in range(phi.ndim)]
     dx = np.array(dx)
 
     if isinstance(phi, np.ma.MaskedArray):
-        flag = np.zeros(phi.shape, dtype=np.int)
+        flag = np.zeros(phi.shape, dtype=np.dtype("longlong"))
         flag[phi.mask] = MASK
         phi = phi.data
     else:
-        flag = np.zeros(phi.shape, dtype=np.int)
+        flag = np.zeros(phi.shape, dtype=np.dtype("longlong"))
 
     if ext_mask is None:
-        ext_mask = np.zeros(phi.shape, dtype=np.int)
+        ext_mask = np.zeros(phi.shape, dtype=np.dtype("longlong"))
 
     periodic_data = 0
     if isinstance(periodic, bool):
         if periodic:
-            periodic_data = int(2**phi.ndim-1)
+            periodic_data = int(2 ** phi.ndim - 1)
     else:
         if hasattr(periodic, "__len__") and len(periodic) == phi.ndim:
             for i, value in enumerate(periodic):
                 if value:
-                    periodic_data |= 1<<i
+                    periodic_data |= 1 << i
         else:
             raise ValueError("parameter \"periodic\" must be of type bool or sequence of type bool of length phi.ndim.")
 
@@ -122,6 +122,7 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
         distance_init *= dx[0]
         distance_init[phi<0] *= -1
         distance_init[mask] = float_info.max
+
 
     d = cFastMarcher(phi, dx, flag, None, ext_mask,
                      int(self_test), DISTANCE, order, narrow,
@@ -252,7 +253,7 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
 
     """
     phi, dx, flag, ext_mask, periodic = \
-                pre_process_args(phi, dx, narrow, periodic, ext_mask)
+        pre_process_args(phi, dx, narrow, periodic, ext_mask)
 
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,

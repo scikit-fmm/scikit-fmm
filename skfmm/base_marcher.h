@@ -7,9 +7,10 @@ const char Frozen = 2;
 const char Mask   = 3;
 
 #include <limits>
-using namespace std;
-#define doubleEpsilon            numeric_limits<double>::epsilon()
-#define maxDouble                numeric_limits<double>::max()
+#include <memory>
+#include <vector>
+#define doubleEpsilon            std::numeric_limits<double>::epsilon()
+#define maxDouble                std::numeric_limits<double>::max()
 
 class heap;
 
@@ -18,7 +19,7 @@ extern "C" {
 class baseMarcher
 {
 public:
-  baseMarcher(double *phi,      double *dx,  long *flag,
+  baseMarcher(double *phi,      double *dx,  long long *flag,
               double *distance, int ndim,    int *shape,
               bool self_test,   int order,   double narrow,
               int periodic);
@@ -49,8 +50,8 @@ private:
 
   double            narrow_;
   int               order_;
-  int             * heapptr_;        // heap back pointers
-  heap            * heap_;
+  std::vector<int>       heapptr_;
+  std::unique_ptr<heap>  heap_;
   int               shape_[MaximumDimension];    // size of each dimension
   int               shift_[MaximumDimension];
   int               periodic_;
@@ -94,7 +95,7 @@ protected:
   double          * distance_; // return value modified in place
   double          * phi_;
   double          * dx_;
-  long            * flag_;
+  long long       * flag_;
   int               error_;
   int               dim_;            // number of dimensions
   int               size_;           // flat size

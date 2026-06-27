@@ -38,15 +38,15 @@ skfmm.extension_velocities(phi, speed, dx=1.0, self_test=False,
   extension velocity and d is the signed distance function.
 
 
-:Copyright: Copyright 2021 The scikit-fmm team.
+:Copyright: Copyright 2025 The scikit-fmm team.
 :License: BSD-style license. See LICENSE.txt in the source directory.
 
 """
 
-from __future__ import print_function
-
-__version__ = "2021.2.2"
+__version__ = "2025.06.23"
 __docformat__ = 'restructuredtext'
+
+__all__ = ['distance', 'travel_time', 'extension_velocities', 'heap']
 
 from .pfmm import distance, travel_time, extension_velocities
 from .heap import heap
@@ -872,6 +872,20 @@ def testing():
     >>> np.testing.assert_allclose(tt.data, ((0.5, 50, 7.5),
     ...                                      (0,    0, 0.5),
     ...                                      (0,    0, 0.5)))
+
+    This is from Pull Request #57:
+
+    >>> a = np.array([[[600,  399,  641], [607,  605,  796], [602,  641,  797], [602,  658,  814]], [[272,   -1,  398], [208,  282,  539], [209,  285,  513], [208,  298,  519]], [[-19,   51,  307], [-191,   2,  403], [-171,   5,  325], [-172,   3,  318]]])
+
+    >>> d = distance(a)
+    >>> assert not (d==0).any()
+
+    A 2D version of this bug was also discovered
+
+    >>> a = np.array([[399,  -1, 51,   10.0], [605, 282,  2,   -3], [641, 285,  5, -100], [658, 298,  3,   -3]])
+    >>> d = distance(a)
+    >>> assert not (d==0).any()
+
     """
 
 def test(verbose=None):

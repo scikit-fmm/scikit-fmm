@@ -5,8 +5,10 @@ include skfmm/*.cpp
 include skfmm/*.h
 include skfmm/setup.py
 include skfmm/__init__.py
+include skfmm/__init__.pyi
 include skfmm/pfmm.py
 include skfmm/heap.py
+include skfmm/py.typed
 include skfmm/pheap.pyx
 include Makefile
 include LICENSE.txt
@@ -18,3 +20,4 @@ include doc/*.png
 include doc/*.rst
 include doc/conf.py
 include static_analysis.sh
+include pyproject.toml

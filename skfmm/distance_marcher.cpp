@@ -1,5 +1,6 @@
 #include "distance_marcher.h"
 #include "math.h"
+#include <stdexcept>
 
 double distanceMarcher::updatePointOrderOne(int i)
 {
@@ -27,8 +28,13 @@ double distanceMarcher::updatePointOrderOne(int i)
       c+=idx2_[dim]*pow(value,2);
     }
   }
-  double tmp = solveQuadratic(i,a,b,c);
-  return tmp;
+  try {
+    return solveQuadratic(i,a,b,c);
+  } catch(std::runtime_error& err) {
+    // if the quadratic equation can't be solved, use the
+    // position of the minimum as a more reasonable approximation
+    return -b / (2.0 * a);
+  }
 }
 
 
@@ -78,8 +84,12 @@ double distanceMarcher::updatePointOrderTwo(int i)
       c+=idx2_[dim]*pow(value1,2);
     }
   }
-  double tmp = solveQuadratic(i,a,b,c);
-  return tmp;
+  try {
+    return solveQuadratic(i,a,b,c);
+  } catch(std::runtime_error& err) {
+    // if the second order method fails, try the first order method instead
+    return updatePointOrderOne(i);
+  }
 }
 
 
@@ -90,14 +100,14 @@ double distanceMarcher::solveQuadratic(int i, const double &a,
 {
   c-=1;
   double det = pow(b,2)-4*a*c;
-  if (det > 0)
+  if (det >= 0)
   {
     if (phi_[i] > doubleEpsilon) { return (-b + sqrt(det)) / 2.0 / a; }
     else                         { return (-b - sqrt(det)) / 2.0 / a; }
   }
   else
   {
-    return 0;
+    throw std::runtime_error("Negative discriminant in distance marcher quadratic.");
   }
 }
 

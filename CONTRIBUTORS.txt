@@ -2,7 +2,7 @@ Jason Furtney
 Chris Richardson
 Luigi Costalli
 Daniel Wheeler
-Ján Margeta
+Jan Margeta
 Geordie McBain
 Eugene Prilepin
 Lester Hedges
@@ -15,3 +15,13 @@ Murray Cutforth
 okonrad
 f-fanni
 David Parsson
+Robin Thibaut
+Joshua Gehre
+Xylar Asay-Davis
+Amin Sadeghi
+Daniel Ammar
+Fernando Bordignon
+DorSSS
+Jan Janssen
+Sylvester S
+joeybutton
