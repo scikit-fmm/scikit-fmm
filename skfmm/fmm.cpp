@@ -29,7 +29,6 @@ static PyMethodDef fmm_methods[] =
     {NULL, NULL, 0, NULL}
 };
 
-#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "cfmm",                               /* m_name */
@@ -41,33 +40,17 @@ static struct PyModuleDef moduledef = {
     NULL,                                 /* m_clear */
     NULL,                                 /* m_free */
 };
-#endif
 
 PyMODINIT_FUNC
-#if PY_MAJOR_VERSION >= 3
 PyInit_cfmm(void)
-#else
-initcfmm(void)
-#endif
 {
-    PyObject* m;
-
-#if PY_MAJOR_VERSION >= 3
-    m = PyModule_Create(&moduledef);
+    PyObject* m = PyModule_Create(&moduledef);
 
     if (m == NULL)
         return NULL;
 
     import_array();
     return m;
-#else
-    m = Py_InitModule3("cfmm", fmm_methods,
-        "c extension module for scikit-fmm");
-    if (m == NULL)
-        return;
-
-    import_array();
-#endif
 }
 
 static PyObject *distance_method(PyObject *self, PyObject *args)
