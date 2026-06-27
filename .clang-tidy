@@ -1,0 +1,13 @@
+Checks: >
+  bugprone-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-magic-numbers,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-magic-numbers
+
+WarningsAsErrors: "*"
+HeaderFilterRegex: "skfmm/.*\\.h"
+FormatStyle: none
