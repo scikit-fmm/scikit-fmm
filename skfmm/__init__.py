@@ -46,6 +46,8 @@ skfmm.extension_velocities(phi, speed, dx=1.0, self_test=False,
 __version__ = "2025.06.23"
 __docformat__ = 'restructuredtext'
 
+__all__ = ['distance', 'travel_time', 'extension_velocities', 'heap']
+
 from .pfmm import distance, travel_time, extension_velocities
 from .heap import heap
 

@@ -21,6 +21,10 @@ classifiers      = ["Development Status :: 5 - Production/Stable",
                     "Programming Language :: C++",
                     "Programming Language :: Python :: 3"]
 
+[[tool.mypy.overrides]]
+module = ["skfmm.pheap", "skfmm.cfmm"]
+ignore_missing_imports = true
+
 [project.urls]
 Homepage = 'https://github.com/scikit-fmm/scikit-fmm'
 Repository = 'https://github.com/scikit-fmm/scikit-fmm'
