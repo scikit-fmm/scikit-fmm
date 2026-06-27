@@ -30,6 +30,7 @@ srcs = [
   'skfmm/heap.cpp',
   'skfmm/base_marcher.cpp',
   'skfmm/distance_marcher.cpp',
+  'skfmm/distance_marcher_dinit.cpp',
   'skfmm/travel_time_marcher.cpp',
   'skfmm/extension_velocity_marcher.cpp',
 ]
@@ -37,6 +38,7 @@ srcs = [
 py.install_sources(
   ['skfmm/__init__.py',
    'skfmm/__init__.pyi',
+   'skfmm/bi_cubic_init.py',
    'skfmm/pfmm.py',
    'skfmm/heap.py',
    'skfmm/py.typed'],

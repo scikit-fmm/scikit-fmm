@@ -259,7 +259,7 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
     {
       if (pdinit != Py_None)
       {
-        dinit = (PyArrayObject *)PyArray_FROMANY(pdinit, PyArray_DOUBLE, 1,
+        dinit = (PyArrayObject *)PyArray_FROMANY(pdinit, NPY_DOUBLE, 1,
                                                  10, NPY_IN_ARRAY);
         // we should be testing the dimention here for safety.
 

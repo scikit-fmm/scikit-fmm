@@ -115,6 +115,11 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
         # experimental 2d only bicubic initialization
         if len(phi.shape) != 2 or dx[0] != dx[1] or order != 2:
             raise ValueError("Second order narrow band initialization only works for 2d arrays where spacing is the same in each dimension.")
+        if periodic:
+            raise ValueError("Second order narrow band initialization does not support periodic boundaries.")
+        if isinstance(phi, np.ma.MaskedArray):
+            raise ValueError("Second order narrow band initialization does not support masked arrays.")
+
         dinit = BiCubicInit(phi, 1.0)
         mask = dinit.aborders == False
         distance_init = dinit.d

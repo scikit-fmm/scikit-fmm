@@ -11,8 +11,7 @@ Then build with
 This builds the module in place and sets up import hooks that rebuilds
 the module on demand if you change the c++ files.
 
-- force rebuild: `python -m pip install --no-build-isolation
-  --force-reinstall -e .`
+- force rebuild: `python -m pip install --no-build-isolation --force-reinstall -e .`
 - linting `ruff check skfmm/`
 - C++ linting: `pipx run clang-tidy skfmm/*.cpp -- -std=c++17`
 
