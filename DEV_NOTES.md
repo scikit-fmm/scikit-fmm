@@ -5,11 +5,16 @@ To do a normal build from source see the README.md, if you are
 developing and want to make changes and test them in this folder use
 this approach:
 
-- `pip install meson-python ninja numpy`
+- `pip install meson-python ninja numpy pipx`
 Then build with
 - `python -m pip install --no-build-isolation -e .`
 This builds the module in place and sets up import hooks that rebuilds
 the module on demand if you change the c++ files.
+
+- force rebuild: `python -m pip install --no-build-isolation
+  --force-reinstall -e .`
+- linting `ruff check skfmm/`
+- C++ linting: `pipx run clang-tidy skfmm/*.cpp -- -std=c++17`
 
 ## To make a release:
 
