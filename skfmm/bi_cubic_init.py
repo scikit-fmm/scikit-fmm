@@ -223,6 +223,8 @@ class BiCubicInit(object):
 
 
 if __name__ == '__main__':
+    from matplotlib import pyplot as plt
+
     N = 100
     x, h = np.linspace(-2.5,2.5,N,retstep=True)
     extent = (x[0],x[-1],x[0],x[-1])
