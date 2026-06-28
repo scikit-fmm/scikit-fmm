@@ -12,3 +12,5 @@ scikit_fmm.egg-info/requires.txt
 scikit_fmm.egg-info/top_level.txt
 install_log.txt
 skfmm/*.pyd
+init_temp/notes.*
+!init_temp/notes.org
