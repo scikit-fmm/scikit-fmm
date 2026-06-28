@@ -1,7 +1,7 @@
 import numpy as np
 from sys import float_info
 
-ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ainv = np.array([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
                  [-3,3,0,0,-2,-1,0,0,0,0,0,0,0,0,0,0],
                  [2,-2,0,0,1,1,0,0,0,0,0,0,0,0,0,0],
@@ -212,7 +212,7 @@ class BiCubicInit(object):
         coords = ((i, i+1, i, i+1), (j, j, j+1, j+1))
         X = np.hstack((self.phi[coords], self.gx[coords],
                        self.gy[coords], self.xgr[coords]))
-        a =  ainv *np.matrix(X).T
+        a = ainv @ X
         interp = bc_interp(a)
 
         np.testing.assert_almost_equal(self.phi[i,j],     interp(0,0))

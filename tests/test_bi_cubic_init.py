@@ -12,8 +12,7 @@ from skfmm.bi_cubic_init import ainv, bc_interp, bc_interp_eq2, _newton2d, BiCub
 def _make_interp(seed):
     """bc_interp from a fixed random coefficient vector."""
     rng = np.random.default_rng(seed)
-    a_flat = rng.standard_normal(16) * 0.5
-    return bc_interp(np.matrix(a_flat).T)
+    return bc_interp(rng.standard_normal(16) * 0.5)
 
 
 def _linear_x_interp():
@@ -28,8 +27,7 @@ def _linear_x_interp():
          0.0,  0.0,  0.0,  0.0,   # gy = 0 everywhere
          0.0,  0.0,  0.0,  0.0,   # fxy = 0 everywhere
     ])
-    a = ainv * np.matrix(X_data).T
-    return bc_interp(a)
+    return bc_interp(ainv @ X_data)
 
 
 # ---------------------------------------------------------------------------
@@ -137,7 +135,7 @@ class TestNewtonSolver:
         interp = None
         for _ in range(200):
             a_flat = rng.standard_normal(16) * 0.5
-            candidate = bc_interp(np.matrix(a_flat).T)
+            candidate = bc_interp(a_flat)
             vals = [candidate(x, y) for x, y in [(0, 0), (1, 0), (0, 1), (1, 1)]]
             if min(vals) < 0 < max(vals):
                 interp = candidate
@@ -153,7 +151,7 @@ class TestNewtonSolver:
 
     def test_singular_jacobian_reports_not_converged(self):
         """f = 0 everywhere → Jacobian is zero → solver must not claim convergence."""
-        interp = bc_interp(np.matrix(np.zeros(16)).T)
+        interp = bc_interp(np.zeros(16))
         eq2 = bc_interp_eq2(interp, b0=0.0, b1=0.0)
         _, _, converged = _newton2d(eq2)
         assert not converged
