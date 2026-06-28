@@ -7,7 +7,9 @@ this approach:
 
 - `pip install meson-python ninja numpy pipx`
 Then build with
-- `python -m pip install --no-build-isolation -e .`
+```
+python -m pip install --no-build-isolation -e .
+```
 This builds the module in place and sets up import hooks that rebuilds
 the module on demand if you change the c++ files.
 

@@ -86,8 +86,12 @@ pip install .
 For more on development and making releases see: [DEV_NOTES.md](DEV_NOTES.md)
 
 ### Running Tests
-* `python -c "import skfmm; skfmm.test(True)"` (Do not run the tests from the source directory.)
-* Tests are doctests in `skfmm/__init__.py`
+* Running the tests requires `pytest`. (`pip install pytest`)
+* Do not run the tests from the source directory.
+* Tests are doctests in `skfmm/__init__.py` and in `test/`
+```
+python -c "import skfmm; skfmm.test(True)"
+```
 
 ### Building documentation
 * Requires sphinx and numpydoc

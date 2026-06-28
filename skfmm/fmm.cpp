@@ -313,7 +313,8 @@ static PyObject *distance_method(PyObject *self, PyObject *args)
         local_speed,
         local_fext,
         narrow,
-        periodic);
+        periodic,
+        local_dinit);
     }
     break;
   default: error=1;

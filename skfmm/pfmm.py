@@ -99,7 +99,7 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
                individual directions. The default value is False,
                i.e., no periodic boundaries in any direction.
 
-    init_order : bool, optional
+    init_order : {1, 2}, optional
                  Experimental second-order initialization of calculation
 
     Returns
@@ -184,7 +184,7 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
                individual directions. The default value is False,
                i.e., no periodic boundaries in any direction.
 
-    init_order : bool, optional
+    init_order : {1, 2}, optional
                  Experimental second-order initialization of calculation
 
     Returns
@@ -226,7 +226,7 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
 
 
 def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
-                         ext_mask=None, narrow=0.0, periodic=False):
+                         ext_mask=None, narrow=0.0, periodic=False, init_order=1):
     """Extend the velocities defined at the zero contour of phi, in the
     normal direction, to the rest of the domain. Extend the velocities
     such that grad f_ext dot grad d = 0 where where f_ext is the
@@ -276,6 +276,10 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
                individual directions. The default value is False,
                i.e., no periodic boundaries in any direction.
 
+     init_order : {1, 2}, optional
+                 Experimental second-order initialization of calculation
+
+
     Returns
     -------
     (d, f_ext) : tuple
@@ -286,9 +290,33 @@ def extension_velocities(phi, speed, dx=1.0, self_test=False, order=2,
     phi, dx, flag, ext_mask, periodic = \
         pre_process_args(phi, dx, narrow, periodic, ext_mask)
 
+    distance_init = None
+    if init_order==2:
+        # experimental 2d only bicubic initialization
+        if len(phi.shape) != 2 or dx[0] != dx[1] or order != 2:
+            raise ValueError("Second order narrow band initialization only works for 2d arrays where spacing is the same in each dimension.")
+        if periodic:
+            raise ValueError("Second order narrow band initialization does not support periodic boundaries.")
+        if isinstance(phi, np.ma.MaskedArray):
+            raise ValueError("Second order narrow band initialization does not support masked arrays.")
+        if ext_mask.any():
+            raise ValueError("Second order narrow band initialization does not support the optional ext_mask argument.")
+
+        dinit = BiCubicInit(phi, 1.0, speed)
+        mask = dinit.aborders == False
+        distance_init = dinit.d
+        distance_init[mask] = 0.0
+        distance_init *= dx[0]
+        distance_init[phi<0] *= -1
+        distance_init[mask] = float_info.max
+        speed = np.copy(speed)
+        # here we used a reconstructed value of the speed on the interface
+        # for initially frozen points.
+        speed[dinit._speed_set] = dinit.out_speed[dinit._speed_set]
+
     distance, f_ext = cFastMarcher(phi, dx, flag, speed, ext_mask,
                                    int(self_test), EXTENSION_VELOCITY,
-                                   order, narrow, periodic, None)
+                                   order, narrow, periodic, distance_init)
     distance = post_process_result(distance)
     f_ext = post_process_result(f_ext)
 

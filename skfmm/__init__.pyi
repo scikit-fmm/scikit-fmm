@@ -82,6 +82,7 @@ def extension_velocities(
     ext_mask: ArrayLike | None = ...,
     narrow: float = ...,
     periodic: _Periodic = ...,
+    init_order: Literal[1, 2] = ...,
 ) -> tuple[np.ma.MaskedArray, np.ma.MaskedArray]: ...
 
 @overload
@@ -94,6 +95,7 @@ def extension_velocities(
     ext_mask: ArrayLike | None = ...,
     narrow: float = ...,
     periodic: _Periodic = ...,
+    init_order: Literal[1, 2] = ...,
 ) -> tuple[np.ndarray | np.ma.MaskedArray, np.ndarray | np.ma.MaskedArray]: ...
 
 # ---------------------------------------------------------------------------

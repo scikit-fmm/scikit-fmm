@@ -95,6 +95,23 @@ class bc_interp_eq2(bc_interp):
         return f0, f1, j00, j01, j10, j11
 
 
+def _cross_derivative(f, h):
+    """Cross-derivative (fxy) of a 2D field using the 4-point corner stencil."""
+    xgr = np.zeros_like(f)
+    nx, ny = f.shape
+    xgr[1:-1,1:-1] = (f[2:,2:] - f[2:,:-2] - f[:-2,2:] + f[:-2,:-2])
+    xgr[   0,   0] = -(f[ 2, 0] - f[ 2, 2] - f[ 0, 0] + f[ 0, 2])
+    xgr[nx-1,ny-1] = -(f[-1,-3] - f[-1,-1] - f[-3,-3] + f[-3,-1])
+    xgr[   0,ny-1] =  (f[ 0,-3] - f[ 0,-1] - f[ 2,-3] + f[ 2,-1])
+    xgr[nx-1,   0] = -(f[-1, 0] - f[-1, 2] - f[-3, 0] + f[-3, 2])
+    xgr[0,   1:-1] = -(f[ 2, :-2] - f[ 2, 2:] - f[0, :-2] + f[0, 2:])
+    xgr[nx-1,1:-1] =  (f[ -3, :-2] - f[ -3, 2:] - f[-1, :-2] + f[-1, 2:])
+    xgr[1:-1,   0] = -(f[ 2:,  0] - f[2:, 2] - f[:-2,   0] + f[:-2, 2])
+    xgr[1:-1,ny-1] = -(f[ 2:, -3] - f[2:, -1] - f[:-2, -3] + f[:-2, -1])
+    xgr /= (4 * h**2)
+    return xgr
+
+
 def _newton2d(eq2, tol=1.49e-8, max_iter=50):
     """Newton-Raphson solver for the 2D closest-point system.
 
@@ -120,7 +137,16 @@ def _newton2d(eq2, tol=1.49e-8, max_iter=50):
 
 
 class BiCubicInit(object):
-    def __init__(self, phi, h):
+    def __init__(self, phi, h, speed=None):
+        self.in_speed = None
+        self.out_speed = None
+        phi = phi.astype(np.double)
+        if speed is not None:
+            self.in_speed = speed.astype(np.double)
+            assert self.in_speed.shape == phi.shape
+            self.out_speed = np.zeros_like(self.in_speed)
+            self._speed_set = np.zeros(phi.shape, dtype=bool)
+
         assert h==1
         self.phi = phi
         self.d = np.ones_like(phi) * float_info.max
@@ -131,30 +157,14 @@ class BiCubicInit(object):
         gx, gy = np.gradient(phi, edge_order=2)
         self.gx, self.gy = gx/h, gy/h # is this correct for h != 1?
 
-        xgr = np.zeros_like(phi)
 
-        denom = (4*h**2)
-        xgr[1:-1,1:-1] = (phi[2:,2:] - phi[2:,:-2] - phi[:-2,2:] + phi[:-2,:-2])
-        # there are 8 special cases, 4 corners and 4 sides
-        # The cross derivative stencil looks like this:
-        #   C---.---A
-        #   |       |     phi_xy = (phi_A - phi_B - phi_C + phi_D) / (4*h**2)
-        #   .   .   .
-        #   |       |
-        #   D---.---B
-        #                A            B           C           D
-        nx, ny = phi.shape
-        xgr[   0,   0] = -(phi[ 2, 0] - phi[ 2, 2] - phi[ 0, 0] + phi[ 0, 2])
-        xgr[nx-1,ny-1] = -(phi[-1,-3] - phi[-1,-1] - phi[-3,-3] + phi[-3,-1])
-        xgr[   0,ny-1] =  (phi[ 0,-3] - phi[ 0,-1] - phi[ 2,-3] + phi[ 2,-1])
-        xgr[nx-1,   0] = -(phi[-1, 0] - phi[-1, 2] - phi[-3, 0] + phi[-3, 2])
-        xgr[0,1:-1] = -(phi[ 2, :-2] - phi[ 2, 2:] - phi[0, :-2] + phi[0, 2:])
-        xgr[nx-1,1:-1] =  (phi[ -3, :-2] - phi[ -3, 2:] - phi[-1, :-2] + phi[-1, 2:])
-        xgr[1:-1, 0] =   -(phi[ 2:,  0] - phi[2:, 2] - phi[:-2,   0] + phi[:-2, 2])
-        xgr[1:-1,ny-1] = -(phi[ 2:, -3] - phi[2:, -1] - phi[:-2, -3] + phi[:-2, -1])
-        xgr /= denom
+        self.xgr = _cross_derivative(phi, h)
 
-        self.xgr = xgr
+        if self.in_speed is not None:
+            gx_s, gy_s = np.gradient(self.in_speed, edge_order=2)
+            self.gx_speed = gx_s / h
+            self.gy_speed = gy_s / h
+            self.xgr_speed = _cross_derivative(self.in_speed, h)
         self.find_frozen()
         self.ini_frozen()
 
@@ -214,23 +224,31 @@ class BiCubicInit(object):
                        self.gy[coords], self.xgr[coords]))
         a = ainv @ X
         interp = bc_interp(a)
+        interp_speed = None
+        if self.in_speed is not None:
+            X2 = np.hstack((self.in_speed[coords], self.gx_speed[coords],
+                            self.gy_speed[coords], self.xgr_speed[coords]))
+            interp_speed = bc_interp(ainv @ X2)
 
         np.testing.assert_almost_equal(self.phi[i,j],     interp(0,0))
         np.testing.assert_almost_equal(self.phi[i+1,j],   interp(1,0))
         np.testing.assert_almost_equal(self.phi[i,j+1],   interp(0,1))
         np.testing.assert_almost_equal(self.phi[i+1,j+1], interp(1,1))
 
-        self.process_point(i,j,0,0,interp)
-        self.process_point(i+1,j,1,0,interp)
-        self.process_point(i,j+1,0,1,interp)
-        self.process_point(i+1,j+1,1,1,interp)
+        self.process_point(i,   j,   0, 0, interp, interp_speed)
+        self.process_point(i+1, j,   1, 0, interp, interp_speed)
+        self.process_point(i,   j+1, 0, 1, interp, interp_speed)
+        self.process_point(i+1, j+1, 1, 1, interp, interp_speed)
 
-    def process_point(self, i, j, ii, jj, interp):
+    def process_point(self, i, j, ii, jj, interp, interp_speed):
         # ii and jj are the query point coordinates in the dimensionless reference cell
         nx, ny = self.phi.shape
         if not self.aborders[i,j]: return
         if abs(self.phi[i,j]) < float_info.epsilon:
             self.d[i,j] = 0.0
+            if self.out_speed is not None:
+                self.out_speed[i,j] = self.in_speed[i,j]
+                self._speed_set[i,j] = True
             return
 
         eq2 = bc_interp_eq2(interp, ii, jj)
@@ -240,8 +258,11 @@ class BiCubicInit(object):
             if 0 <= sx <= 1 and 0 <= sy <= 1:
                 dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
                 if self.d[i,j] > dist:
-                    self.d[i,j]=dist
-                    self.pdict[(i,j)] = (sx-ii,sy-jj)
+                    self.d[i,j] = dist
+                    self.pdict[(i,j)] = (sx-ii, sy-jj)
+                    if interp_speed is not None:
+                        self.out_speed[i,j] = interp_speed(sx, sy)
+                        self._speed_set[i,j] = True
             else:
                 # for boundary points we need to accept points outside [0,1]
                 # this could/should be done more cleverly/safely
@@ -249,8 +270,11 @@ class BiCubicInit(object):
                 if i==0 or j==0 or i==nx-1 or j==ny-1:
                     dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
                     if self.d[i,j] > dist:
-                        self.d[i,j]=dist
-                        self.pdict[(i,j)] = (sx-ii,sy-jj)
+                        self.d[i,j] = dist
+                        self.pdict[(i,j)] = (sx-ii, sy-jj)
+                        if interp_speed is not None:
+                            self.out_speed[i,j] = interp_speed(sx, sy)
+                            self._speed_set[i,j] = True
         else:
             print("Newton did not converge", sx, sy, interp(sx,sy), eq2(sx,sy))
 

@@ -9,10 +9,10 @@ public:
                            double *distance, int     ndim,  int *shape,
                            bool self_test,   int order,     long long *ext_mask,
                            double *speed,
-                           double *f_ext,    double narrow, int periodic) :
+                           double *f_ext,    double narrow, int periodic, double *dinit):
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test,
-                    order, narrow, periodic, 0),
-  speed_(speed), f_ext_(f_ext), ext_mask_(ext_mask) { }
+                    order, narrow, periodic, dinit),
+    speed_(speed), f_ext_(f_ext), ext_mask_(ext_mask) { }
   virtual ~extensionVelocityMarcher() { }
 
 protected:

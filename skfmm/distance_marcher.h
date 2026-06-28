@@ -23,6 +23,6 @@ protected:
   virtual void             initalizeFrozen();
   virtual double           updatePointOrderOne(int i);
   virtual double           updatePointOrderTwo(int i);
-private:
+protected:
   double * dinit_;
 };

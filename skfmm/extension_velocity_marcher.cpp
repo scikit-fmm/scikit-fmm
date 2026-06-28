@@ -8,6 +8,24 @@
 
 void extensionVelocityMarcher::initalizeFrozen()
 {
+  if (dinit_ != 0)
+  {
+    // this is a special case of the init frozen because the distance to
+    // the zero contour of the initially frozen points has been pre-calculated
+    // in the python wrapper.
+    int c=0;
+    for (int i=0; i<size_; i++)
+    {
+      if (! (dinit_[i] == maxDouble))
+      {
+        c++;
+        flag_[i] = Frozen;
+        distance_[i] = dinit_[i];
+        f_ext_[i] = speed_[i];
+      }
+    }
+    return;
+  }
   //loop over phi to find zero values
   //  and mark them as frozen
   for (int i=0; i<size_; i++)
