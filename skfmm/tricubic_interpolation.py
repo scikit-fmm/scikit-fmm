@@ -247,7 +247,7 @@ if __name__ == '__main__':
 
 
 
-    print
+    print()
     1/0
 
     # make sure we can recover the corner points
@@ -261,5 +261,5 @@ if __name__ == '__main__':
     for i in range(1000):
         test_point = np.random.rand(3)*5
 
-        print test_point, tci(test_point), f(*test_point)
+        print(test_point, tci(test_point), f(*test_point))
         np.testing.assert_almost_equal()

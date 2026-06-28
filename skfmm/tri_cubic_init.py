@@ -89,10 +89,10 @@ class TriCubicInit(object):
                                             k/self.h),
                                            full_output=1)
         if ier==1:
-            print "OK", sol
+            print("OK", sol)
         else:
-            print "failed"
-            print ier, mesg, info
+            print("failed")
+            print(ier, mesg, info)
 
 if __name__ == '__main__':
     X,Y,Z = np.meshgrid(np.linspace(0,15,16),
