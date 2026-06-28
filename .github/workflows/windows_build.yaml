@@ -37,7 +37,7 @@ jobs:
           python -c "import struct; print(struct.calcsize('P') * 8)"
           pip install build
           python -m build
-          pip install .
+          pip install ".[test]"
           pip list
       - uses: actions/upload-artifact@v7
         with:
