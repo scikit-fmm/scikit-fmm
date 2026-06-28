@@ -1,6 +1,5 @@
 import numpy as np
 from sys import float_info
-from scipy.optimize import fsolve
 
 ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
@@ -22,36 +21,102 @@ ainv = np.matrix([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 class bc_interp(object):
     def __init__(self, a):
         self.a = a.reshape((4,4),order="f")
+
     def __call__(self, x, y):
-        a=self.a
-        return  a[0,0] + a[0,1]*y + a[0,2]*y**2 + a[0,3]*y**3 + \
-                a[1,0]*x + a[1,1]*x*y + a[1,2]*x*y**2 + a[1,3]*x*y**3 + \
-                a[2,0]*x**2 + a[2,1]*x**2*y + a[2,2]*x**2*y**2 + \
-                a[2,3]*x**2*y**3 + a[3,0]*x**3 + a[3,1]*x**3*y + \
-                a[3,2]*x**3*y**2 + a[3,3]*x**3*y**3
+        a = self.a
+        return (a[0,0] + a[0,1]*y + a[0,2]*y**2 + a[0,3]*y**3 +
+                a[1,0]*x + a[1,1]*x*y + a[1,2]*x*y**2 + a[1,3]*x*y**3 +
+                a[2,0]*x**2 + a[2,1]*x**2*y + a[2,2]*x**2*y**2 +
+                a[2,3]*x**2*y**3 + a[3,0]*x**3 + a[3,1]*x**3*y +
+                a[3,2]*x**3*y**2 + a[3,3]*x**3*y**3)
+
+    def fx(self, x, y):
+        a = self.a
+        return (a[1,0] + a[1,1]*y + a[1,2]*y**2 + a[1,3]*y**3 +
+                2*a[2,0]*x + 2*a[2,1]*x*y + 2*a[2,2]*x*y**2 + 2*a[2,3]*x*y**3 +
+                3*a[3,0]*x**2 + 3*a[3,1]*x**2*y + 3*a[3,2]*x**2*y**2 +
+                3*a[3,3]*x**2*y**3)
+
+    def fy(self, x, y):
+        a = self.a
+        return (a[0,1] + 2*a[0,2]*y + 3*a[0,3]*y**2 +
+                a[1,1]*x + 2*a[1,2]*x*y + 3*a[1,3]*x*y**2 +
+                a[2,1]*x**2 + 2*a[2,2]*x**2*y + 3*a[2,3]*x**2*y**2 +
+                a[3,1]*x**3 + 2*a[3,2]*x**3*y + 3*a[3,3]*x**3*y**2)
+
+    def fxx(self, x, y):
+        a = self.a
+        return (2*a[2,0] + 2*a[2,1]*y + 2*a[2,2]*y**2 + 2*a[2,3]*y**3 +
+                6*a[3,0]*x + 6*a[3,1]*x*y + 6*a[3,2]*x*y**2 + 6*a[3,3]*x*y**3)
+
+    def fyy(self, x, y):
+        a = self.a
+        return (2*a[0,2] + 6*a[0,3]*y +
+                2*a[1,2]*x + 6*a[1,3]*x*y +
+                2*a[2,2]*x**2 + 6*a[2,3]*x**2*y +
+                2*a[3,2]*x**3 + 6*a[3,3]*x**3*y)
+
+    def fxy(self, x, y):
+        a = self.a
+        return (a[1,1] + 2*a[1,2]*y + 3*a[1,3]*y**2 +
+                2*a[2,1]*x + 4*a[2,2]*x*y + 6*a[2,3]*x*y**2 +
+                3*a[3,1]*x**2 + 6*a[3,2]*x**2*y + 9*a[3,3]*x**2*y**2)
 
 
 class bc_interp_eq2(bc_interp):
     def __init__(self, interp, b0, b1):
         self.a = interp.a
         self.b0, self.b1 = b0, b1
-    def __call__(self, x, y):
-        a=self.a
-        b0, b1 = self.b0, self.b1
-        return -(b0 - x)* \
-            (a[0,1] + 2*a[0,2]*y + 3*a[0,3]*y**2 + \
-                           a[1,1]*x + 2*a[1,2]*x*y + \
-                           3*a[1,3]*x*y**2 + a[2,1]*x**2 +\
-                           2*a[2,2]*x**2*y + 3*a[2,3]*x**2*y**2 +\
-                           a[3,1]*x**3 + 2*a[3,2]*x**3*y +\
-                           3*a[3,3]*x**3*y**2) + (b1 - y)* \
-            (a[1,0] + a[1,1]*y + a[1,2]*y**2 + a[1,3]*y**3 +\
-             2*a[2,0]*x + 2*a[2,1]*x*y +\
-             2*a[2,2]*x*y**2 + 2*a[2,3]*x*y**3 +\
-             3*a[3,0]*x**2 + 3*a[3,1]*x**2*y +\
-             3*a[3,2]*x**2*y**2 +\
-             3*a[3,3]*x**2*y**3)
 
+    def __call__(self, x, y):
+        return -(self.b0 - x) * self.fy(x, y) + (self.b1 - y) * self.fx(x, y)
+
+    def fj(self, x, y):
+        """Returns (F0, F1, J00, J01, J10, J11) in one pass for Newton-Raphson.
+
+        F0 = f(x,y)  [bicubic value]
+        F1 = eq2(x,y) [orthogonality condition: closest-point constraint]
+        J is the 2x2 Jacobian of (F0, F1) w.r.t. (x, y), computed analytically.
+        """
+        b0, b1 = self.b0, self.b1
+        _fx  = self.fx(x, y)
+        _fy  = self.fy(x, y)
+        _fxx = self.fxx(x, y)
+        _fyy = self.fyy(x, y)
+        _fxy = self.fxy(x, y)
+        f0 = bc_interp.__call__(self, x, y)
+        f1 = -(b0 - x) * _fy + (b1 - y) * _fx
+        # J[0,:] = grad f
+        j00 = _fx
+        j01 = _fy
+        # J[1,:] = grad eq2, derived by product rule
+        j10 = _fy - (b0 - x) * _fxy + (b1 - y) * _fxx
+        j11 = -_fx - (b0 - x) * _fyy + (b1 - y) * _fxy
+        return f0, f1, j00, j01, j10, j11
+
+
+def _newton2d(eq2, tol=1.49e-8, max_iter=50):
+    """Newton-Raphson solver for the 2D closest-point system.
+
+    Finds (x, y) such that f(x,y)=0 and the vector to the query point
+    is parallel to grad f (i.e. the closest point on the zero contour).
+    Uses the analytic Jacobian from eq2.fj; no external dependencies.
+    Returns (x, y, converged).
+    """
+    x, y = 0.5, 0.5
+    for _ in range(max_iter):
+        f0, f1, j00, j01, j10, j11 = eq2.fj(x, y)
+        det = j00 * j11 - j01 * j10
+        if abs(det) < 1e-15:
+            return x, y, False
+        # 2x2 solve via Cramer's rule
+        dx = (j11 * f0 - j01 * f1) / det
+        dy = (j00 * f1 - j10 * f0) / det
+        x -= dx
+        y -= dy
+        if abs(dx) < tol and abs(dy) < tol:
+            return x, y, True
+    return x, y, False
 
 
 class BiCubicInit(object):
@@ -155,21 +220,13 @@ class BiCubicInit(object):
         np.testing.assert_almost_equal(self.phi[i,j+1],   interp(0,1))
         np.testing.assert_almost_equal(self.phi[i+1,j+1], interp(1,1))
 
-        # print interp(0,0)
-        # print interp(1,0)
-        # print interp(0,1)
-        # print interp(1,1)
-
-        # print "phi at cell center", interp(0.5,0.5)
-
         self.process_point(i,j,0,0,interp)
         self.process_point(i+1,j,1,0,interp)
         self.process_point(i,j+1,0,1,interp)
         self.process_point(i+1,j+1,1,1,interp)
 
     def process_point(self, i, j, ii, jj, interp):
-        # ii and jj are b here in the dimensionless reference cell
-        #print ii,jj
+        # ii and jj are the query point coordinates in the dimensionless reference cell
         nx, ny = self.phi.shape
         if not self.aborders[i,j]: return
         if abs(self.phi[i,j]) < float_info.epsilon:
@@ -177,24 +234,10 @@ class BiCubicInit(object):
             return
 
         eq2 = bc_interp_eq2(interp, ii, jj)
+        sx, sy, converged = _newton2d(eq2)
 
-        def eqns(p):
-            c0, c1 = p
-            # try scaling these?
-            return (interp(c0, c1), eq2(c0, c1))
-
-        fprime = None
-        # maybe try using the bilnear approximation as a starting value?
-        # or try specifying the Jacobian of the functions
-        # http://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant
-        sol, info, ier, mesg = fsolve(eqns, (0.5,0.5),
-                                      full_output=1, fprime=fprime)
-        sx,sy = sol
-
-        if ier==1:
+        if converged:
             if 0 <= sx <= 1 and 0 <= sy <= 1:
-                #print i+sx,j+sy
-                #print "test", eqns(sol)
                 dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
                 if self.d[i,j] > dist:
                     self.d[i,j]=dist
@@ -208,18 +251,8 @@ class BiCubicInit(object):
                     if self.d[i,j] > dist:
                         self.d[i,j]=dist
                         self.pdict[(i,j)] = (sx-ii,sy-jj)
-
-                # print "-"*20
-                # print sx, sy
-                # print "point {} cell {}".format((i, j), (ii, jj))
-                # dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
-                # print "distance {}".format(dist)
-                # print eqns(sol)
-                # print
         else:
-            #pass
-            print (ier, mesg)
-            print (sx,sy, interp(sx,sy), eq2(sx,sy))
+            print("Newton did not converge", sx, sy, interp(sx,sy), eq2(sx,sy))
 
 
 if __name__ == '__main__':
@@ -243,9 +276,6 @@ if __name__ == '__main__':
     plt.matshow(a.aborders)
     plt.colorbar()
     plt.show()
-
-    #plt.matshow(a.border_cells)
-    #plt.matshow(a.xgr[1:-1,1:-1])
 
     arr=np.copy(a.d)
     mask = arr==float_info.max

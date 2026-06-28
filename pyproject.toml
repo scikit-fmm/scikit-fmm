@@ -25,6 +25,12 @@ classifiers      = ["Development Status :: 5 - Production/Stable",
 module = ["skfmm.pheap", "skfmm.cfmm"]
 ignore_missing_imports = true
 
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [project.urls]
 Homepage = 'https://github.com/scikit-fmm/scikit-fmm'
 Repository = 'https://github.com/scikit-fmm/scikit-fmm'

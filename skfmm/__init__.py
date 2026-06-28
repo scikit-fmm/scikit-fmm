@@ -888,15 +888,16 @@ def testing():
 
     """
 
-def test(verbose=None):
+def test(verbose=False):
     r"""
-    Run all the doctests available.
+    Run all the tests.
     """
-    import doctest
-    import skfmm
-    fail0, test0 = doctest.testmod(skfmm,      verbose=verbose)
-    fail1, test1 = doctest.testfile("heap.py", verbose=verbose)
-
-    print ("Summary: {} tests run {} failures".format(test0+test1,
-                                                      fail0+fail1))
-    return fail0+fail1
+    import os
+    import pytest
+    tests_dir = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'tests')
+    )
+    args = [tests_dir]
+    if verbose:
+        args.append('-v')
+    return pytest.main(args)
