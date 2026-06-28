@@ -37,7 +37,7 @@ jobs:
           cd .. && python -c "import skfmm; print(skfmm.__version__)"
       - name: Run skfmm tests
         run: |
-          cd .. && python -c "import skfmm, sys; sys.exit(skfmm.test())"
+          python -m pytest tests/
       - uses: actions/upload-artifact@v7
         with:
           name: linux-artifacts-py-${{ matrix.python-version }}
