@@ -45,7 +45,8 @@ jobs:
 
       - name: Run skfmm tests
         run: |
-          python -m pytest tests/
+          cd ..
+          python -m pytest scikit-fmm/tests/
 
   merge:
     name: Merge artifacts
