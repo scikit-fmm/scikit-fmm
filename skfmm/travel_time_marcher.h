@@ -11,9 +11,9 @@ public:
                     double *distance, int ndim,   int *shape,
                     bool self_test,   int order,
                     double *speed,    double narrow,
-                    int periodic) :
+                    int periodic,     double *dinit):
     distanceMarcher(phi, dx, flag, distance, ndim, shape, self_test,
-                    order, narrow, periodic),
+                    order, narrow, periodic, dinit),
     speed_(speed)
   {
     for (int i=0; i<size_; i++)

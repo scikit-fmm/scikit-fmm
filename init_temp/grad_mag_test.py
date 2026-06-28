@@ -12,8 +12,8 @@ xc,yc = -0.5e-1, -0.5e-1
 phi = (X - xc)**2 + (Y-yc)**2 - 3**2
 exact = np.sqrt((X - xc)**2 + (Y-yc)**2) - 3
 
-d1 = distance(phi,initorder=1)
-d2 = distance(phi,initorder=2)
+d1 = distance(phi,init_order=1)
+d2 = distance(phi,init_order=2)
 
 ng1 = np.linalg.norm(np.gradient(d1, edge_order=2),axis=0)
 ng2 = np.linalg.norm(np.gradient(d2, edge_order=2),axis=0)

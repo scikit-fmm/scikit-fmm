@@ -60,7 +60,7 @@ def post_process_result(result):
 
 
 def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
-             periodic=False, initorder=1):
+             periodic=False, init_order=1):
     """Return the signed distance from the zero contour of the array phi.
 
 
@@ -99,6 +99,9 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
                individual directions. The default value is False,
                i.e., no periodic boundaries in any direction.
 
+    init_order : bool, optional
+                 Experimental second-order initialization of calculation
+
     Returns
     -------
     d : an array the same shape as phi
@@ -111,7 +114,7 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
                         pre_process_args(phi, dx, narrow, periodic)
 
     distance_init = None
-    if initorder==2:
+    if init_order==2:
         # experimental 2d only bicubic initialization
         if len(phi.shape) != 2 or dx[0] != dx[1] or order != 2:
             raise ValueError("Second order narrow band initialization only works for 2d arrays where spacing is the same in each dimension.")
@@ -137,7 +140,7 @@ def distance(phi, dx=1.0, self_test=False, order=2, narrow=0.0,
 
 
 def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
-                narrow=0.0, periodic=False):
+                narrow=0.0, periodic=False, init_order=1):
     """Return the travel from the zero contour of the array phi given the
     scalar velocity field speed.
 
@@ -181,6 +184,9 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
                individual directions. The default value is False,
                i.e., no periodic boundaries in any direction.
 
+    init_order : bool, optional
+                 Experimental second-order initialization of calculation
+
     Returns
     -------
     t : an array the same shape as phi
@@ -192,9 +198,29 @@ def travel_time(phi, speed, dx=1.0, self_test=False, order=2,
     """
     phi, dx, flag, ext_mask, periodic \
         = pre_process_args(phi, dx, narrow, periodic)
+
+    distance_init = None
+    if init_order==2:
+        # experimental 2d only bicubic initialization
+        if len(phi.shape) != 2 or dx[0] != dx[1] or order != 2:
+            raise ValueError("Second order narrow band initialization only works for 2d arrays where spacing is the same in each dimension.")
+        if periodic:
+            raise ValueError("Second order narrow band initialization does not support periodic boundaries.")
+        if isinstance(phi, np.ma.MaskedArray):
+            raise ValueError("Second order narrow band initialization does not support masked arrays.")
+
+        dinit = BiCubicInit(phi, 1.0)
+        mask = dinit.aborders == False
+        distance_init = dinit.d
+        distance_init[mask] = 0.0
+        distance_init *= dx[0]
+        distance_init[phi<0] *= -1
+        distance_init[mask] = float_info.max
+
+
     t = cFastMarcher(phi, dx, flag, speed, ext_mask,
                      int(self_test), TRAVEL_TIME, order, narrow,
-                     periodic, None)
+                     periodic, distance_init)
     t = post_process_result(t)
     return t
 

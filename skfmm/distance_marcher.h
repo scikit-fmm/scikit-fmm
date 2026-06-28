@@ -8,9 +8,12 @@ public:
   distanceMarcher(double *phi,      double *dx, long long *flag,
                   double *distance, int ndim,   int *shape,
                   bool self_test,   int order,  double narrow,
-                  int periodic):
+                  int periodic,     double *dinit):
     baseMarcher(phi, dx, flag, distance, ndim, shape, self_test, order,
-                narrow, periodic) { }
+                narrow, periodic)
+    {
+      dinit_ = dinit;
+    }
   virtual ~distanceMarcher() { }
 
 protected:
@@ -20,4 +23,6 @@ protected:
   virtual void             initalizeFrozen();
   virtual double           updatePointOrderOne(int i);
   virtual double           updatePointOrderTwo(int i);
+private:
+  double * dinit_;
 };

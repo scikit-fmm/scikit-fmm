@@ -1,8 +1,8 @@
 //travel_time_marcher.cpp
 
 #include "travel_time_marcher.h"
-#include "math.h"
 #include "heap.h"
+#include <cmath>
 #include <stdexcept>
 #include <vector>
 #include <algorithm>    // std::min_element, std::max_element

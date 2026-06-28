@@ -4,8 +4,7 @@
 
 #include <stdexcept>
 #include <iostream>
-
-#include "math.h"
+#include <cmath>
 
 void extensionVelocityMarcher::initalizeFrozen()
 {

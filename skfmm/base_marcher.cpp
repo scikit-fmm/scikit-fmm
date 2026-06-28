@@ -5,9 +5,8 @@
 
 #include "base_marcher.h"
 #include "heap.h"
-#include "math.h"
+#include <cmath>
 #include <vector>
-
 extern "C" {
 
 

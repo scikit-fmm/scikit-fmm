@@ -30,7 +30,6 @@ srcs = [
   'skfmm/heap.cpp',
   'skfmm/base_marcher.cpp',
   'skfmm/distance_marcher.cpp',
-  'skfmm/distance_marcher_dinit.cpp',
   'skfmm/travel_time_marcher.cpp',
   'skfmm/extension_velocity_marcher.cpp',
 ]
