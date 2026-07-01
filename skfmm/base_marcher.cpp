@@ -45,7 +45,7 @@ baseMarcher::baseMarcher(
 
 void baseMarcher::march()
 {
-  initalizeFrozen();
+  initializeFrozen();
 
   int maxHeap=0;
   for (int i=0; i<size_; i++)

@@ -59,7 +59,7 @@ private:
 
 protected:
   // derived classes must implement these functions
-  virtual void     initalizeFrozen() = 0;
+  virtual void     initializeFrozen() = 0;
   virtual double   updatePointOrderTwo(int i) = 0;
   virtual double   updatePointOrderOne(int i) = 0;
 

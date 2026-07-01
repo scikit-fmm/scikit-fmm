@@ -27,7 +27,7 @@ public:
   virtual ~travelTimeMarcher() { }
 
 protected:
-  virtual void             initalizeFrozen();
+  virtual void             initializeFrozen();
   virtual double           updatePointOrderTwo(int i);
   virtual double           updatePointOrderTwo(int i, std::set<int> avoid_dim);
   virtual double           solveQuadratic(int i, const double &a,

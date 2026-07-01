@@ -112,7 +112,7 @@ double distanceMarcher::solveQuadratic(int i, const double &a,
 }
 
 
-void distanceMarcher::initalizeFrozen()
+void distanceMarcher::initializeFrozen()
 {
   //loop over phi to find zero values
   //  and mark them as frozen
