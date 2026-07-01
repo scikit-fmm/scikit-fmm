@@ -7,9 +7,9 @@
 #include <vector>
 #include <algorithm>    // std::min_element, std::max_element
 
-void travelTimeMarcher::initalizeFrozen()
+void travelTimeMarcher::initializeFrozen()
 {
-  distanceMarcher::initalizeFrozen();
+  distanceMarcher::initializeFrozen();
   for (int i=0; i<size_; i++)
   {
     if (flag_[i]==Frozen)

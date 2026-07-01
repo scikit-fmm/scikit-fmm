@@ -17,7 +17,7 @@ protected:
   virtual double           solveQuadratic(int i, const double &a,
                                           const double &b, double &c);
 
-  virtual void             initalizeFrozen();
+  virtual void             initializeFrozen();
   virtual double           updatePointOrderOne(int i);
   virtual double           updatePointOrderTwo(int i);
 };

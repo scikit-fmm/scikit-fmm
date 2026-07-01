@@ -16,7 +16,7 @@ public:
   virtual ~extensionVelocityMarcher() { }
 
 protected:
-  virtual void             initalizeFrozen();
+  virtual void             initializeFrozen();
   virtual void             finalizePoint(int i, double phi_i);
   virtual void             cleanUp();
 

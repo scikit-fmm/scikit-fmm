@@ -7,7 +7,7 @@
 
 #include "math.h"
 
-void extensionVelocityMarcher::initalizeFrozen()
+void extensionVelocityMarcher::initializeFrozen()
 {
   //loop over phi to find zero values
   //  and mark them as frozen
