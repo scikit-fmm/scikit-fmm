@@ -16,9 +16,9 @@ def pre_process_args(phi, dx, narrow, periodic, ext_mask=None):
     if not isinstance(phi, np.ndarray):
         phi = np.array(phi)
 
-    if type(dx) is float or type(dx) is int:
+    if np.ndim(dx) == 0:  # any scalar, including NumPy scalars like np.float64
         dx = [dx for _ in range(phi.ndim)]
-    dx = np.array(dx)
+    dx = np.array(dx, dtype=np.double)
 
     if isinstance(phi, np.ma.MaskedArray):
         flag = np.zeros(phi.shape, dtype=np.dtype("longlong"))

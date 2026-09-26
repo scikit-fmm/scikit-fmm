@@ -292,3 +292,14 @@ def test_distance_second_order_convergence():
         errs.append(np.abs(d - exact)[np.abs(exact) < 0.3].max())
     assert errs[1] < errs[0] / 2.5 and errs[2] < errs[1] / 2.5
 
+
+@pytest.mark.parametrize("dx", [0.1, np.float64(0.1), np.float32(0.1),
+                                1, np.int64(1), [0.1, 0.1], (1, 1),
+                                np.array([0.1, 0.1])])
+def test_dx_types(dx):
+    # NumPy scalars used to fail with "dx must be a 1D array of doubles"
+    x = np.linspace(-1, 1, 21)
+    X, Y = np.meshgrid(x, x)
+    phi = X**2 + Y**2 - 0.25
+    ref = skfmm.distance(phi, dx=[float(np.ravel(dx)[0])] * 2)
+    assert np.allclose(skfmm.distance(phi, dx=dx), ref)
