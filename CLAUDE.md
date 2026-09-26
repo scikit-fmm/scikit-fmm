@@ -78,3 +78,43 @@ more accurate initial distances for the narrow-band frozen points. Constraints:
 - `extension_velocities` only: no `ext_mask`
 
 Active development is on the `new-init` branch.
+
+### How `BiCubicInit` finds the closest point (robustness design)
+
+`bi_cubic_init.py` is vectorized: all (border cell, frozen corner) queries
+are solved at once in NumPy (`_newton2d_vec`, `_cubic_roots01`,
+`_edge_zero_points`); the scalar `bc_interp`/`bc_interp_eq2`/`_newton2d`
+remain as the readable reference and are cross-checked against the
+vectorized versions in the tests.
+
+- Only cells whose four corners change sign are processed (`find_frozen`).
+  The old loop also marked about as many cells with no sign change, where
+  Newton cannot find a zero; those produced most of the old
+  "Newton did not converge" messages.
+- Candidates for a corner's closest point in a cell are (a) Newton
+  solutions of the closest-point equations inside the cell and (b) the
+  zeros of the bicubic on the cell's four edges. The minimum distance wins.
+- (b) is the robustness guarantee: along an edge the bicubic is exactly the
+  1D cubic Hermite interpolant, so an edge whose end values differ in sign
+  always has a root (found by splitting at critical points + bisection,
+  which cannot fail). Every frozen point is on such an edge, so the old
+  "frozen points were not initialized" RuntimeError can no longer happen.
+- Newton is damped (step <= 0.5 cell) and started from the first-order
+  projection `q - phi*grad/|grad|^2` (clamped to the cell), then from the
+  cell center only if that gives nothing usable. Newton converging
+  *outside* the cell is normal (closest point is in a neighbor cell) and
+  is not a failure. `n_newton_fail` counts true non-convergence
+  (diagnostic only; no printing).
+- Found with the salt.py dissolution example (C:/src/intrepid2026): the old
+  code failed after ~300 reinitializations of a kinked/under-resolved
+  front, and even on the plain circle SDF `sqrt(x^2+y^2)-1` at 61x61.
+  Now: no failures; ~15x faster than the old Python loops; distance error
+  converges at ~2nd order vs 1st order for `init_order=1`.
+
+### Build gotcha on this machine
+
+The editable install rebuilds the C++ extension whenever a .cpp/.h mtime
+changes (e.g. after `git stash`/`git stash pop`), and the rebuild fails
+with `CreateProcess failed` if `cl` isn't on PATH. Rebuild from an MSVC
+environment:
+`cmd /c "\"C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Auxiliary\Build\vcvars64.bat\" && cd /d build\cp314 && meson compile"`

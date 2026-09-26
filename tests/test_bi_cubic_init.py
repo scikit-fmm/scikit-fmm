@@ -2,7 +2,9 @@ import numpy as np
 import pytest
 from sys import float_info
 
-from skfmm.bi_cubic_init import ainv, bc_interp, bc_interp_eq2, _newton2d, BiCubicInit
+from skfmm.bi_cubic_init import (ainv, bc_interp, bc_interp_eq2, _newton2d,
+                                 _newton2d_vec, _cubic_roots01, BiCubicInit)
+import skfmm
 
 
 # ---------------------------------------------------------------------------
@@ -182,3 +184,111 @@ class TestBiCubicInit:
         zero_mask = phi == 0.0
         assert zero_mask.any(), "setup: no grid point exactly on zero contour"
         assert np.all(b.d[zero_mask] == 0.0)
+
+
+# ---------------------------------------------------------------------------
+# Vectorized helpers
+# ---------------------------------------------------------------------------
+
+class TestVectorizedHelpers:
+
+    def test_newton_vec_matches_scalar(self):
+        rng = np.random.default_rng(3)
+        n = 200
+        a = rng.standard_normal((n, 16)) * 0.5
+        b0 = rng.integers(0, 2, n).astype(float)
+        b1 = rng.integers(0, 2, n).astype(float)
+        x0 = rng.random(n)
+        y0 = rng.random(n)
+        # a[k].reshape((4,4), order="f") is the scalar layout; the batch
+        # layout is the same matrix
+        A = a.reshape(n, 4, 4).transpose(0, 2, 1)
+        xv, yv, cv = _newton2d_vec(A, b0, b1, x0, y0)
+        for k in range(n):
+            eq2 = bc_interp_eq2(bc_interp(a[k]), b0[k], b1[k])
+            xs, ys, cs = _newton2d(eq2, x0=x0[k], y0=y0[k])
+            assert cs == cv[k]
+            if cs:
+                assert xs == pytest.approx(xv[k], abs=1e-9)
+                assert ys == pytest.approx(yv[k], abs=1e-9)
+
+    def test_cubic_roots_match_numpy(self):
+        rng = np.random.default_rng(5)
+        c = rng.standard_normal((500, 4))
+        # include some cubics with three roots in [0, 1]
+        r = rng.random((50, 3))
+        c[:50] = np.array([-r[:, 0]*r[:, 1]*r[:, 2],
+                           r[:, 0]*r[:, 1] + r[:, 1]*r[:, 2] + r[:, 0]*r[:, 2],
+                           -r.sum(axis=1), np.ones(50)]).T
+        got = _cubic_roots01(c)
+        for k in range(c.shape[0]):
+            z = np.roots(c[k, ::-1])
+            want = np.sort([w.real for w in z
+                            if abs(w.imag) < 1e-9 and 1e-9 < w.real < 1 - 1e-9])
+            have = np.sort(got[k][~np.isnan(got[k])])
+            assert have.size == want.size
+            assert np.allclose(have, want, atol=1e-7)
+
+    def test_cubic_roots_degenerate(self):
+        c = np.array([[-0.5, 1.0, 0.0, 0.0],   # linear
+                      [0.0, 0.0, 0.0, 0.0],    # identically zero
+                      [1.0, 0.0, 0.0, 0.0],    # constant, no root
+                      [-0.25, 0.0, 1.0, 0.0]]) # quadratic, root at 0.5
+        got = _cubic_roots01(c)
+        assert np.nanmin(got[0]) == pytest.approx(0.5)
+        assert np.all(np.isnan(got[2]))
+        assert np.nanmin(got[3]) == pytest.approx(0.5)
+
+
+# ---------------------------------------------------------------------------
+# Robustness: every frozen point gets a distance
+# ---------------------------------------------------------------------------
+
+def _frozen_ok(phi, speed=None):
+    b = BiCubicInit(phi, 1, speed)  # raises if a frozen point is missed
+    d = b.d[b.aborders]
+    # the zero on an edge with a sign change is at most one cell away
+    assert np.all((d >= 0) & (d <= 1.0 + 1e-12))
+    return b
+
+
+class TestRobustness:
+
+    def test_circle_signed_distance(self):
+        # a true SDF input; the original center-start Newton failed here
+        N = 61
+        x, h = np.linspace(-1.5, 1.5, N, retstep=True)
+        X, Y = np.meshgrid(x, x)
+        R = np.sqrt(X**2 + Y**2)
+        b = _frozen_ok((R - 1.0) / h)
+        m = b.aborders
+        assert np.abs(b.d[m] - np.abs(R - 1.0)[m] / h).max() < 0.01
+
+    @pytest.mark.parametrize("seed", range(10))
+    def test_random_rough_fields(self, seed):
+        # under-resolved contours with thin slivers and kinks
+        rng = np.random.default_rng(seed)
+        phi = rng.standard_normal((40, 40))
+        _frozen_ok(phi, speed=rng.random((40, 40)) + 1)
+
+    def test_square_corners(self):
+        x = np.linspace(-1, 1, 37)
+        X, Y = np.meshgrid(x, x)
+        _frozen_ok(np.maximum(np.abs(X), np.abs(Y)) - 0.5)
+
+    def test_thin_sliver(self):
+        x = np.linspace(-1, 1, 50)
+        X, Y = np.meshgrid(x, x)
+        _frozen_ok(np.abs(Y - 0.3*X) - 0.01)
+
+
+def test_distance_second_order_convergence():
+    errs = []
+    for N in (41, 81, 161):
+        x, h = np.linspace(-1.5, 1.5, N, retstep=True)
+        X, Y = np.meshgrid(x, x)
+        exact = np.sqrt(X**2 + Y**2) - 1
+        d = skfmm.distance(X**2 + Y**2 - 1, dx=float(h), init_order=2)
+        errs.append(np.abs(d - exact)[np.abs(exact) < 0.3].max())
+    assert errs[1] < errs[0] / 2.5 and errs[2] < errs[1] / 2.5
+

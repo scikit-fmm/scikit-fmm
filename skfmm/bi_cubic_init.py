@@ -112,15 +112,18 @@ def _cross_derivative(f, h):
     return xgr
 
 
-def _newton2d(eq2, tol=1.49e-8, max_iter=50):
-    """Newton-Raphson solver for the 2D closest-point system.
+def _newton2d(eq2, tol=1.49e-8, max_iter=50, x0=0.5, y0=0.5, max_step=0.5):
+    """Damped Newton-Raphson solver for the 2D closest-point system.
 
     Finds (x, y) such that f(x,y)=0 and the vector to the query point
     is parallel to grad f (i.e. the closest point on the zero contour).
     Uses the analytic Jacobian from eq2.fj; no external dependencies.
+    Each step is limited to length ``max_step`` (in cell units) and the
+    iteration is abandoned if it wanders more than one cell away from the
+    reference cell, since a solution there is not useful to the caller.
     Returns (x, y, converged).
     """
-    x, y = 0.5, 0.5
+    x, y = x0, y0
     for _ in range(max_iter):
         f0, f1, j00, j01, j10, j11 = eq2.fj(x, y)
         det = j00 * j11 - j01 * j10
@@ -129,14 +132,189 @@ def _newton2d(eq2, tol=1.49e-8, max_iter=50):
         # 2x2 solve via Cramer's rule
         dx = (j11 * f0 - j01 * f1) / det
         dy = (j00 * f1 - j10 * f0) / det
+        step = np.hypot(dx, dy)
+        if step > max_step:
+            dx *= max_step / step
+            dy *= max_step / step
         x -= dx
         y -= dy
         if abs(dx) < tol and abs(dy) < tol:
             return x, y, True
+        if not (-1.0 < x < 2.0 and -1.0 < y < 2.0):
+            return x, y, False
     return x, y, False
 
 
+def _powers(t):
+    """Rows (1, t, t^2, t^3) and their first and second t-derivatives."""
+    one, zero = np.ones_like(t), np.zeros_like(t)
+    p = np.stack((one, t, t*t, t*t*t), axis=-1)
+    dp = np.stack((zero, one, 2*t, 3*t*t), axis=-1)
+    ddp = np.stack((zero, zero, 2*one, 6*t), axis=-1)
+    return p, dp, ddp
+
+
+def _bicubic(a, px, py):
+    """Evaluate sum a[k,p,q] * px[k,p] * py[k,q] for a batch of cells."""
+    return np.einsum('kpq,kp,kq->k', a, px, py)
+
+
+def _newton2d_vec(a, b0, b1, x, y, tol=1.49e-8, max_iter=50, max_step=0.5):
+    """Vectorized version of ``_newton2d`` over a batch of problems.
+
+    ``a`` has shape (n, 4, 4) (bicubic coefficients, ``a[k, p, q]`` multiplies
+    x**p * y**q); ``b0``, ``b1`` are the query points and ``x``, ``y`` the
+    starting points, all shape (n,). Same iteration, damping and stopping
+    rules as ``_newton2d``. Returns (x, y, converged).
+    """
+    x = np.array(x, dtype=np.double)
+    y = np.array(y, dtype=np.double)
+    converged = np.zeros(x.shape, dtype=bool)
+    active = np.ones(x.shape, dtype=bool)
+    for _ in range(max_iter):
+        idx = np.flatnonzero(active)
+        if idx.size == 0:
+            break
+        A, xi, yi, q0, q1 = a[idx], x[idx], y[idx], b0[idx], b1[idx]
+        px, dpx, ddpx = _powers(xi)
+        py, dpy, ddpy = _powers(yi)
+        f = _bicubic(A, px, py)
+        fx = _bicubic(A, dpx, py)
+        fy = _bicubic(A, px, dpy)
+        fxx = _bicubic(A, ddpx, py)
+        fyy = _bicubic(A, px, ddpy)
+        fxy = _bicubic(A, dpx, dpy)
+        f1 = -(q0 - xi) * fy + (q1 - yi) * fx
+        j00, j01 = fx, fy
+        j10 = fy - (q0 - xi) * fxy + (q1 - yi) * fxx
+        j11 = -fx - (q0 - xi) * fyy + (q1 - yi) * fxy
+        det = j00 * j11 - j01 * j10
+        singular = np.abs(det) < 1e-15
+        det = np.where(singular, 1.0, det)
+        dx = (j11 * f - j01 * f1) / det
+        dy = (j00 * f1 - j10 * f) / det
+        step = np.hypot(dx, dy)
+        scale = np.where(step > max_step,
+                         max_step / np.maximum(step, 1e-300), 1.0)
+        dx = np.where(singular, 0.0, dx * scale)
+        dy = np.where(singular, 0.0, dy * scale)
+        xi, yi = xi - dx, yi - dy
+        x[idx], y[idx] = xi, yi
+        done = ~singular & (np.abs(dx) < tol) & (np.abs(dy) < tol)
+        converged[idx[done]] = True
+        escaped = ~((-1.0 < xi) & (xi < 2.0) & (-1.0 < yi) & (yi < 2.0))
+        active[idx[singular | done | escaped]] = False
+    return x, y, converged
+
+
+def _cubic_roots01(c, n_bisect=60):
+    """All real roots in [0, 1] of the cubics c0 + c1 s + c2 s^2 + c3 s^3.
+
+    ``c`` has shape (n, 4). Returns an (n, 3) array of roots, NaN where a
+    cubic has fewer than three. The interval is split at the cubic's
+    critical points into (at most three) monotone pieces, and each piece
+    whose end values differ in sign (or touch zero) holds exactly one root,
+    found by bisection -- no convergence failure is possible.
+    """
+    c = np.asarray(c, dtype=np.double)
+    n = c.shape[0]
+    c0, c1, c2, c3 = c.T
+
+    def g(s):
+        return ((c3[:, None] * s + c2[:, None]) * s + c1[:, None]) * s + \
+            c0[:, None]
+
+    # critical points: roots of 3 c3 s^2 + 2 c2 s + c1
+    qa, qb, qc = 3 * c3, 2 * c2, c1
+    crit = np.full((n, 2), np.nan)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        disc = qb * qb - 4 * qa * qc
+        quad = (qa != 0) & (disc >= 0)
+        q = -0.5 * (qb + np.copysign(np.sqrt(np.maximum(disc, 0.0)), qb))
+        crit[:, 0] = np.where(quad, q / qa, np.nan)
+        crit[:, 1] = np.where(quad, qc / q, np.nan)
+        lin = (qa == 0) & (qb != 0)
+        crit[lin, 0] = -qc[lin] / qb[lin]
+    crit[~((crit > 0) & (crit < 1))] = 1.0  # NaN or outside -> empty piece
+    knots = np.sort(np.column_stack((np.zeros(n), crit, np.ones(n))), axis=1)
+    lo, hi = knots[:, :-1].copy(), knots[:, 1:].copy()
+    glo = g(lo)
+    has_root = glo * g(hi) <= 0
+    for _ in range(n_bisect):
+        mid = 0.5 * (lo + hi)
+        gmid = g(mid)
+        left = glo * gmid <= 0
+        hi = np.where(left, mid, hi)
+        lo = np.where(left, lo, mid)
+        glo = np.where(left, glo, gmid)
+    return np.where(has_root, 0.5 * (lo + hi), np.nan)
+
+
+def _edge_zero_points(a):
+    """Points on the boundary of each unit reference cell where the bicubic
+    is zero.
+
+    ``a`` has shape (n, 4, 4). Returns (x, y), each shape (n, 12), NaN where
+    there is no point. Along each cell edge the bicubic reduces to a cubic
+    (the 1D cubic Hermite interpolant of phi and its derivative along that
+    edge), so an edge whose end values differ in sign always has a root.
+    These points lie on the interpolated zero contour, so they are always
+    valid closest-point candidates; they are the fallback that guarantees
+    every point next to a sign change gets a distance.
+    """
+    n = a.shape[0]
+    zero, one = np.zeros((n, 3)), np.ones((n, 3))
+    s_y0 = _cubic_roots01(a[:, :, 0])        # edge y=0: (s, 0)
+    s_y1 = _cubic_roots01(a.sum(axis=2))     # edge y=1: (s, 1)
+    s_x0 = _cubic_roots01(a[:, 0, :])        # edge x=0: (0, s)
+    s_x1 = _cubic_roots01(a.sum(axis=1))     # edge x=1: (1, s)
+    ex = np.hstack((s_y0, s_y1, zero, one))
+    ey = np.hstack((zero, one, s_x0, s_x1))
+    nan = np.isnan(np.hstack((s_y0, s_y1, s_x0, s_x1)))
+    ex[nan] = np.nan
+    ey[nan] = np.nan
+    return ex, ey
+
+
+def _cell_coefficients(f, gx, gy, gxy, ci, cj):
+    """Bicubic coefficients, shape (n, 4, 4), for the cells whose lower-left
+    corners are (ci, cj); ``a[k, p, q]`` multiplies x**p * y**q."""
+    ii = np.stack((ci, ci+1, ci, ci+1), axis=1)
+    jj = np.stack((cj, cj, cj+1, cj+1), axis=1)
+    X = np.hstack((f[ii, jj], gx[ii, jj], gy[ii, jj], gxy[ii, jj]))
+    return (X @ ainv.T).reshape(-1, 4, 4).transpose(0, 2, 1)
+
+
 class BiCubicInit(object):
+    """Second-order initialization of the frozen points next to the zero
+    contour of a 2D level set function on a unit-spaced grid.
+
+    For every cell the zero contour crosses, phi is interpolated with a
+    bicubic (values, gradients and cross-derivative at the four corners),
+    and for each frozen corner of the cell the distance to the closest point
+    on the interpolated zero contour is computed. A frozen point's distance
+    is the minimum over its adjacent cells. The closest point in a cell is
+    the nearest of
+
+    - interior solutions of the closest-point equations (damped Newton,
+      started from the first-order projection of the query point, then
+      from the cell center if that fails), and
+    - the zero points on the cell's edges (exact cubic roots).
+
+    The edge points make the method robust: every frozen point is next to
+    an edge with a sign change, which always holds a root, so every frozen
+    point gets a distance even where Newton fails (under-resolved or kinked
+    contours).
+
+    Attributes: ``d`` (distance, ``float_info.max`` where not frozen),
+    ``aborders`` (frozen points), ``border_cells`` (processed cells),
+    ``pdict`` (offset to the closest point for each frozen point),
+    ``n_newton_fail`` (diagnostic count of (point, cell) pairs where Newton
+    never converged; harmless since the edge points cover them), and with
+    ``speed``: ``out_speed``/``_speed_set`` (speed interpolated at the
+    closest point).
+    """
+
     def __init__(self, phi, h, speed=None):
         self.in_speed = None
         self.out_speed = None
@@ -152,12 +330,11 @@ class BiCubicInit(object):
         self.d = np.ones_like(phi) * float_info.max
         self.h = h
         self.pdict = {}
+        self.n_newton_fail = 0
         assert len(phi.shape)==2
 
         gx, gy = np.gradient(phi, edge_order=2)
         self.gx, self.gy = gx/h, gy/h # is this correct for h != 1?
-
-
         self.xgr = _cross_derivative(phi, h)
 
         if self.in_speed is not None:
@@ -168,115 +345,122 @@ class BiCubicInit(object):
         self.find_frozen()
         self.ini_frozen()
 
-        mask = self.d==float_info.max
-        if not np.logical_and(self.aborders==True,
-                              np.logical_not(mask)).sum() == \
-            (self.aborders==True).sum():
-            raise RuntimeError("scikit-fmm (skfmm) error, some initially \
-            frozen points were not initilized correctly.")
-
+        if np.any(self.aborders & (self.d == float_info.max)):
+            raise RuntimeError("scikit-fmm (skfmm) error, some initially "
+                               "frozen points were not initialized correctly.")
 
     def find_frozen(self):
-        phi = self.phi
-        aborders = np.zeros_like(phi,dtype=bool)
-        aborders[phi==0.0] = True
-        self.d[phi==0.0] = 0.0
-        border_cells = np.zeros_like(phi, dtype=bool)#[:-1,:-1]
-        nx, ny = phi.shape
-        for i in range(nx):
-            for j in range(ny):
-                for k in [-1,1]: # each direction
-                    # logic to not read off the edge of the arrays
-                    # skip this test if:
-                    ## i==0 and k == -1
-                    ## i==nx-1 and k==1
-                    ok_first =  not ((i==0 and k==-1) or (i==(nx-1) and k==1))
-                    ok_second =  not ((j==0 and k==-1) or (j==(ny-1) and k==1))
-                    if ok_first and phi[i, j] * phi[i+k,j] < 0:
-                        aborders[i,j] = True
-                        border_cells[i][j] = True
-                        if j > 0:
-                            border_cells[i][j-1] = True
-                    elif ok_second and phi[i,j] * phi[i,j+k] < 0:
-                        aborders[i,j] = True
-                        border_cells[i][j] = True
-                        if j > 0:
-                            border_cells[i][j-1] = True
-                        if i > 0:
-                            border_cells[i-1][j] = True
+        """Mark the initially frozen points and the cells to process.
 
+        A point is frozen (``aborders``) if phi is exactly zero there or
+        phi changes sign between it and one of its four neighbors; this is
+        the same set the first-order C++ initialization freezes.  A cell
+        (indexed by its lower-left corner) is processed if its four corner
+        values change sign, i.e. the zero contour crosses it.  Every edge
+        with a sign change belongs to such a cell.
+        """
+        phi = self.phi
+        aborders = phi == 0.0
+        self.d[aborders] = 0.0
+        sx = phi[:-1, :] * phi[1:, :] < 0
+        sy = phi[:, :-1] * phi[:, 1:] < 0
+        aborders[:-1, :] |= sx
+        aborders[1:, :] |= sx
+        aborders[:, :-1] |= sy
+        aborders[:, 1:] |= sy
+
+        corners = np.stack((phi[:-1, :-1], phi[1:, :-1],
+                            phi[:-1, 1:], phi[1:, 1:]))
+        border_cells = np.zeros_like(phi, dtype=bool)
+        border_cells[:-1, :-1] = ((corners.min(axis=0) < 0) &
+                                  (corners.max(axis=0) > 0))
         self.aborders = aborders
         self.border_cells = border_cells
 
     def ini_frozen(self):
-        x, y = self.border_cells.shape
-        for i in range(x):
-            for j in range(y):
-                if self.border_cells[i, j]:
-                    self.process_cell(i,j)
+        phi = self.phi
+        nx, ny = phi.shape
 
-
-    def process_cell(self,i,j):
-        # find interpolation values for this cell
-        #if not self.aborders[i,j]: return
-        coords = ((i, i+1, i, i+1), (j, j, j+1, j+1))
-        X = np.hstack((self.phi[coords], self.gx[coords],
-                       self.gy[coords], self.xgr[coords]))
-        a = ainv @ X
-        interp = bc_interp(a)
-        interp_speed = None
+        # points (numerically) on the contour: distance zero
+        on_contour = self.aborders & (np.abs(phi) < float_info.epsilon)
+        self.d[on_contour] = 0.0
         if self.in_speed is not None:
-            X2 = np.hstack((self.in_speed[coords], self.gx_speed[coords],
-                            self.gy_speed[coords], self.xgr_speed[coords]))
-            interp_speed = bc_interp(ainv @ X2)
+            self.out_speed[on_contour] = self.in_speed[on_contour]
+            self._speed_set[on_contour] = True
 
-        np.testing.assert_almost_equal(self.phi[i,j],     interp(0,0))
-        np.testing.assert_almost_equal(self.phi[i+1,j],   interp(1,0))
-        np.testing.assert_almost_equal(self.phi[i,j+1],   interp(0,1))
-        np.testing.assert_almost_equal(self.phi[i+1,j+1], interp(1,1))
-
-        self.process_point(i,   j,   0, 0, interp, interp_speed)
-        self.process_point(i+1, j,   1, 0, interp, interp_speed)
-        self.process_point(i,   j+1, 0, 1, interp, interp_speed)
-        self.process_point(i+1, j+1, 1, 1, interp, interp_speed)
-
-    def process_point(self, i, j, ii, jj, interp, interp_speed):
-        # ii and jj are the query point coordinates in the dimensionless reference cell
-        nx, ny = self.phi.shape
-        if not self.aborders[i,j]: return
-        if abs(self.phi[i,j]) < float_info.epsilon:
-            self.d[i,j] = 0.0
-            if self.out_speed is not None:
-                self.out_speed[i,j] = self.in_speed[i,j]
-                self._speed_set[i,j] = True
+        ci, cj = np.nonzero(self.border_cells)
+        if ci.size == 0:
             return
+        a = _cell_coefficients(phi, self.gx, self.gy, self.xgr, ci, cj)
 
-        eq2 = bc_interp_eq2(interp, ii, jj)
-        sx, sy, converged = _newton2d(eq2)
+        # one query per (cell, frozen corner) pair
+        cell = np.repeat(np.arange(ci.size), 4)
+        qi = np.tile(np.array([0, 1, 0, 1]), ci.size)  # corner in cell coords
+        qj = np.tile(np.array([0, 0, 1, 1]), ci.size)
+        pi, pj = ci[cell] + qi, cj[cell] + qj           # corner in the grid
+        keep = self.aborders[pi, pj] & ~on_contour[pi, pj]
+        cell, qi, qj, pi, pj = cell[keep], qi[keep], qj[keep], pi[keep], pj[keep]
+        qi = qi.astype(np.double)
+        qj = qj.astype(np.double)
 
-        if converged:
-            if 0 <= sx <= 1 and 0 <= sy <= 1:
-                dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
-                if self.d[i,j] > dist:
-                    self.d[i,j] = dist
-                    self.pdict[(i,j)] = (sx-ii, sy-jj)
-                    if interp_speed is not None:
-                        self.out_speed[i,j] = interp_speed(sx, sy)
-                        self._speed_set[i,j] = True
-            else:
-                # for boundary points we need to accept points outside [0,1]
-                # this could/should be done more cleverly/safely
-                # which direction to let sx or sy exceed the interval should be known?
-                if i==0 or j==0 or i==nx-1 or j==ny-1:
-                    dist = np.sqrt((sx-ii)**2 + (sy-jj)**2)
-                    if self.d[i,j] > dist:
-                        self.d[i,j] = dist
-                        self.pdict[(i,j)] = (sx-ii, sy-jj)
-                        if interp_speed is not None:
-                            self.out_speed[i,j] = interp_speed(sx, sy)
-                            self._speed_set[i,j] = True
-        else:
-            print("Newton did not converge", sx, sy, interp(sx,sy), eq2(sx,sy))
+        # candidates on the cell edges
+        ex, ey = _edge_zero_points(a)
+        edist = np.hypot(ex[cell] - qi[:, None], ey[cell] - qj[:, None])
+        edist[np.isnan(edist)] = np.inf
+        k = np.argmin(edist, axis=1)
+        rows = np.arange(cell.size)
+        best = edist[rows, k]
+        bx, by = ex[cell, k], ey[cell, k]
+
+        # interior candidates from Newton: first from the first-order
+        # projection of the query point onto the contour, then (for queries
+        # that produced nothing usable) from the cell center
+        g0, g1 = self.gx[pi, pj], self.gy[pi, pj]
+        gg = g0*g0 + g1*g1
+        pr = np.where(gg > 0, phi[pi, pj] / np.where(gg > 0, gg, 1.0), 0.0)
+        x0 = np.where(gg > 0, np.clip(qi - pr*g0, 0.0, 1.0), 0.5)
+        y0 = np.where(gg > 0, np.clip(qj - pr*g1, 0.0, 1.0), 0.5)
+        on_boundary = (pi == 0) | (pj == 0) | (pi == nx-1) | (pj == ny-1)
+        todo = rows
+        any_converged = np.zeros(cell.size, dtype=bool)
+        for start in ((x0, y0), (0.5, 0.5)):
+            sx0 = np.broadcast_to(start[0], rows.shape)[todo]
+            sy0 = np.broadcast_to(start[1], rows.shape)[todo]
+            sx, sy, conv = _newton2d_vec(a[cell[todo]], qi[todo], qj[todo],
+                                         sx0, sy0)
+            any_converged[todo[conv]] = True
+            inside = (sx >= 0) & (sx <= 1) & (sy >= 0) & (sy <= 1)
+            # for boundary points we need to accept points outside [0,1]
+            # this could/should be done more cleverly/safely
+            ok = conv & (inside | on_boundary[todo])
+            dist = np.hypot(sx - qi[todo], sy - qj[todo])
+            better = ok & (dist < best[todo])
+            t = todo[better]
+            best[t], bx[t], by[t] = dist[better], sx[better], sy[better]
+            # converged outside this cell: the closest point is in a
+            # neighboring cell, which handles it; retry only the rest
+            todo = todo[~ok]
+        self.n_newton_fail = int(np.count_nonzero(~any_converged))
+
+        # reduce over the cells adjacent to each point: keep the minimum
+        found = np.isfinite(best)
+        order = np.lexsort((best, pj, pi))
+        order = order[found[order]]
+        flat = pi[order] * ny + pj[order]
+        _, first = np.unique(flat, return_index=True)
+        w = order[first]
+        wi, wj = pi[w], pj[w]
+        self.d[wi, wj] = np.minimum(self.d[wi, wj], best[w])
+        for i, j, ox, oy in zip(wi, wj, bx[w] - qi[w], by[w] - qj[w]):
+            self.pdict[(int(i), int(j))] = (ox, oy)
+        if self.in_speed is not None:
+            a_s = _cell_coefficients(self.in_speed, self.gx_speed,
+                                     self.gy_speed, self.xgr_speed,
+                                     ci[cell[w]], cj[cell[w]])
+            px, _, _ = _powers(bx[w])
+            py, _, _ = _powers(by[w])
+            self.out_speed[wi, wj] = _bicubic(a_s, px, py)
+            self._speed_set[wi, wj] = True
 
 
 if __name__ == '__main__':
