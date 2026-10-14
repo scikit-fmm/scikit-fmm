@@ -116,7 +116,9 @@ void extensionVelocityMarcher::finalizePoint(int i, double phi_i)
         //determine which direction, in this dimension, is nearest to
         //the front. Calculate the distance to front in this direction
         double d = distance_[i] - distance_[naddr];
-        if (ldistance[dim]==0 || ldistance[dim]>d)
+        // The nearest frozen neighbor has the largest absolute difference,
+        // regardless of which side of the front this point lies on.
+        if (fabs(ldistance[dim]) < fabs(d))
         {
           // this condition avoids a rare div by zero case where d = 0
           if (fabs(d) > std::numeric_limits<double>::epsilon())
