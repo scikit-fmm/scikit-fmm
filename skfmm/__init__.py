@@ -77,6 +77,28 @@ def testing():
     ...                   np.arange(8) * dx - 3.5 * dx))
     True
 
+    Scalar grid spacing may come from a NumPy calculation. Check all
+    three solvers on planar fronts with known distance and constant speed.
+
+    >>> for ndim in (1, 2, 3):
+    ...     shape = (7,) * ndim
+    ...     front = np.broadcast_to(
+    ...         np.arange(-3., 4.).reshape((7,) + (1,) * (ndim - 1)), shape)
+    ...     speed = np.full(shape, 2.)
+    ...     for spacing in (np.float64(.25), np.float32(.25),
+    ...                     np.int64(2), np.array(.25)):
+    ...         expected = front * float(spacing)
+    ...         for order in (1, 2):
+    ...             np.testing.assert_allclose(
+    ...                 distance(front, dx=spacing, order=order), expected)
+    ...             np.testing.assert_allclose(
+    ...                 travel_time(front, speed, dx=spacing, order=order),
+    ...                 abs(expected) / 2)
+    ...             d, extended = extension_velocities(
+    ...                 front, speed, dx=spacing, order=order)
+    ...             np.testing.assert_allclose(d, expected)
+    ...             np.testing.assert_allclose(extended, speed)
+
     **Bug Fix**
 
     Test case for a bug in the upwind finite difference scheme for
