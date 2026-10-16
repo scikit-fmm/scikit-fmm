@@ -5,7 +5,7 @@
 #include "numpy/ndarrayobject.h"
 
 #ifndef NPY_IN_ARRAY
-#define NPY_IN_ARRAY (NPY_ARRAY_ALIGNED | NPY_ARRAY_ENSUREARRAY | NPY_ARRAY_NOTSWAPPED | NPY_ARRAY_BEHAVED)
+#define NPY_IN_ARRAY NPY_ARRAY_IN_ARRAY
 #endif
 
 #include "distance_marcher.h"

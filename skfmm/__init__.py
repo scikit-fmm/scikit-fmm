@@ -895,6 +895,46 @@ def testing():
     ...                                      (0,    0, 0.5),
     ...                                      (0,    0, 0.5)))
 
+    Native marching uses C-order buffers, including for transposed and
+    Fortran-order inputs. A planar front has the same distances in either
+    layout.
+
+    >>> phi = np.ones((3, 5))
+    >>> phi[:, 0] = 0
+    >>> expected = np.tile(np.arange(5), (3, 1))
+    >>> for order in (1, 2):
+    ...     np.testing.assert_allclose(distance(np.asfortranarray(phi), order=order), expected)
+    ...     np.testing.assert_allclose(distance(phi.T, order=order), expected.T)
+
+    Strided grid-spacing arrays also retain their per-axis values.
+
+    >>> dx = np.array([0.25, 9., 0.5, 9.])[::2]
+    >>> np.testing.assert_allclose(distance(phi, dx=dx), expected * 0.5)
+
+    Travel times for a planar front with speed depending only on the
+    propagation coordinate are cumulative inverse speeds at first order.
+
+    >>> speed = np.tile(np.arange(1., 6.), (3, 1))
+    >>> expected_time = np.tile(np.r_[0, np.cumsum(1 / np.arange(2., 6.))], (3, 1))
+    >>> np.testing.assert_allclose(travel_time(phi, np.asfortranarray(speed), order=1), expected_time)
+
+    Extension velocities are constant along the normals of this front.
+
+    >>> speed = np.repeat(np.arange(1., 4.)[:, None], 5, axis=1)
+    >>> d, extended = extension_velocities(phi, np.asfortranarray(speed), order=1)
+    >>> np.testing.assert_allclose(d, expected)
+    >>> np.testing.assert_allclose(extended, speed)
+
+    An extension mask can select only the positive side of the front,
+    regardless of the mask's storage order.
+
+    >>> phi = np.tile(np.arange(5) - 0.5, (3, 1))
+    >>> speed = np.full_like(phi, 6.)
+    >>> speed[:, 0] = 2.
+    >>> ext_mask = np.asfortranarray(phi < 0)
+    >>> d, extended = extension_velocities(phi, speed, ext_mask=ext_mask, order=1)
+    >>> np.testing.assert_allclose(extended, 6.)
+
     This is from Pull Request #57:
 
     >>> a = np.array([[[600,  399,  641], [607,  605,  796], [602,  641,  797], [602,  658,  814]], [[272,   -1,  398], [208,  282,  539], [209,  285,  513], [208,  298,  519]], [[-19,   51,  307], [-191,   2,  403], [-171,   5,  325], [-172,   3,  318]]])
