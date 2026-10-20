@@ -165,6 +165,18 @@ def testing():
 
     **Test Extension Field Calculation**
 
+    Transport from the nearest front in each direction, for either sign
+    of phi. The fronts are at 10/11 and 4 + 9/19, so the two interior
+    points are reached by different fronts with different velocities.
+
+    >>> phi = np.array([-1., .1, 1., 2., .9, -1.])
+    >>> speed = np.array([2., 2., 0., 0., 7., 7.])
+    >>> expected = [2., 2., 2., 7., 7., 7.]
+    >>> for order in (1, 2):
+    ...     for sign in (1, -1):
+    ...         d, ext = extension_velocities(sign * phi, speed, order=order)
+    ...         np.testing.assert_allclose(ext, expected)
+
     >>> tmp = 1 / np.sqrt(2)
     >>> phi = np.array([[-1., 1.], [1., 1.]])
     >>> phi, ext =  extension_velocities(phi,
