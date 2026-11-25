@@ -73,7 +73,7 @@ class heap(object):
 
         Parameters
         ----------
-        max_heap : int
+        max_size : int
 
                    The maximum size of the heap.
 
